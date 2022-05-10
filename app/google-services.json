@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "49692332123",
+    "project_id": "perseo-1c22f",
+    "storage_bucket": "perseo-1c22f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49692332123:android:a5c8c38b5e3076b2e4af7e",
+        "android_client_info": {
+          "package_name": "com.cv.perseo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "49692332123-2drhrhppjvlt94sit3junml178bo95ga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCB1EOfArHLJgwAhvMa6st5G5X709c6K8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "49692332123-2drhrhppjvlt94sit3junml178bo95ga.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
