@@ -7,9 +7,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
@@ -24,12 +24,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
-import com.cv.perseo.ui.theme.Accent
-import com.cv.perseo.ui.theme.Yellow3
-import com.cv.perseo.ui.theme.Yellow4
+import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
 
 @Composable
@@ -241,4 +241,30 @@ fun PerseoBottomBar(
             }
 
         })
+}
+
+@Composable
+@Preview
+fun DefaultButton(
+    text: String = "Cumplimiento OS",
+    action: () -> Unit = {}
+) {
+    Button(
+        modifier = Modifier
+            .padding(8.dp),
+        onClick = {
+            action.invoke()
+        },
+        colors = ButtonDefaults.buttonColors(Yellow5)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(text = text, maxLines = 2, overflow = TextOverflow.Clip)
+            Image(imageVector = Icons.Default.Done, contentDescription = null)
+        }
+    }
 }
