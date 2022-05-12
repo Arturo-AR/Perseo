@@ -1,21 +1,25 @@
 package com.cv.perseo.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -25,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.cv.perseo.ui.theme.Accent
 import com.cv.perseo.ui.theme.Yellow3
+import com.cv.perseo.ui.theme.Yellow4
 import com.cv.perseo.utils.Constants
 
 @Composable
@@ -146,4 +151,94 @@ fun PasswordVisibility(passwordVisibility: MutableState<Boolean>) {
             tint = Color.Black
         )
     }
+}
+
+@Composable
+fun PerseoTopBar(
+    title: String,
+    inDashboard: Boolean = false,
+    onBackArrowClicked: () -> Unit = {}
+) {
+    TopAppBar(
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                if (inDashboard) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.clickable {
+                            onBackArrowClicked.invoke()
+                        }
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Arrow Back",
+                        tint = Color.White,
+                        modifier = Modifier.clickable {
+                            onBackArrowClicked.invoke()
+                        }
+                    )
+                }
+
+                Text(
+                    text = title,
+                    color = Yellow4,
+                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 28.sp)
+                )
+                LogoPerseo(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(vertical = 8.dp)
+                )
+            }
+        },
+        modifier = Modifier.height(70.dp),
+        backgroundColor = Accent,
+        elevation = 0.dp
+    )
+}
+
+@Composable
+fun PerseoBottomBar(
+    enterprise: String = "TEST",
+    enterpriseIcon: String = Constants.LOGO_TELECABLE
+) {
+    BottomAppBar(
+        modifier = Modifier
+            .height(50.dp)
+            .clip(
+                RoundedCornerShape(
+                    topStart = 10.dp,
+                    topEnd = 10.dp,
+                    bottomStart = 0.dp,
+                    bottomEnd = 0.dp
+                )
+            ),
+        backgroundColor = Accent,
+        content = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = enterprise,
+                    color = Yellow3,
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold
+                )
+                Image(
+                    painter = rememberImagePainter(data = enterpriseIcon), //TODO: Change painter per bitmap
+                    contentDescription = null
+                )
+            }
+
+        })
 }

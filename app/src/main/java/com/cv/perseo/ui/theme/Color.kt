@@ -7,6 +7,9 @@ val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 
+/**
+ * Modify names colors
+ */
 
 val Yellow1 = Color(0xFFA67538)
 val Yellow2 = Color(0xFFBF964B)
@@ -20,7 +23,7 @@ val Background = Color(0xFF262626)
 val Accent = Color(0xFF3F3F3F)
 val Subtitles = Color(0xFFC8C8C8)
 val TextGray = Color(0xFF3F3F40)
-val Text = Color(0xFFF2F2F2)
+val TextColor = Color(0xFFF2F2F2)
 val Shadow = Color(0xFF0D0D0D)
 
 val ButtonText = Color(0xFFBCBCBC)
