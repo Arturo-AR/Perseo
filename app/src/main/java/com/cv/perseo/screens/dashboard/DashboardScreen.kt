@@ -30,8 +30,6 @@ import kotlinx.coroutines.launch
 @ExperimentalFoundationApi
 @Composable
 fun DashboardScreen(navController: NavController) {
-
-    val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 

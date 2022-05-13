@@ -5,5 +5,6 @@ enum class PerseoScreens {
     LoginScreen,
     EnterpriseSelector,
     Dashboard,
-    Inventory
+    Inventory,
+    OSDetails
 }

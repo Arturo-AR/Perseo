@@ -11,6 +11,7 @@ import com.cv.perseo.screens.dashboard.DashboardScreen
 import com.cv.perseo.screens.enterpriseselector.EnterpriseSelectorScreen
 import com.cv.perseo.screens.inventory.InventoryScreen
 import com.cv.perseo.screens.login.LoginScreen
+import com.cv.perseo.screens.osdetails.OSDetails
 
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
@@ -37,6 +38,10 @@ fun PerseoNavigation() {
 
         composable(PerseoScreens.Inventory.name) {
             InventoryScreen(navController = navController)
+        }
+
+        composable(PerseoScreens.OSDetails.name) {
+            OSDetails(navController = navController)
         }
     }
 }

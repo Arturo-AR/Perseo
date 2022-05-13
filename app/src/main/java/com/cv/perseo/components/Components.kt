@@ -283,6 +283,9 @@ fun ButtonsList(
                     Constants.INVENTORY -> {
                         navController.navigate(PerseoScreens.Inventory.name)
                     }
+                    Constants.SERVICE_ORDERS ->{
+                        navController.navigate(PerseoScreens.OSDetails.name)
+                    }
                     else -> {
                         Log.d("ELSE", "Otra pantalla")
                     }
