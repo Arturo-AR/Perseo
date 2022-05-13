@@ -3,6 +3,7 @@ package com.cv.perseo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.PerseoTheme
 
 @ExperimentalComposeUiApi
+@ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +30,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @ExperimentalComposeUiApi
+@ExperimentalFoundationApi
 @Composable
 fun PerseoApp() {
     Surface(

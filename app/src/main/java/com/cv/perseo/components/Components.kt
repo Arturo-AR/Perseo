@@ -1,15 +1,18 @@
 package com.cv.perseo.components
 
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
@@ -24,11 +27,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
+import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
 
@@ -40,7 +43,7 @@ fun LogoPerseo(modifier: Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = rememberImagePainter(data = Constants.LOGO_PERSEO),
+            painter = rememberAsyncImagePainter(Constants.LOGO_PERSEO),
             contentDescription = "Logo Perseo"
         )
     }
@@ -235,7 +238,7 @@ fun PerseoBottomBar(
                     fontWeight = FontWeight.Bold
                 )
                 Image(
-                    painter = rememberImagePainter(data = enterpriseIcon), //TODO: Change painter per bitmap
+                    painter = rememberAsyncImagePainter(enterpriseIcon), //TODO: Change painter per bitmap
                     contentDescription = null
                 )
             }
@@ -244,27 +247,47 @@ fun PerseoBottomBar(
 }
 
 @Composable
-@Preview
-fun DefaultButton(
-    text: String = "Cumplimiento OS",
+fun ImageButton(
+    urlImage: String,
+    modifier: Modifier,
     action: () -> Unit = {}
 ) {
-    Button(
-        modifier = Modifier
-            .padding(8.dp),
-        onClick = {
-            action.invoke()
-        },
-        colors = ButtonDefaults.buttonColors(Yellow5)
+    Image(
+        modifier = modifier
+            .width(150.dp)
+            .height(60.dp)
+            .clickable {
+                action.invoke()
+            },
+        painter = rememberAsyncImagePainter(model = urlImage),
+        contentDescription = null
+    )
+}
+
+@ExperimentalFoundationApi
+@Composable
+fun ButtonsList(
+    navController: NavController,
+    Items: List<String>
+) {
+    LazyVerticalGrid(
+        cells = GridCells.Fixed(2),
+        contentPadding = PaddingValues(32.dp),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Text(text = text, maxLines = 2, overflow = TextOverflow.Clip)
-            Image(imageVector = Icons.Default.Done, contentDescription = null)
+        items(Items.size) { index ->
+            ImageButton(
+                urlImage = Items[index],
+                modifier = Modifier.padding(horizontal = 8.dp)
+            ) {
+                when (Items[index]) {
+                    Constants.INVENTORY -> {
+                        navController.navigate(PerseoScreens.Inventory.name)
+                    }
+                    else -> {
+                        Log.d("ELSE", "Otra pantalla")
+                    }
+                }
+            }
         }
     }
 }

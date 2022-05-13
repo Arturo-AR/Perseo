@@ -1,14 +1,8 @@
 package com.cv.perseo.screens.dashboard
 
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,7 +11,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -26,15 +19,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.cv.perseo.components.DefaultButton
-import com.cv.perseo.components.LogoPerseo
-import com.cv.perseo.components.PerseoBottomBar
-import com.cv.perseo.components.PerseoTopBar
-import com.cv.perseo.navigation.PerseoScreens
+import com.cv.perseo.components.*
 import com.cv.perseo.ui.theme.Accent
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.ButtonText
 import com.cv.perseo.ui.theme.TextColor
+import com.cv.perseo.utils.Constants
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
@@ -63,22 +53,7 @@ fun DashboardScreen(navController: NavController) {
         },
         backgroundColor = Background,
     ) {
-
-        val list = listOf("Mis Ordenes", "Cumplimiento OS", "Inventario", "Ordenes de servicio")
-        LazyVerticalGrid(
-            cells = GridCells.Fixed(2),
-            contentPadding = PaddingValues(8.dp)
-        ) {
-            items(list.size) { index ->
-                DefaultButton(text = list[index]) {
-                    when (list[index]) {
-                        "Inventario" -> navController.navigate(PerseoScreens.Inventory.name)
-                        else -> Toast.makeText(context, list[index], Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
-        //Text(text = "En dashboard")// TODO add dashboard content
+        ButtonsList(navController,listOf(Constants.SERVICE_ORDERS, Constants.INVENTORY, Constants.SUBSCRIBER))
     }
 }
 
@@ -120,7 +95,6 @@ fun DrawerView() {
             Toast.makeText(context, "Cerrar sesion", Toast.LENGTH_SHORT).show()
         }
     }
-
 }
 
 @Composable
