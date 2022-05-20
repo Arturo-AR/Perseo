@@ -51,7 +51,10 @@ fun DashboardScreen(navController: NavController) {
         },
         backgroundColor = Background,
     ) {
-        ButtonsList(navController,listOf(Constants.SERVICE_ORDERS, Constants.INVENTORY, Constants.SUBSCRIBER))
+        ButtonsList(
+            navController,
+            listOf(Constants.SERVICE_ORDERS, Constants.INVENTORY, Constants.SUBSCRIBER)
+        )
     }
 }
 

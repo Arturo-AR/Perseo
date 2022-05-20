@@ -55,7 +55,7 @@ fun OSDetails(navController: NavController) {
                 }
                 AnimatedVisibility(visible = expanded1) {
                     Column(Modifier.padding(8.dp)) {
-                        Row() {
+                        Row {
                             Image(imageVector = Icons.Default.Done, contentDescription = null)
                             Text(
                                 text = "Contrato No: ",
@@ -73,7 +73,7 @@ fun OSDetails(navController: NavController) {
             }
         }
         Card(backgroundColor = Accent) {
-            Column() {
+            Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painterResource(R.drawable.ic_launcher_foreground),
@@ -102,7 +102,7 @@ fun OSDetails(navController: NavController) {
             }
         }
         Card(backgroundColor = Accent) {
-            Column() {
+            Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painterResource(R.drawable.ic_launcher_foreground),

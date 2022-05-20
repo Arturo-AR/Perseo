@@ -42,7 +42,7 @@ fun SplashScreen(navController: NavController) {
         )
 
         delay(1500L) //On screen total time
-        navController.navigate(PerseoScreens.Dashboard.name)//TODO change per Login and add login verification
+        navController.navigate(PerseoScreens.Dashboard.route)//TODO change per Login and add login verification
     }
 
     Surface(

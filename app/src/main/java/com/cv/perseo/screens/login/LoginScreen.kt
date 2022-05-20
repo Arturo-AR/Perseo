@@ -60,7 +60,7 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
             Spacer(modifier = Modifier.height(40.dp))
             UserForm(loading = false, isCreatedAccount = false) { email, password ->
                 //viewModel.signInWithEmailAndPassword(email, password){
-                    navController.navigate(PerseoScreens.Dashboard.name)
+                    navController.navigate(PerseoScreens.Dashboard.route)
                // }
             }
         }

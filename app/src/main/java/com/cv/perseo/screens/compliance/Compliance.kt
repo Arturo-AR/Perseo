@@ -1,26 +1,24 @@
-package com.cv.perseo.screens.inventory
+package com.cv.perseo.screens.compliance
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import com.cv.perseo.components.ButtonsList
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
 import com.cv.perseo.navigation.PerseoScreens
-import com.cv.perseo.screens.dashboard.DrawerView
 import com.cv.perseo.ui.theme.Background
-import com.cv.perseo.utils.Constants
-import kotlinx.coroutines.launch
 
 @Composable
-fun InventoryScreen(navController: NavController) {
+fun Compliance(navController: NavController) {
 
     val scaffoldState = rememberScaffoldState()
 
@@ -28,7 +26,7 @@ fun InventoryScreen(navController: NavController) {
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Inventario",
+                title = "Cumplimientos",
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.Dashboard.route)
@@ -44,7 +42,7 @@ fun InventoryScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Inventory", color = Color.White, style = MaterialTheme.typography.h3)
+            Text(text = "Cumplimiento", color = Color.White, style = MaterialTheme.typography.h3)
         }
     }
 }

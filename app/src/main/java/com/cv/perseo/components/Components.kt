@@ -192,7 +192,7 @@ fun PerseoTopBar(
                 Text(
                     text = title,
                     color = Yellow4,
-                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 28.sp)
+                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 )
                 LogoPerseo(
                     modifier = Modifier
@@ -281,10 +281,13 @@ fun ButtonsList(
             ) {
                 when (Items[index]) {
                     Constants.INVENTORY -> {
-                        navController.navigate(PerseoScreens.Inventory.name)
+                        navController.navigate(PerseoScreens.Inventory.route)
                     }
                     Constants.SERVICE_ORDERS ->{
-                        navController.navigate(PerseoScreens.OSDetails.name)
+                        navController.navigate(PerseoScreens.ServiceOrders.route)
+                    }
+                    Constants.SUBSCRIBER ->{
+                        navController.navigate(PerseoScreens.Subscribers.route)
                     }
                     else -> {
                         Log.d("ELSE", "Otra pantalla")
