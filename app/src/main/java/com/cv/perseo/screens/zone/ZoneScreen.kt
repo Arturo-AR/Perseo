@@ -1,4 +1,4 @@
-package com.cv.perseo.screens.equipment
+package com.cv.perseo.screens.zone
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,14 +18,14 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
 @Composable
-fun Equipment(navController: NavController) {
+fun ZoneScreen(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Equipos",
+                title = "Zona",
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.Dashboard.route)
@@ -41,7 +41,7 @@ fun Equipment(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Equipos", color = Color.White, style = MaterialTheme.typography.h3)
+            Text(text = "Zona", color = Color.White, style = MaterialTheme.typography.h3)
         }
     }
 }

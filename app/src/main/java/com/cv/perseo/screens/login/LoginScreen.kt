@@ -48,9 +48,11 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ) {
-            LogoPerseo(modifier = Modifier
-                .height(150.dp)
-                .width(150.dp))
+            LogoPerseo(
+                modifier = Modifier
+                    .height(150.dp)
+                    .width(150.dp)
+            )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = "Ingresa a tu cuenta",
@@ -59,9 +61,7 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
             )
             Spacer(modifier = Modifier.height(40.dp))
             UserForm(loading = false, isCreatedAccount = false) { email, password ->
-                //viewModel.signInWithEmailAndPassword(email, password){
-                    navController.navigate(PerseoScreens.Dashboard.route)
-               // }
+                navController.navigate(PerseoScreens.Dashboard.route)
             }
         }
     }

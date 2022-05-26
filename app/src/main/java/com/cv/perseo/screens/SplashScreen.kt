@@ -40,11 +40,9 @@ fun SplashScreen(navController: NavController) {
                         .getInterpolation(it)
                 })
         )
-
         delay(1500L) //On screen total time
         navController.navigate(PerseoScreens.Dashboard.route)//TODO change per Login and add login verification
     }
-
     Surface(
         modifier = Modifier
             .padding(15.dp)
@@ -55,8 +53,6 @@ fun SplashScreen(navController: NavController) {
         border = BorderStroke(width = 3.dp, color = Yellow2)
     ) {
         val modifier = Modifier.padding(bottom = 35.dp, top = 10.dp)
-
         LogoPerseo(modifier)
-
     }
 }

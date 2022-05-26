@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun InventoryScreen(navController: NavController) {
-
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
@@ -31,7 +30,9 @@ fun InventoryScreen(navController: NavController) {
                 title = "Inventario",
                 inDashboard = false
             ) {
-                navController.navigate(PerseoScreens.Dashboard.route)
+                navController.navigate(PerseoScreens.Dashboard.route) {
+                    popUpTo(PerseoScreens.Dashboard.route)
+                }
             }
         },
         bottomBar = {

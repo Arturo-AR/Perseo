@@ -18,7 +18,7 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
 @Composable
-fun RubroMis(navController: NavController) {
+fun RubroScreen(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(

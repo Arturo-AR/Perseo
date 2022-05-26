@@ -1,6 +1,7 @@
 package com.cv.perseo.screens.dashboard
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.cv.perseo.components.*
+import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Accent
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.ButtonText
@@ -32,6 +34,10 @@ import kotlinx.coroutines.launch
 fun DashboardScreen(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+
+    BackHandler {
+        return@BackHandler
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,

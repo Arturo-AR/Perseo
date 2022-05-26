@@ -1,4 +1,4 @@
-package com.cv.perseo.screens.servicecords
+package com.cv.perseo.screens.materials
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,30 +18,30 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
 @Composable
-fun ServiceCords(navController: NavController) {
+fun MaterialsScreen(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
-    scaffoldState = scaffoldState,
-    topBar = {
-        PerseoTopBar(
-            title = "Cortes de Servicio",
-            inDashboard = false
-        ) {
-            navController.navigate(PerseoScreens.Dashboard.route)
-        }
-    },
-    bottomBar = {
-        PerseoBottomBar()
-    },
-    backgroundColor = Background,
+        scaffoldState = scaffoldState,
+        topBar = {
+            PerseoTopBar(
+                title = "Materiales",
+                inDashboard = false
+            ) {
+                navController.navigate(PerseoScreens.Dashboard.route)
+            }
+        },
+        bottomBar = {
+            PerseoBottomBar()
+        },
+        backgroundColor = Background,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Cortes de Servicio", color = Color.White, style = MaterialTheme.typography.h3)
+            Text(text = "Materiales", color = Color.White, style = MaterialTheme.typography.h3)
         }
     }
 }

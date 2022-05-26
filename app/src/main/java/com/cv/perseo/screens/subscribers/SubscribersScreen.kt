@@ -19,7 +19,7 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
 @Composable
-fun Subscribers(navController: NavController) {
+fun SubscribersScreen(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
@@ -29,7 +29,9 @@ fun Subscribers(navController: NavController) {
                 title = "Abonados",
                 inDashboard = false
             ) {
-                navController.navigate(PerseoScreens.Dashboard.route)
+                navController.navigate(PerseoScreens.Dashboard.route) {
+                    popUpTo(PerseoScreens.Dashboard.route)
+                }
             }
         },
         bottomBar = {

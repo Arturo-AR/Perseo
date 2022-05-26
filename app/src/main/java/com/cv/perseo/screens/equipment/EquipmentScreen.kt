@@ -1,4 +1,4 @@
-package com.cv.perseo.screens.myserviceorders
+package com.cv.perseo.screens.equipment
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,30 +18,30 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
 @Composable
-fun MyServiceOrders(navController: NavController) {
+fun EquipmentScreen(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
-    scaffoldState = scaffoldState,
-    topBar = {
-        PerseoTopBar(
-            title = "Mis Ordenes",
-            inDashboard = false
-        ) {
-            navController.navigate(PerseoScreens.Dashboard.route)
-        }
-    },
-    bottomBar = {
-        PerseoBottomBar()
-    },
-    backgroundColor = Background,
+        scaffoldState = scaffoldState,
+        topBar = {
+            PerseoTopBar(
+                title = "Equipos",
+                inDashboard = false
+            ) {
+                navController.navigate(PerseoScreens.Dashboard.route)
+            }
+        },
+        bottomBar = {
+            PerseoBottomBar()
+        },
+        backgroundColor = Background,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Mis Ordenes", color = Color.White, style = MaterialTheme.typography.h3)
+            Text(text = "Equipos", color = Color.White, style = MaterialTheme.typography.h3)
         }
     }
 }

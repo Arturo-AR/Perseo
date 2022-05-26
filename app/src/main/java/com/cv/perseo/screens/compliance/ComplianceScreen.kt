@@ -1,4 +1,4 @@
-package com.cv.perseo.screens.serviceorders
+package com.cv.perseo.screens.compliance
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,17 +18,19 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
 @Composable
-fun ServiceOrders(navController: NavController) {
+fun ComplianceScreen(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Ordenes de Servicio",
+                title = "Cumplimientos",
                 inDashboard = false
             ) {
-                navController.navigate(PerseoScreens.Dashboard.route)
+                navController.navigate(PerseoScreens.ServiceOrders.route) {
+                    popUpTo(PerseoScreens.ServiceOrders.route)
+                }
             }
         },
         bottomBar = {
@@ -41,7 +43,7 @@ fun ServiceOrders(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Ordenes de Servicio", color = Color.White, style = MaterialTheme.typography.h3)
+            Text(text = "Cumplimiento", color = Color.White, style = MaterialTheme.typography.h3)
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.cv.perseo.components
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -283,14 +282,20 @@ fun ButtonsList(
                     Constants.INVENTORY -> {
                         navController.navigate(PerseoScreens.Inventory.route)
                     }
-                    Constants.SERVICE_ORDERS ->{
+                    Constants.SERVICE_ORDERS -> {
                         navController.navigate(PerseoScreens.ServiceOrders.route)
                     }
-                    Constants.SUBSCRIBER ->{
+                    Constants.SUBSCRIBER -> {
                         navController.navigate(PerseoScreens.Subscribers.route)
                     }
-                    else -> {
-                        Log.d("ELSE", "Otra pantalla")
+                    Constants.MY_SERVICE_ORDERS -> {
+                        navController.navigate(PerseoScreens.MyServiceOrders.route)
+                    }
+                    Constants.COMPLIANCE -> {
+                        navController.navigate(PerseoScreens.Compliance.route)
+                    }
+                    Constants.SERVICES_CORDS -> {
+                        navController.navigate(PerseoScreens.ServicesCords.route)
                     }
                 }
             }

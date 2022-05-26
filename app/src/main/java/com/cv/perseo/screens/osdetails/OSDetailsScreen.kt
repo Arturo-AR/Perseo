@@ -27,7 +27,7 @@ import com.cv.perseo.ui.theme.Accent
 import com.cv.perseo.ui.theme.Yellow6
 
 @Composable
-fun OSDetails(navController: NavController) {
+fun OSDetailsScreen(navController: NavController) {
     var expanded1 by remember { mutableStateOf(false) }
     var expanded2 by remember { mutableStateOf(false) }
     var expanded3 by remember { mutableStateOf(false) }

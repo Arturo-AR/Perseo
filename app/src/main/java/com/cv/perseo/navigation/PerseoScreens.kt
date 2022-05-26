@@ -7,31 +7,37 @@ sealed class PerseoScreens(
     /**
      * Screens that need permission
      */
-    object Dashboard: PerseoScreens(
+    object Dashboard : PerseoScreens(
         route = "dashboard",
         id = 1
     )
-    object Subscribers: PerseoScreens(
+
+    object Subscribers : PerseoScreens(
         route = "subscribers",
         id = 2
     )
-    object ServiceOrders: PerseoScreens(
+
+    object ServiceOrders : PerseoScreens(
         route = "serviceOrders",
         id = 3
     )
-    object Compliance: PerseoScreens(
+
+    object Compliance : PerseoScreens(
         route = "compliance",
         id = 4
     )
-    object MyServiceOrders: PerseoScreens(
+
+    object MyServiceOrders : PerseoScreens(
         route = "myServiceOrders",
         id = 5
     )
-    object Inventory: PerseoScreens(
+
+    object Inventory : PerseoScreens(
         route = "inventory",
         id = 6
     )
-    object ServicesCords: PerseoScreens(
+
+    object ServicesCords : PerseoScreens(
         route = "servicesCords",
         id = 7
     )
@@ -40,20 +46,43 @@ sealed class PerseoScreens(
      * Screens that don't need permissions
      */
 
-    object SplashScreen: PerseoScreens(
+    object Splash : PerseoScreens(
         route = "splashScreen",
         id = 0
     )
-    object LoginScreen: PerseoScreens(
+
+    object Login : PerseoScreens(
         route = "loginScreen",
         id = 0
     )
-    object EnterpriseSelector: PerseoScreens(
+
+    object EnterpriseSelector : PerseoScreens(
         route = "enterpriseSelector",
         id = 0
     )
-    object OSDetails: PerseoScreens(
+
+    object OSDetails : PerseoScreens(
         route = "oSDetails",
+        id = 0
+    )
+
+    object Equipment : PerseoScreens(
+        route = "equipment",
+        id = 0
+    )
+
+    object Materials : PerseoScreens(
+        route = "materials",
+        id = 0
+    )
+
+    object Rubro : PerseoScreens(
+        route = "rubro",
+        id = 0
+    )
+
+    object Zone : PerseoScreens(
+        route = "zone",
         id = 0
     )
 }
