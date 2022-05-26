@@ -10,6 +10,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.cv.perseo.components.*
-import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Accent
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.ButtonText
@@ -34,9 +35,12 @@ import kotlinx.coroutines.launch
 fun DashboardScreen(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+    val openDialog = remember {
+        mutableStateOf(false)
+    }
 
     BackHandler {
-        return@BackHandler
+        openDialog.value = !openDialog.value
     }
 
     Scaffold(
@@ -57,6 +61,15 @@ fun DashboardScreen(navController: NavController) {
         },
         backgroundColor = Background,
     ) {
+        if (openDialog.value) {
+            ShowAlertDialog(
+                title = "Alerta",
+                message = "Desea salir de la aplicacion ?",
+                openDialog = openDialog
+            ) {
+                //TODO: Close app when user tap accept
+            }
+        }
         ButtonsList(
             navController,
             listOf(Constants.SERVICE_ORDERS, Constants.INVENTORY, Constants.SUBSCRIBER)

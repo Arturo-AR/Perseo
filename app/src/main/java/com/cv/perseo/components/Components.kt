@@ -302,3 +302,35 @@ fun ButtonsList(
         }
     }
 }
+
+@Composable
+fun ShowAlertDialog(
+    title: String,
+    message: String,
+    positiveButtonText: String = "Aceptar",
+    negativeButtonText: String = "Cancelar",
+    openDialog: MutableState<Boolean>,
+    onYesPress: () -> Unit
+) {
+    if (openDialog.value) {
+        AlertDialog(onDismissRequest = { openDialog.value = false },
+            title = { Text(text = title, color = Yellow4) },
+            text = { Text(text = message, color = Color.White) },
+            backgroundColor = Background,
+            buttons = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(all = 8.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { openDialog.value = false }) {
+                        Text(text = negativeButtonText, color = Yellow4)
+                    }
+                    TextButton(onClick = { onYesPress.invoke() }) {
+                        Text(text = positiveButtonText, color = Yellow4)
+                    }
+                }
+            })
+    }
+}
