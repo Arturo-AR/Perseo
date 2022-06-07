@@ -134,7 +134,6 @@ fun AddDrawerHeader(
             },
         backgroundColor = Background
     ) {
-
         Row(modifier = Modifier.padding(vertical = 16.dp)) {
             Icon(imageVector = icon, contentDescription = null, tint = titleColor)
             Spacer(modifier = Modifier.width(32.dp))

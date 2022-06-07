@@ -1,15 +1,8 @@
 package com.cv.perseo.screens.serviceorders
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ExperimentalComposeApi
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.cv.perseo.components.ButtonsList
 import com.cv.perseo.components.PerseoBottomBar

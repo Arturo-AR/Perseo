@@ -1,16 +1,11 @@
 package com.cv.perseo.screens.rubro
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
@@ -28,7 +23,9 @@ fun RubroScreen(navController: NavController) {
                 title = "Rubros",
                 inDashboard = false
             ) {
-                navController.navigate(PerseoScreens.Dashboard.route)
+                navController.navigate(PerseoScreens.Zone.route) {
+                    popUpTo(PerseoScreens.Zone.route)
+                }
             }
         },
         bottomBar = {
@@ -41,7 +38,13 @@ fun RubroScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Rubros", color = Color.White, style = MaterialTheme.typography.h3)
+/*            StandardBackground(
+                modifier = Modifier
+                    .height(70.dp)
+                    .width(120.dp),
+                colorBackground = Yellow5,
+                colorBorder = Color.DarkGray
+            )*/
         }
     }
 }

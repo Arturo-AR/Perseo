@@ -1,13 +1,16 @@
 package com.cv.perseo.screens.myserviceorders
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
+import com.cv.perseo.components.ZonesButtons
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
+@ExperimentalFoundationApi
 @Composable
 fun MyServiceOrdersScreen(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
@@ -29,6 +32,7 @@ fun MyServiceOrdersScreen(navController: NavController) {
         },
         backgroundColor = Background,
     ) {
+        ZonesButtons(navController = navController)
 /*        Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,

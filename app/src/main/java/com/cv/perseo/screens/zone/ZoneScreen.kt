@@ -1,25 +1,22 @@
 package com.cv.perseo.screens.zone
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import com.cv.perseo.components.ButtonsList
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
+import com.cv.perseo.utils.Constants
 
+@ExperimentalFoundationApi
 @Composable
 fun ZoneScreen(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
+    val rubroList = listOf(Constants.RUBRO1, Constants.RUBRO2, Constants.RUBRO3, Constants.RUBRO4)
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -28,7 +25,9 @@ fun ZoneScreen(navController: NavController) {
                 title = "Zona",
                 inDashboard = false
             ) {
-                navController.navigate(PerseoScreens.Dashboard.route)
+                navController.navigate(PerseoScreens.MyServiceOrders.route) {
+                    popUpTo(PerseoScreens.MyServiceOrders.route)
+                }
             }
         },
         bottomBar = {
@@ -36,12 +35,6 @@ fun ZoneScreen(navController: NavController) {
         },
         backgroundColor = Background,
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Zona", color = Color.White, style = MaterialTheme.typography.h3)
-        }
+        ButtonsList(navController = navController, Items = rubroList, true)
     }
 }

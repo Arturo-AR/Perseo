@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
-import com.cv.perseo.data.Data
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
