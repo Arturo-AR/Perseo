@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
+import com.cv.perseo.components.ServiceOrderCard
+import com.cv.perseo.data.Data
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
@@ -38,6 +40,11 @@ fun RubroScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            ServiceOrderCard(Data.orders[1]){
+                navController.navigate(PerseoScreens.OSDetails.route)
+            }
+
 /*            StandardBackground(
                 modifier = Modifier
                     .height(70.dp)

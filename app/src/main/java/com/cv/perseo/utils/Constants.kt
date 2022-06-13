@@ -13,6 +13,9 @@ object Constants {
 
     const val BUTTON_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/zona_item_background.png"
 
+    const val OS_ACTIVE_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/os_item_background.png"
+    const val OS_INACTIVE_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/ciudad_item_background.png"
+
     const val RUBRO1 = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/rubros/ININT.png"
     const val RUBRO2 = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/rubros/DESCINT.png"
     const val RUBRO3 = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/rubros/FATV.png"

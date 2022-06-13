@@ -1,0 +1,35 @@
+package com.cv.perseo.model
+
+data class ServiceOrder(
+    val idOs: Int,
+    val rubroDesc: String,
+    val motivoDesc: String,
+    val noTvs: Int,
+    val estadoDesc: String,
+    val nombres: String,
+    val apellidos: String,
+    val noSolicitud: Int,
+    val noContrato: Int,
+    val asentamiento: String,
+    val vialidad: String,
+    val noExterior: String,
+    val noInterior: String,
+    val observaciones: String,
+    val zona: String,
+    val paquete: String,
+    val idMotivo: String,
+    val idEstado: String,
+    val detallePedido1: String,
+    val detallePedido2: String,
+    val sector: String,
+    val cajaTerminal: String,
+    val idRubro: String,
+    val fechaPedido: String,
+    val fechaPreCumplimiento: String,
+    val celular: String,
+    val telefono: String,
+    val iconoRubro: String
+
+    //val ciudad: String,
+    //val modificar_fecha_prox_factura: Int,
+)
