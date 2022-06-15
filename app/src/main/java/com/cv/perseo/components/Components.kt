@@ -3,14 +3,17 @@ package com.cv.perseo.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
@@ -18,6 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -26,11 +32,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.cv.perseo.data.Data
 import com.cv.perseo.model.ItemOSDetail
+import com.cv.perseo.model.Material
 import com.cv.perseo.model.ServiceOrder
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
@@ -511,6 +521,99 @@ fun DetailItem(
                 style = MaterialTheme.typography.body2,
                 color = Yellow6
             )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MaterialsAddItem() {
+
+    val materiales = Data.Material
+    // State variables
+    var countryName: Material by remember { mutableStateOf(materiales[0]) }
+    var expanded by remember { mutableStateOf(false) }
+
+    Card {
+        Row(
+            modifier = Modifier
+                .background(Accent)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(9f)
+                    .padding(end = 32.dp)
+            ) {
+                Text(text = "Material:", color = Color.White)
+                Row(
+                    Modifier
+                        .background(Background)
+                        .clickable {
+                            expanded = !expanded
+                        }
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = countryName.materialDesc,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(end = 32.dp),
+                        color = White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Icon(
+                        imageVector = Icons.Filled.ArrowDropDown,
+                        contentDescription = "",
+                        tint = White
+                    )
+                    DropdownMenu(expanded = expanded, onDismissRequest = {
+                        expanded = false
+                    }) {
+                        materiales.forEach { country ->
+                            DropdownMenuItem(onClick = {
+                                expanded = false
+                                countryName = country
+                            }) {
+                                Text(text = country.materialDesc)
+                            }
+                        }
+                    }
+                }
+                var text by remember { mutableStateOf("") }
+
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    label = { Text("Cantidad") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = White,
+                        cursorColor = White,
+                        focusedBorderColor = White,
+                        unfocusedBorderColor = Yellow3,
+                        focusedLabelColor = White,
+                        unfocusedLabelColor = Yellow3,
+                    )
+                )
+            }
+            IconButton(
+                modifier = Modifier
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 10.dp,
+                            topEnd = 10.dp,
+                            bottomStart = 10.dp,
+                            bottomEnd = 10.dp
+                        )
+                    )
+                    .background(Yellow3),
+                onClick = {}
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = White)
+            }
         }
     }
 }

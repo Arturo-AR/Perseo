@@ -25,12 +25,12 @@ object Data {
         Permissions(3, 7, Constants.SERVICES_CORDS),
     )
 
-    val Material = listOf(
+    val Material = mutableListOf(
+        Material(materialDesc = "(RECICLADO) FIBRA DROP SIN SOPORTE", amount = 4),
         Material(materialDesc = "MINI NODOS", amount = 234),
         Material(materialDesc = "CONECTOR RG6", amount = 23),
         Material(materialDesc = "FLEFE", amount = 0),
         Material(materialDesc = "FIBRA DROP SIN SOPORTE", amount = 234),
-        Material(materialDesc = "(RECICLADO) FIBRA DROP SIN SOPORTE", amount = 4),
         Material(materialDesc = "CABLERG6", amount = 6786)
     )
 
