@@ -454,7 +454,8 @@ fun DetailContainer(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp), backgroundColor = Accent
+            .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+        backgroundColor = Accent
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -498,7 +499,7 @@ fun DetailItem(
 ) {
     Column(Modifier.padding(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(imageVector = Icons.Default.Build, contentDescription = null)
+            Image(imageVector = Icons.Filled.Info, contentDescription = null)
             Text(
                 modifier = Modifier.padding(start = 8.dp),
                 text = row,

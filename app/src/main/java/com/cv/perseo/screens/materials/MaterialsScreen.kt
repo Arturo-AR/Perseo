@@ -28,7 +28,9 @@ fun MaterialsScreen(navController: NavController) {
                 title = "Materiales",
                 inDashboard = false
             ) {
-                navController.navigate(PerseoScreens.Dashboard.route)
+                navController.navigate(PerseoScreens.OSDetails.route) {
+                    popUpTo(PerseoScreens.OSDetails.route)
+                }
             }
         },
         bottomBar = {

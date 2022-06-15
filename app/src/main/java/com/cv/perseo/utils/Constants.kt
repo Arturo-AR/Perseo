@@ -20,4 +20,9 @@ object Constants {
     const val RUBRO2 = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/rubros/DESCINT.png"
     const val RUBRO3 = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/rubros/FATV.png"
     const val RUBRO4 = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/rubros/RE.png"
+
+    const val BUTTON_MATERIAL = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/materiales_agregar.png"
+    const val BUTTON_EQUIPMENT = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/equipos_agregar.png"
+    const val BUTTON_FINISH = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/finalizar_orden.png"
+    const val BUTTON_CANCEL = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/cancelar.png"
 }
