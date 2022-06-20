@@ -1,10 +1,8 @@
 package com.cv.perseo.data
 
-import com.cv.perseo.model.GeneralData
-import com.cv.perseo.model.Permissions
+import com.cv.perseo.R
+import com.cv.perseo.model.*
 import com.cv.perseo.utils.Constants
-import com.cv.perseo.model.Material
-import com.cv.perseo.model.ServiceOrder
 
 object Data {
     val GeneralData = GeneralData(
@@ -33,6 +31,10 @@ object Data {
         Material(materialDesc = "FIBRA DROP SIN SOPORTE", amount = 234),
         Material(materialDesc = "CABLERG6", amount = 6786)
     )
+
+    val sectores = listOf("CIRCUITO 12", "CIRCUITO 10", "CIRCUITO 19", "CIRCUITO 4", "CIRCUITO 20")
+    val colonias =
+        listOf("SANTA RITA", "CENTRO", "SAN ISIDRO", "FRANCISCO I. MADERO", "ALMOLOYA", "SAN JUAN")
 
     val orders = listOf(
         ServiceOrder(
@@ -156,5 +158,163 @@ object Data {
             iconoRubro = "RE.png"
         ),
     )
+
+    val cords = listOf(
+        ServiceCords(
+            2540,
+            "VISTA BELLA",
+            "ATZIMBA",
+            "123",
+            "",
+            "COFAPA",
+            "",
+            "CAJA-1",
+            "iwu9we8"
+        ),
+        ServiceCords(
+            2548,
+            "VISTA BELLA",
+            "ATZIMBA",
+            "14",
+            "",
+            "RECO",
+            "",
+            "",
+            "iwu9we8"
+        ),
+        ServiceCords(
+            4798,
+            "RESIDENCIAL DEL SUR",
+            "DE NICOLAS BRAVO",
+            "56",
+            "",
+            "RECO",
+            "",
+            "",
+            "iwu9we8"
+        ),
+        ServiceCords(
+            4776,
+            "ESTRELLA",
+            "LUCAS DURAN",
+            "987",
+            "",
+            "RECO",
+            "",
+            "",
+            "iwu9we8"
+        ),
+        ServiceCords(
+            4772,
+            "VENTURA PUENTE",
+            "ANDRES DEL RIO",
+            "7894",
+            "",
+            "COFAPA",
+            "",
+            "",
+            "iwu9we8"
+        ),
+        ServiceCords(
+            27421,
+            "VISTA BELLA",
+            "EL RETAJO",
+            "12",
+            "A",
+            "COFAPA",
+            "SECTOR1",
+            "S1-TB01",
+            "123"
+        ),
+        ServiceCords(
+            3052,
+            "VENTURA PUENTE",
+            "MIGUEL DE CERVANTES SAAVEDRA",
+            "55",
+            "",
+            "RECO",
+            "",
+            "",
+            "3456ERTY"
+        ),
+        ServiceCords(
+            2540,
+            "VISTA BELLA",
+            "ATZIMBA",
+            "123",
+            "",
+            "COFAPA",
+            "",
+            "",
+            ""
+        ),
+        ServiceCords(
+            2548,
+            "VISTA BELLA",
+            "ATZIMBA",
+            "14",
+            "",
+            "RECO",
+            "",
+            "",
+            ""
+        ),
+        ServiceCords(
+            4798,
+            "RESIDENCIAL DEL SUR",
+            "DE NICOLAS BRAVO",
+            "56",
+            "",
+            "RECO",
+            "",
+            "",
+            ""
+        ),
+        ServiceCords(
+            4776,
+            "ESTRELLA",
+            "LUCAS DURAN",
+            "987",
+            "",
+            "COFAPA",
+            "",
+            "",
+            ""
+        ),
+        ServiceCords(
+            4772,
+            "VENTURA PUENTE",
+            "ANDRES DEL RIO",
+            "7894",
+            "",
+            "COFAPA",
+            "",
+            "",
+            ""
+        ),
+        ServiceCords(
+            27421,
+            "VISTA BELLA",
+            "EL RETAJO",
+            "12",
+            "A",
+            "COFAPA",
+            "SECTOR1",
+            "S1-TB01",
+            "123"
+        ),
+        ServiceCords(
+            3052,
+            "VENTURA PUENTE",
+            "MIGUEL DE CERVANTES SAAVEDRA",
+            "55",
+            "",
+            "RECO",
+            "",
+            "",
+            "3456ERTY"
+        ),
+    )
+
 }
 

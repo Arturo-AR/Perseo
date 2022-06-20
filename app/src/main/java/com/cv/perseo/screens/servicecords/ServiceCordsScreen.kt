@@ -1,19 +1,23 @@
 package com.cv.perseo.screens.servicecords
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.cv.perseo.components.CordsServicesFilters
+import com.cv.perseo.components.CordsServicesItem
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
+import com.cv.perseo.data.Data
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
@@ -39,15 +43,17 @@ fun ServiceCordsScreen(navController: NavController) {
         backgroundColor = Background,
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 50.dp)
+                .background(Background)
         ) {
-            Text(
-                text = "Cortes de Servicio",
-                color = Color.White,
-                style = MaterialTheme.typography.h3
-            )
+            CordsServicesFilters()
+            LazyColumn(contentPadding = PaddingValues(8.dp)) {
+                items(Data.cords) { cord ->
+                    CordsServicesItem(cord)
+                }
+            }
         }
     }
 }

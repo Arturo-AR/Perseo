@@ -26,4 +26,7 @@ val TextGray = Color(0xFF3F3F40)
 val TextColor = Color(0xFFF2F2F2)
 val Shadow = Color(0xFF0D0D0D)
 
+val cordsRed = Color(0xFF8B3F3F)
+val cordsBlue = Color(0xFF3F3F8B)
+
 val ButtonText = Color(0xFFBCBCBC)

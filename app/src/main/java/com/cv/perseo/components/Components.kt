@@ -8,6 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,6 +17,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -38,6 +42,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.cv.perseo.data.Data
 import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.model.Material
+import com.cv.perseo.model.ServiceCords
 import com.cv.perseo.model.ServiceOrder
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
@@ -403,7 +408,6 @@ fun ZonesButtons(
         })
 }
 
-@Preview
 @Composable
 fun ServiceOrderCard(
     os: ServiceOrder = ServiceOrder(
@@ -711,6 +715,161 @@ fun EquipmentItem() {
                     Text(text = "FOTO", fontWeight = FontWeight.Bold)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CordsServicesItem(
+    cord: ServiceCords,
+) {
+    val checked = rememberSaveable { mutableStateOf(false) }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .background(
+                    if (cord.idTipoOrden == "COFAPA") cordsRed else cordsBlue
+                )
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier.weight(1.5f),
+                text = "${cord.vialidad} #${cord.noExterior}",
+                color = White
+            )
+            Column(modifier = Modifier.weight(1.5f)) {
+                Text(text = "Etiquita", color = Yellow4)
+                Text(text = cord.etiqueta, color = White)
+                Text(text = "Caja terminal", color = Yellow4)
+                Text(text = cord.cajaTerminal, color = White)
+            }
+            Checkbox(
+                modifier = Modifier.weight(1f),
+                checked = checked.value,
+                onCheckedChange = { checked.value = !checked.value })
+        }
+    }
+}
+
+@Preview
+@Composable
+fun CordsServicesFilters() {
+    val colonias = Data.colonias
+    val spinners = listOf("Colonia", "Sector")
+    val currentSelection = remember { mutableStateOf(spinners.first()) }
+
+    // State variables
+    var colonia: String by remember { mutableStateOf(colonias.first()) }
+    var expanded by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier.padding(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            Modifier
+                .background(Background)
+                .clickable {
+                    expanded = !expanded
+                }
+                .padding(8.dp)
+                .weight(1f),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = colonia,
+                fontSize = 18.sp,
+                color = White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            DropdownMenu(expanded = expanded, onDismissRequest = {
+                expanded = false
+            }) {
+                colonias.forEach { coloniaNew ->
+                    DropdownMenuItem(onClick = {
+                        expanded = false
+                        colonia = coloniaNew
+                    }) {
+                        Text(text = coloniaNew)
+                    }
+                }
+            }
+            Icon(
+                imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = "",
+                tint = White
+            )
+
+        }
+        RadioGroupWithSelectable(
+            modifier = Modifier,
+            items = spinners,
+            selection = currentSelection.value
+        ) { clickedItem ->
+            currentSelection.value = clickedItem
+        }
+    }
+}
+
+@Composable
+fun LabelledRadioButton(
+    modifier: Modifier = Modifier,
+    label: String,
+    selected: Boolean,
+    onClick: (() -> Unit)?,
+    enabled: Boolean = true,
+    colors: RadioButtonColors = RadioButtonDefaults.colors()
+) {
+
+    Row(
+        modifier = modifier.padding(horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
+    ) {
+        RadioButton(
+            selected = selected,
+            onClick = onClick,
+            enabled = enabled,
+            colors = colors
+        )
+
+        Text(
+            text = label,
+            style = MaterialTheme.typography.body1.merge(),
+            color = White
+        )
+    }
+}
+
+@Composable
+fun RadioGroupWithSelectable(
+    modifier: Modifier,
+    items: List<String>,
+    selection: String,
+    onItemClick: ((String) -> Unit)
+) {
+    Row(modifier = modifier.selectableGroup()) {
+        items.forEach { item ->
+            LabelledRadioButton(
+                modifier = Modifier
+                    .selectable(
+                        selected = item == selection,
+                        onClick = { onItemClick(item) },
+                        role = Role.RadioButton
+                    ),
+                label = item,
+                selected = item == selection,
+                onClick = null
+            )
         }
     }
 }
