@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -92,9 +91,9 @@ fun PasswordInput(
         },
         keyboardActions = onAction,
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Black,
+            focusedBorderColor = Black,
             focusedLabelColor = Yellow3,
-            unfocusedBorderColor = Color.Black,
+            unfocusedBorderColor = Black,
             unfocusedLabelColor = Color.LightGray,
             backgroundColor = Accent
         )
@@ -144,9 +143,9 @@ fun InputField(
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         keyboardActions = onAction,
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Black,
+            focusedBorderColor = Black,
             focusedLabelColor = Yellow3,
-            unfocusedBorderColor = Color.Black,
+            unfocusedBorderColor = Black,
             unfocusedLabelColor = Color.LightGray,
             backgroundColor = Accent
         )
@@ -160,7 +159,7 @@ fun PasswordVisibility(passwordVisibility: MutableState<Boolean>) {
         Icon(
             imageVector = Icons.Default.Edit,
             contentDescription = "Icon to show password",
-            tint = Color.Black
+            tint = Black
         )
     }
 }
@@ -282,7 +281,7 @@ fun ButtonsList(
 ) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
-        contentPadding = PaddingValues(32.dp),
+        contentPadding = PaddingValues(16.dp),
     ) {
         items(Items.size) { index ->
             ImageButton(
@@ -407,78 +406,78 @@ fun ZonesButtons(
 @Preview
 @Composable
 fun ServiceOrderCard(
-    os: ServiceOrder = ServiceOrder(idOs=234,
-        rubroDesc="efr",
-        motivoDesc="INTALAR SERVICIO TV (PAQ)",
-        noTvs=34,
-        estadoDesc="2resdf",
-        nombres="wwekdfjn",
-        apellidos="wwekdfjn",
-        noSolicitud=23,
-        noContrato=23,
-        asentamiento="wwekdfjn",
-        vialidad="MARIANO DE JESUS TORRES",
-        noExterior="2345",
-        noInterior="wwekdfjn",
-        observaciones="wwekdfjn",
-        zona="wwekdfjn",
-        paquete="wwekdfjn",
-        idMotivo="wwekdfjn",
-        idEstado="wwekdfjn",
-        detallePedido1="wwekdfjn",
-        detallePedido2="wwekdfjn",
-        sector="null",
-        cajaTerminal="wwekdfjn",
-        idRubro="wwekdfjn",
-        fechaPedido="wwekdfjn",
-        fechaPreCumplimiento="wwekdfjn",
-        celular="wwekdfjn",
-        telefono="wwekdfjn",
-        iconoRubro="wwekdfjn"),
+    os: ServiceOrder = ServiceOrder(
+        idOs = 234,
+        rubroDesc = "efr",
+        motivoDesc = "INTALAR SERVICIO TV (PAQ)",
+        noTvs = 34,
+        estadoDesc = "2resdf",
+        nombres = "wwekdfjn",
+        apellidos = "wwekdfjn",
+        noSolicitud = 23,
+        noContrato = 23,
+        asentamiento = "wwekdfjn",
+        vialidad = "MARIANO DE JESUS TORRES",
+        noExterior = "2345",
+        noInterior = "wwekdfjn",
+        observaciones = "wwekdfjn",
+        zona = "wwekdfjn",
+        paquete = "wwekdfjn",
+        idMotivo = "wwekdfjn",
+        idEstado = "wwekdfjn",
+        detallePedido1 = "wwekdfjn",
+        detallePedido2 = "wwekdfjn",
+        sector = "null",
+        cajaTerminal = "wwekdfjn",
+        idRubro = "wwekdfjn",
+        fechaPedido = "wwekdfjn",
+        fechaPreCumplimiento = "wwekdfjn",
+        celular = "wwekdfjn",
+        telefono = "wwekdfjn",
+        iconoRubro = "wwekdfjn"
+    ),
     onClick: () -> Unit = {}
 ) {
-    Card(modifier = Modifier
-        .width(200.dp)
-        .height(130.dp)
-        .padding(10.dp)
-        .clickable {
-            onClick.invoke()
-        }) {
-        Box(
+    Box(
+        modifier = Modifier
+            .height(145.dp)
+            .padding(4.dp)
+            .clickable {
+                onClick.invoke()
+            }
+    ) {
+        Image(
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxSize(),
+            painter = rememberAsyncImagePainter(Constants.OS_ACTIVE_BACKGROUND), //TODO: Change painter per bitmap
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds
+        )
+        Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Image(
-                modifier = Modifier
-                    .fillMaxSize(),
-                painter = rememberAsyncImagePainter(Constants.OS_ACTIVE_BACKGROUND), //TODO: Change painter per bitmap
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds
+            Text(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                text = os.motivoDesc,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
             )
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = os.motivoDesc,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = "${os.vialidad} #${os.noExterior}",
-                    color = White,
-                    textAlign = TextAlign.Center,
-                    fontSize = 12.sp
-                )
-                Text(
-                    text = "Sector: ${os.sector}",
-                    textAlign = TextAlign.Center,
-                    fontSize = 12.sp
-                )
-            }
+            Text(
+                text = "${os.vialidad} #${os.noExterior}",
+                color = White,
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp
+            )
+            Text(
+                text = if (os.sector == "null") "Sin Sector" else "Sector: ${os.sector}",
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp
+            )
         }
     }
 }

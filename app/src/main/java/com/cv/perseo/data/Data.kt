@@ -146,7 +146,7 @@ object Data {
             idEstado = "PR",
             detallePedido1 = "",
             detallePedido2 = "",
-            sector = "",
+            sector = "null",
             cajaTerminal = "",
             idRubro = "RE",
             fechaPedido = "2022-04-25",

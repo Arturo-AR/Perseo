@@ -28,7 +28,7 @@ fun RubroScreen(navController: NavController) {
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Rubros",
+                title = "Rubro",
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.Zone.route) {
@@ -43,11 +43,11 @@ fun RubroScreen(navController: NavController) {
     ) {
 
         LazyVerticalGrid(
-            cells =  GridCells.Fixed(2),
-            contentPadding = PaddingValues(16.dp)
-        ){
-            items(Data.orders.size){ index ->
-                ServiceOrderCard(Data.orders[index]){
+            cells = GridCells.Fixed(2),
+            contentPadding = PaddingValues(8.dp)
+        ) {
+            items(Data.orders.size) { index ->
+                ServiceOrderCard(Data.orders[index]) {
                     navController.navigate(PerseoScreens.OSDetails.route)
                 }
             }
