@@ -8,12 +8,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
@@ -21,10 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -79,7 +77,7 @@ fun PasswordInput(
         },
         label = { Text(text = labelId) },
         singleLine = true,
-        textStyle = TextStyle(fontSize = 18.sp, color = Color.White),
+        textStyle = TextStyle(fontSize = 18.sp, color = White),
         modifier = modifier
             .padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
             .fillMaxWidth(),
@@ -138,7 +136,7 @@ fun InputField(
         value = valueState.value, onValueChange = { valueState.value = it },
         label = { Text(text = labelId) },
         singleLine = isSingleLine,
-        textStyle = TextStyle(fontSize = 18.sp, color = Color.White),
+        textStyle = TextStyle(fontSize = 18.sp, color = White),
         modifier = modifier
             .padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
             .fillMaxWidth(),
@@ -184,7 +182,7 @@ fun PerseoTopBar(
                     Icon(
                         imageVector = Icons.Default.Menu,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = White,
                         modifier = Modifier.clickable {
                             onBackArrowClicked.invoke()
                         }
@@ -193,7 +191,7 @@ fun PerseoTopBar(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Arrow Back",
-                        tint = Color.White,
+                        tint = White,
                         modifier = Modifier.clickable {
                             onBackArrowClicked.invoke()
                         }
@@ -333,7 +331,7 @@ fun ShowAlertDialog(
     if (openDialog.value) {
         AlertDialog(onDismissRequest = { openDialog.value = false },
             title = { Text(text = title, color = Yellow4) },
-            text = { Text(text = message, color = Color.White) },
+            text = { Text(text = message, color = White) },
             backgroundColor = Background,
             buttons = {
                 Row(
@@ -366,17 +364,18 @@ fun ZonesButtons(
 ) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
-        contentPadding = PaddingValues(32.dp),
+        contentPadding = PaddingValues(16.dp),
         content = {
             items(Items.size) { index ->
                 Box(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .height(50.dp),
+                        .padding(4.dp)
+                        .height(55.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
                         modifier = Modifier
+                            .padding(4.dp)
                             .fillMaxSize()
                             .clickable {
                                 navController.navigate(PerseoScreens.Zone.route)
@@ -388,7 +387,7 @@ fun ZonesButtons(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
+                            .padding(horizontal = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -405,10 +404,38 @@ fun ZonesButtons(
         })
 }
 
+@Preview
 @Composable
 fun ServiceOrderCard(
-    os: ServiceOrder,
-    onClick: () -> Unit
+    os: ServiceOrder = ServiceOrder(idOs=234,
+        rubroDesc="efr",
+        motivoDesc="INTALAR SERVICIO TV (PAQ)",
+        noTvs=34,
+        estadoDesc="2resdf",
+        nombres="wwekdfjn",
+        apellidos="wwekdfjn",
+        noSolicitud=23,
+        noContrato=23,
+        asentamiento="wwekdfjn",
+        vialidad="MARIANO DE JESUS TORRES",
+        noExterior="2345",
+        noInterior="wwekdfjn",
+        observaciones="wwekdfjn",
+        zona="wwekdfjn",
+        paquete="wwekdfjn",
+        idMotivo="wwekdfjn",
+        idEstado="wwekdfjn",
+        detallePedido1="wwekdfjn",
+        detallePedido2="wwekdfjn",
+        sector="null",
+        cajaTerminal="wwekdfjn",
+        idRubro="wwekdfjn",
+        fechaPedido="wwekdfjn",
+        fechaPreCumplimiento="wwekdfjn",
+        celular="wwekdfjn",
+        telefono="wwekdfjn",
+        iconoRubro="wwekdfjn"),
+    onClick: () -> Unit = {}
 ) {
     Card(modifier = Modifier
         .width(200.dp)
@@ -435,13 +462,14 @@ fun ServiceOrderCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
                     text = os.motivoDesc,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "${os.vialidad} ${os.noExterior}",
-                    color = Color.White,
+                    text = "${os.vialidad} #${os.noExterior}",
+                    color = White,
                     textAlign = TextAlign.Center,
                     fontSize = 12.sp
                 )
@@ -486,8 +514,8 @@ fun DetailContainer(
                         .clickable {
                             expanded = !expanded
                         },
-                    tint = Color.White,
-                    imageVector = if (expanded) Icons.Default.ArrowDropDown else Icons.Default.ArrowForward,
+                    tint = White,
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = null
                 )
             }
@@ -514,7 +542,7 @@ fun DetailItem(
                 modifier = Modifier.padding(start = 8.dp),
                 text = row,
                 style = MaterialTheme.typography.body2,
-                color = Color.White
+                color = White
             )
             Text(
                 text = value,
@@ -525,7 +553,6 @@ fun DetailItem(
     }
 }
 
-@Preview
 @Composable
 fun MaterialsAddItem() {
 
@@ -546,7 +573,7 @@ fun MaterialsAddItem() {
                     .weight(9f)
                     .padding(end = 32.dp)
             ) {
-                Text(text = "Material:", color = Color.White)
+                Text(text = "Material:", color = White)
                 Row(
                     Modifier
                         .background(Background)
@@ -589,13 +616,17 @@ fun MaterialsAddItem() {
                     value = text,
                     onValueChange = { text = it },
                     label = { Text("Cantidad") },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        textColor = White,
+                        textColor = Yellow3,
                         cursorColor = White,
                         focusedBorderColor = White,
                         unfocusedBorderColor = Yellow3,
-                        focusedLabelColor = White,
-                        unfocusedLabelColor = Yellow3,
+                        focusedLabelColor = Yellow3,
+                        unfocusedLabelColor = White,
                     )
                 )
             }
@@ -613,6 +644,73 @@ fun MaterialsAddItem() {
                 onClick = {}
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = White)
+            }
+        }
+    }
+}
+
+@Composable
+fun EquipmentItem() {
+    var text by remember { mutableStateOf("") }
+    Card(
+        modifier = Modifier
+            .padding(8.dp)
+            .clip(
+                RoundedCornerShape(
+                    topStart = 10.dp,
+                    topEnd = 10.dp,
+                    bottomStart = 10.dp,
+                    bottomEnd = 10.dp
+                )
+            ), elevation = 3.dp
+    ) {
+        Column(
+            modifier = Modifier
+                .background(Accent)
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Text(text = "Etiqueta", color = White, fontSize = 20.sp)
+
+            TextField(
+                modifier = Modifier.padding(4.dp),
+                value = text,
+                onValueChange = { text = it },
+                label = { Text("Equipo") },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = Yellow3,
+                    cursorColor = White,
+                    focusedBorderColor = White,
+                    unfocusedBorderColor = Yellow3,
+                    focusedLabelColor = Yellow3,
+                    unfocusedLabelColor = White,
+                )
+            )
+
+            IconButton(
+                modifier = Modifier
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 10.dp,
+                            topEnd = 10.dp,
+                            bottomStart = 10.dp,
+                            bottomEnd = 10.dp
+                        )
+                    )
+                    .background(Yellow6)
+                    .padding(horizontal = 16.dp),
+                onClick = {}
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                    Text(text = "FOTO", fontWeight = FontWeight.Bold)
+                }
             }
         }
     }
