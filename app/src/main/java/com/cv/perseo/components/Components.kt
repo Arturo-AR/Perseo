@@ -291,7 +291,7 @@ fun ButtonsList(
         items(Items.size) { index ->
             ImageButton(
                 urlImage = Items[index],
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(8.dp)
             ) {
                 if (!onRubro) {
                     when (Items[index]) {

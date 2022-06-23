@@ -49,11 +49,9 @@ fun InventoryScreen(navController: NavController) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Inventario", color = Color.White, fontSize = 22.sp)
 
             LazyVerticalGrid(
-                cells = GridCells.Adaptive(140.dp),
-
+                cells = GridCells.Fixed(3),
                 contentPadding = PaddingValues(
                     start = 12.dp,
                     top = 16.dp,
