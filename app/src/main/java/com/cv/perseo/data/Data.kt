@@ -1,6 +1,5 @@
 package com.cv.perseo.data
 
-import com.cv.perseo.R
 import com.cv.perseo.model.*
 import com.cv.perseo.utils.Constants
 
