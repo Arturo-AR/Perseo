@@ -15,9 +15,11 @@ import androidx.compose.ui.Modifier
 import com.cv.perseo.navigation.PerseoNavigation
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.PerseoTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

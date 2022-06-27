@@ -1,4 +1,4 @@
-package com.cv.perseo.model
+package com.cv.perseo.model.database
 
 data class Permissions(
     val idActivityFather: Int,

@@ -109,7 +109,7 @@ fun PasswordInput(
 fun EmailInput(
     modifier: Modifier = Modifier,
     emailState: MutableState<String>,
-    labelId: String = "Email",
+    labelId: String = "Usuario",
     enable: Boolean = true,
     imeAction: ImeAction = ImeAction.Next,
     onAction: KeyboardActions = KeyboardActions.Default

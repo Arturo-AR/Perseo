@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cv.perseo.components.EmailInput
 import com.cv.perseo.components.LogoPerseo
@@ -33,8 +33,10 @@ import com.cv.perseo.ui.theme.Yellow4
 
 @ExperimentalComposeUiApi
 @Composable
-@Preview
-fun LoginScreen(navController: NavController = NavController(LocalContext.current)) {
+fun LoginScreen(
+    navController: NavController,
+    viewModel: LoginScreenViewModel = hiltViewModel()
+) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -58,8 +60,10 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
                 style = MaterialTheme.typography.h5
             )
             Spacer(modifier = Modifier.height(40.dp))
-            UserForm(loading = false, isCreatedAccount = false) { email, password ->
-                navController.navigate(PerseoScreens.Dashboard.route)
+            UserForm(loading = false, isCreatedAccount = false) { userId, password ->
+                viewModel.login(userId = userId, password = password) {
+                    navController.navigate(PerseoScreens.Dashboard.route)
+                }
             }
         }
     }
@@ -71,15 +75,15 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
 fun UserForm(
     loading: Boolean = false,
     isCreatedAccount: Boolean = false,
-    onDone: (String, String) -> Unit = { email, pwd -> }
+    onDone: (String, String) -> Unit = { _, _ -> }
 ) {
-    val email = rememberSaveable { mutableStateOf("") }
+    val userId = rememberSaveable { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
     val passwordVisibility = rememberSaveable { mutableStateOf(false) }
     val passwordFocusRequest = FocusRequester.Default
     val keyboardController = LocalSoftwareKeyboardController.current
-    val valid = remember(email.value, password.value) {
-        email.value.trim().isNotEmpty() && password.value.trim().isNotEmpty()
+    val valid = remember(userId.value, password.value) {
+        userId.value.trim().isNotEmpty() && password.value.trim().isNotEmpty()
     }
     val modifier = Modifier
         .height(250.dp)
@@ -88,7 +92,7 @@ fun UserForm(
 
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         EmailInput(
-            emailState = email,
+            emailState = userId,
             enable = !loading,
             onAction = KeyboardActions {
                 passwordFocusRequest.requestFocus()
@@ -109,7 +113,7 @@ fun UserForm(
             loading = loading,
             validInputs = valid
         ) {
-            onDone(email.value.trim(), password.value.trim())
+            onDone(userId.value.trim(), password.value.trim())
         }
     }
 }

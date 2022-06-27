@@ -3,6 +3,7 @@ package com.cv.perseo.di
 import com.cv.perseo.network.ImgurApi
 import com.cv.perseo.network.MyInterceptor
 import com.cv.perseo.network.PerseoApi
+import com.cv.perseo.repository.PerseoRepository
 import com.cv.perseo.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -41,4 +42,8 @@ object AppModule {
             .build()
             .create(PerseoApi::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun providePerseoRepository(api: PerseoApi) = PerseoRepository(api)
 }

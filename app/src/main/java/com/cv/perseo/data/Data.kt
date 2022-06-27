@@ -1,10 +1,9 @@
 package com.cv.perseo.data
 
 import com.cv.perseo.model.*
-import com.cv.perseo.utils.Constants
 
 object Data {
-    val GeneralData = GeneralData(
+/*    val GeneralData = GeneralData(
         idUser = "TECAPP",
         onWay = false,
         doing = false,
@@ -20,7 +19,7 @@ object Data {
         Permissions(1, 2, Constants.SUBSCRIBER),
         Permissions(3, 4, Constants.COMPLIANCE),
         Permissions(3, 7, Constants.SERVICES_CORDS),
-    )
+    )*/
 
     val Material = mutableListOf(
         Material(materialDesc = "(RECICLADO) FIBRA DROP SIN SOPORTE", amount = 4),

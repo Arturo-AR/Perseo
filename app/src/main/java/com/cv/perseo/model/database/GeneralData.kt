@@ -1,4 +1,4 @@
-package com.cv.perseo.model
+package com.cv.perseo.model.database
 
 data class GeneralData(
     val idUser: String,
@@ -6,5 +6,6 @@ data class GeneralData(
     val doing: Boolean,
     val municipality: String,
     val logo: String,
+    val logoIcon: String,
     val idMunicipality: Int
 )

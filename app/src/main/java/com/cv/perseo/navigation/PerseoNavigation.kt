@@ -3,6 +3,7 @@ package com.cv.perseo.navigation
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -13,6 +14,7 @@ import com.cv.perseo.screens.enterpriseselector.EnterpriseSelectorScreen
 import com.cv.perseo.screens.equipment.EquipmentScreen
 import com.cv.perseo.screens.inventory.InventoryScreen
 import com.cv.perseo.screens.login.LoginScreen
+import com.cv.perseo.screens.login.LoginScreenViewModel
 import com.cv.perseo.screens.materials.MaterialsScreen
 import com.cv.perseo.screens.myserviceorders.MyServiceOrdersScreen
 import com.cv.perseo.screens.osdetails.OSDetailsScreen
@@ -50,7 +52,8 @@ fun PerseoNavigation() {
         }
 
         composable(PerseoScreens.Login.route) {
-            LoginScreen(navController = navController)
+            val viewModel = hiltViewModel<LoginScreenViewModel>()
+            LoginScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(PerseoScreens.Materials.route) {
