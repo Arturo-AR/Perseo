@@ -34,7 +34,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -43,7 +42,7 @@ import com.cv.perseo.data.Data
 import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.model.Material
 import com.cv.perseo.model.ServiceCords
-import com.cv.perseo.model.ServiceOrder
+import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants

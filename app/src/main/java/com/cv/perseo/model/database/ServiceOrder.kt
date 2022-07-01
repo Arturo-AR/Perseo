@@ -1,4 +1,4 @@
-package com.cv.perseo.model
+package com.cv.perseo.model.database
 
 data class ServiceOrder(
     val idOs: Int,
@@ -29,7 +29,4 @@ data class ServiceOrder(
     val celular: String,
     val telefono: String,
     val iconoRubro: String
-
-    //val ciudad: String,
-    //val modificar_fecha_prox_factura: Int,
 )
