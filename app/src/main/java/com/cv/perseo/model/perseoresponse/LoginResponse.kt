@@ -1,4 +1,4 @@
-package com.cv.perseo.model
+package com.cv.perseo.model.perseoresponse
 
 import com.google.gson.annotations.SerializedName
 
@@ -9,8 +9,8 @@ data class LoginResponse(
 )
 
 data class LoginBody(
-    @SerializedName("PERMISOS") val permissions: List<PermissionsBody>,
-    @SerializedName("CIUDADES") val enterprises: List<EnterpriseBody>
+    @SerializedName("EMPRESAS") val enterprises: List<EnterpriseBody>,
+    @SerializedName("PERMISOS") val permissions: List<PermissionsBody>
 )
 
 data class PermissionsBody(

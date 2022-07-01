@@ -3,7 +3,7 @@ package com.cv.perseo.utils
 object Constants {
 
     const val IMGUR_BASE_URL = "https://api.imgur.com/"
-    const val PERSEO_BASE_URL = "http://servermrl.no-ip.org/perseo/pruebas/webservices/aplicacion/"
+    const val PERSEO_BASE_URL = "http://servermrl.no-ip.org/perseo/pruebas/webservices/aplicacion/pruebas/"
 
     /**
      *   No Final

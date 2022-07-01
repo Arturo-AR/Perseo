@@ -1,6 +1,6 @@
 package com.cv.perseo.network
 
-import com.cv.perseo.model.LoginResponse
+import com.cv.perseo.model.perseoresponse.LoginResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded

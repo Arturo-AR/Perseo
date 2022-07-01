@@ -12,15 +12,15 @@ import javax.inject.Inject
 class LoginScreenViewModel @Inject constructor(private val repository: PerseoRepository) :
     ViewModel() {
 
-    fun login(userId: String, password: String, home: () -> Unit) =
+    fun login(userId: String, password: String, success: () -> Unit, fail: () -> Unit) =
         viewModelScope.launch {
             try {
-                if (repository.login(username = userId, password = password)
-                        .responseCode == 200
+                if (repository.login(userId = userId, password = password)
+                        .body()?.responseCode == 200
                 )
-                    home()
+                    success()
                 else {
-                    Log.d("Error", "Credenciales no validas")
+                    fail()
                 }
             } catch (ex: Exception) {
                 Log.d("Login", "Error at login: ${ex.message}")
