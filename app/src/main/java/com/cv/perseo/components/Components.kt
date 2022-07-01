@@ -119,7 +119,7 @@ fun EmailInput(
         valueState = emailState,
         labelId = labelId,
         enable = enable,
-        keyboardType = KeyboardType.Email,
+        keyboardType = KeyboardType.Text,
         imeAction = imeAction,
         onAction = onAction
     )
@@ -757,7 +757,6 @@ fun CordsServicesItem(
     }
 }
 
-@Preview
 @Composable
 fun CordsServicesFilters() {
     val colonias = Data.colonias

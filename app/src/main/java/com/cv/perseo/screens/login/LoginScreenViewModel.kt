@@ -15,7 +15,7 @@ class LoginScreenViewModel @Inject constructor(private val repository: PerseoRep
     fun login(userId: String, password: String, home: () -> Unit) =
         viewModelScope.launch {
             try {
-                if (repository.logIn(username = userId, password = password)
+                if (repository.login(username = userId, password = password)
                         .responseCode == 200
                 )
                     home()

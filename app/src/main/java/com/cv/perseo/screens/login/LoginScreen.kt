@@ -60,7 +60,7 @@ fun LoginScreen(
                 style = MaterialTheme.typography.h5
             )
             Spacer(modifier = Modifier.height(40.dp))
-            UserForm(loading = false, isCreatedAccount = false) { userId, password ->
+            UserForm(loading = false) { userId, password ->
                 viewModel.login(userId = userId, password = password) {
                     navController.navigate(PerseoScreens.Dashboard.route)
                 }
@@ -70,11 +70,9 @@ fun LoginScreen(
 }
 
 @ExperimentalComposeUiApi
-@Preview
 @Composable
 fun UserForm(
     loading: Boolean = false,
-    isCreatedAccount: Boolean = false,
     onDone: (String, String) -> Unit = { _, _ -> }
 ) {
     val userId = rememberSaveable { mutableStateOf("") }

@@ -5,7 +5,7 @@ import com.cv.perseo.network.PerseoApi
 import javax.inject.Inject
 
 class PerseoRepository @Inject constructor(private val api: PerseoApi) {
-    suspend fun logIn(username: String, password: String): LoginResponse {
+    suspend fun login(username: String, password: String): LoginResponse {
         //return api.login(0, username, password)
         return LoginResponse(
             responseCode = 200, responseMessage = "OK", responseBody = LoginBody(
