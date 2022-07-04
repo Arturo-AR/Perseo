@@ -22,7 +22,7 @@ fun ZoneScreen(navController: NavController) {
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Zona",
+                title = "(Zona)*",
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.MyServiceOrders.route) {

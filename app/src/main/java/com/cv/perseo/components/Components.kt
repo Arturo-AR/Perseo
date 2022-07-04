@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -304,7 +306,7 @@ fun ButtonsList(
                             navController.navigate(PerseoScreens.Subscribers.route)
                         }
                         Constants.MY_SERVICE_ORDERS -> {
-                            navController.navigate(PerseoScreens.MyServiceOrders.route)
+                            navController.navigate(PerseoScreens.OrderOptions.route)
                         }
                         Constants.COMPLIANCE -> {
                             navController.navigate(PerseoScreens.Compliance.route)
@@ -413,30 +415,12 @@ fun ServiceOrderCard(
         idOs = 234,
         rubroDesc = "efr",
         motivoDesc = "INTALAR SERVICIO TV (PAQ)",
-        noTvs = 34,
-        estadoDesc = "2resdf",
-        nombres = "wwekdfjn",
-        apellidos = "wwekdfjn",
-        noSolicitud = 23,
-        noContrato = 23,
-        asentamiento = "wwekdfjn",
         vialidad = "MARIANO DE JESUS TORRES",
         noExterior = "2345",
-        noInterior = "wwekdfjn",
-        observaciones = "wwekdfjn",
         zona = "wwekdfjn",
         paquete = "wwekdfjn",
-        idMotivo = "wwekdfjn",
-        idEstado = "wwekdfjn",
-        detallePedido1 = "wwekdfjn",
-        detallePedido2 = "wwekdfjn",
-        sector = "null",
-        cajaTerminal = "wwekdfjn",
         idRubro = "wwekdfjn",
-        fechaPedido = "wwekdfjn",
         fechaPreCumplimiento = "wwekdfjn",
-        celular = "wwekdfjn",
-        telefono = "wwekdfjn",
         iconoRubro = "wwekdfjn"
     ),
     onClick: () -> Unit = {}
@@ -477,7 +461,7 @@ fun ServiceOrderCard(
                 fontSize = 12.sp
             )
             Text(
-                text = if (os.sector == "null") "Sin Sector" else "Sector: ${os.sector}",
+                text = "Sector perron",
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp
             )
@@ -868,6 +852,25 @@ fun RadioGroupWithSelectable(
                 selected = item == selection,
                 onClick = null
             )
+        }
+    }
+}
+
+@Composable
+fun DefaultButtonWithImage(
+    title: String,
+    onClick: () -> Unit
+) {
+    Box {
+        ImageButton(urlImage = Constants.BUTTON_BACKGROUND, modifier = Modifier) {
+            onClick()
+        }
+        Column(
+            modifier = Modifier.matchParentSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = title, fontWeight = FontWeight.Bold)
         }
     }
 }

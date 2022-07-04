@@ -1,6 +1,6 @@
 package com.cv.perseo.repository
 
-import com.cv.perseo.model.ImgurApiResponse
+import com.cv.perseo.model.imgurresponse.ImgurApiResponse
 import com.cv.perseo.network.ImgurApi
 import retrofit2.Response
 import javax.inject.Inject

@@ -17,8 +17,10 @@ import com.cv.perseo.screens.login.LoginScreen
 import com.cv.perseo.screens.login.LoginScreenViewModel
 import com.cv.perseo.screens.materials.MaterialsScreen
 import com.cv.perseo.screens.myserviceorders.MyServiceOrdersScreen
+import com.cv.perseo.screens.ordersoptions.OrdersOptionsScreen
 import com.cv.perseo.screens.osdetails.OSDetailsScreen
 import com.cv.perseo.screens.rubro.RubroScreen
+import com.cv.perseo.screens.scheduleorders.ScheduleOrdersScreen
 import com.cv.perseo.screens.servicecords.ServiceCordsScreen
 import com.cv.perseo.screens.serviceorders.ServiceOrdersScreen
 import com.cv.perseo.screens.subscribers.SubscribersScreen
@@ -90,6 +92,14 @@ fun PerseoNavigation() {
 
         composable(PerseoScreens.Splash.route) {
             SplashScreen(navController = navController)
+        }
+
+        composable(PerseoScreens.ScheduleOrders.route) {
+            ScheduleOrdersScreen(navController = navController)
+        }
+
+        composable(PerseoScreens.OrderOptions.route) {
+            OrdersOptionsScreen(navController = navController)
         }
     }
 }

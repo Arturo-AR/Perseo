@@ -85,4 +85,14 @@ sealed class PerseoScreens(
         route = "zone",
         id = 0
     )
+
+    object ScheduleOrders: PerseoScreens(
+        route = "scheduleOrders",
+        id = 0
+    )
+
+    object OrderOptions: PerseoScreens(
+        route = "orderOptions",
+        id = 0
+    )
 }

@@ -1,4 +1,4 @@
-package com.cv.perseo.model
+package com.cv.perseo.model.imgurresponse
 
 import com.google.gson.annotations.SerializedName
 

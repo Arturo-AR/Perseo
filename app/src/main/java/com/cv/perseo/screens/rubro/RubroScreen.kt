@@ -28,7 +28,7 @@ fun RubroScreen(navController: NavController) {
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Rubro",
+                title = "(Rubro)*",
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.Zone.route) {
@@ -52,25 +52,5 @@ fun RubroScreen(navController: NavController) {
                 }
             }
         }
-
-
-/*        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            ServiceOrderCard(Data.orders[1]){
-                navController.navigate(PerseoScreens.OSDetails.route)
-            }
-
-*//*            StandardBackground(
-                modifier = Modifier
-                    .height(70.dp)
-                    .width(120.dp),
-                colorBackground = Yellow5,
-                colorBorder = Color.DarkGray
-            )*//*
-        }*/
     }
 }

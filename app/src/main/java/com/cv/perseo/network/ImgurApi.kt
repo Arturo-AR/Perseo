@@ -1,6 +1,6 @@
 package com.cv.perseo.network
 
-import com.cv.perseo.model.ImgurApiResponse
+import com.cv.perseo.model.imgurresponse.ImgurApiResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
