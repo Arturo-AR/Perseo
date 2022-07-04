@@ -4,10 +4,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
 
-@Entity(tableName = "permissions")
-data class Permissions(
+@Entity(tableName = "materials")
+data class Materials(
     @PrimaryKey val id: UUID = UUID.randomUUID(),
-    val idActivityFather: Int,
-    val idActivitySon: Int,
-    val icon: String
+    var id_material: String?,
+    var desc_material: String?,
+    var cantidad: Double
 )

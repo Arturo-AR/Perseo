@@ -29,7 +29,11 @@ object Data {
             paquete = "BASICO TV + INTERNET ESENCIAL",
             idRubro = "ININT",
             fechaPreCumplimiento = "2022-04-11",
-            iconoRubro = "ININT.png"
+            iconoRubro = "ININT.png",
+            fecha_agenda = "",
+            hora_de = "",
+            hora_hasta = "",
+            detalle_agenda = ""
         ),
         ServiceOrder(
             idOs = 27280,
@@ -41,7 +45,11 @@ object Data {
             paquete = "BASICO TV + INTERNET ESENCIAL PLUS",
             idRubro = "IN",
             fechaPreCumplimiento = "2022-05-02",
-            iconoRubro = "IN.png"
+            iconoRubro = "IN.png",
+                    fecha_agenda = "",
+            hora_de = "",
+            hora_hasta = "",
+            detalle_agenda = ""
         ),
         ServiceOrder(
             idOs = 27256,
@@ -53,7 +61,11 @@ object Data {
             paquete = "BASICO TV + INTERNET ESENCIAL PLUS",
             idRubro = "ININT",
             fechaPreCumplimiento = "2022-03-31",
-            iconoRubro = "ININT.png"
+            iconoRubro = "ININT.png",
+            fecha_agenda = "",
+            hora_de = "",
+            hora_hasta = "",
+            detalle_agenda = ""
         ),
         ServiceOrder(
             idOs = 27349,
@@ -65,7 +77,11 @@ object Data {
             paquete = "BASICO TV + INTERNET ESENCIAL",
             idRubro = "RE",
             fechaPreCumplimiento = "",
-            iconoRubro = "RE.png"
+            iconoRubro = "RE.png",
+            fecha_agenda = "",
+            hora_de = "",
+            hora_hasta = "",
+            detalle_agenda = ""
         ),
     )
 

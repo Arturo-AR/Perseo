@@ -421,7 +421,11 @@ fun ServiceOrderCard(
         paquete = "wwekdfjn",
         idRubro = "wwekdfjn",
         fechaPreCumplimiento = "wwekdfjn",
-        iconoRubro = "wwekdfjn"
+        iconoRubro = "wwekdfjn",
+        fecha_agenda = "",
+        hora_hasta = "",
+        hora_de = "",
+        detalle_agenda = ""
     ),
     onClick: () -> Unit = {}
 ) {

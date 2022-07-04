@@ -7,7 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.cv.perseo.screens.SplashScreen
+import com.cv.perseo.screens.splash.SplashScreen
 import com.cv.perseo.screens.compliance.ComplianceScreen
 import com.cv.perseo.screens.dashboard.DashboardScreen
 import com.cv.perseo.screens.enterpriseselector.EnterpriseSelectorScreen

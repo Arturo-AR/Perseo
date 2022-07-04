@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.cv.perseo.components.*
+import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Accent
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.ButtonText
@@ -55,7 +56,7 @@ fun DashboardScreen(navController: NavController) {
                 }
             }
         },
-        drawerContent = { DrawerView() },
+        drawerContent = { DrawerView(navController) },
         bottomBar = {
             PerseoBottomBar()
         },
@@ -78,7 +79,7 @@ fun DashboardScreen(navController: NavController) {
 }
 
 @Composable
-fun DrawerView() {
+fun DrawerView(navController: NavController) {
 
     val context = LocalContext.current
     Column(
@@ -112,7 +113,7 @@ fun DrawerView() {
         }
         Divider(color = Accent)
         AddDrawerHeader(title = "Cerrar Sesion", icon = Icons.Default.Close) {
-            Toast.makeText(context, "Cerrar sesion", Toast.LENGTH_SHORT).show()
+            navController.navigate(PerseoScreens.Login.route)
         }
     }
 }
