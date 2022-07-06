@@ -7,5 +7,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class DashboardScreenViewModel : ViewModel() {
+@HiltViewModel
+class DashboardScreenViewModel @Inject constructor(
+    private val dbRepository: DatabaseRepository
+) :
+    ViewModel() {
+
+    fun signOut() {
+        viewModelScope.launch {
+            dbRepository.deleteGeneralData()
+        }
+    }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cv.perseo.components.*
 import com.cv.perseo.navigation.PerseoScreens
@@ -33,7 +34,10 @@ import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @Composable
-fun DashboardScreen(navController: NavController) {
+fun DashboardScreen(
+    navController: NavController,
+    viewModel: DashboardScreenViewModel = hiltViewModel()
+) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val openDialog = remember {
@@ -56,7 +60,7 @@ fun DashboardScreen(navController: NavController) {
                 }
             }
         },
-        drawerContent = { DrawerView(navController) },
+        drawerContent = { DrawerView(navController, viewModel) },
         bottomBar = {
             PerseoBottomBar()
         },
@@ -79,7 +83,7 @@ fun DashboardScreen(navController: NavController) {
 }
 
 @Composable
-fun DrawerView(navController: NavController) {
+fun DrawerView(navController: NavController, viewModel: DashboardScreenViewModel) {
 
     val context = LocalContext.current
     Column(
@@ -113,6 +117,7 @@ fun DrawerView(navController: NavController) {
         }
         Divider(color = Accent)
         AddDrawerHeader(title = "Cerrar Sesion", icon = Icons.Default.Close) {
+            viewModel.signOut()
             navController.navigate(PerseoScreens.Login.route)
         }
     }
