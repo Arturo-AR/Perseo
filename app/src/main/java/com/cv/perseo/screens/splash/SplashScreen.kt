@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cv.perseo.components.LogoPerseo
 import com.cv.perseo.navigation.PerseoScreens
@@ -22,7 +23,10 @@ import com.cv.perseo.ui.theme.Yellow2
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen(
+    navController: NavController,
+    viewModel: SplashScreenViewModel = hiltViewModel()
+) {
 
     val scale = remember {
         Animatable(0f)
@@ -38,7 +42,11 @@ fun SplashScreen(navController: NavController) {
                 })
         )
         delay(1500L) //On screen total time
-        navController.navigate(PerseoScreens.Dashboard.route)//TODO change per Login and add login verification
+        if (viewModel.generalData.value.isEmpty()) {
+            navController.navigate(PerseoScreens.Login.route)
+        } else {
+            navController.navigate(PerseoScreens.Dashboard.route)
+        }
     }
     Surface(
         modifier = Modifier

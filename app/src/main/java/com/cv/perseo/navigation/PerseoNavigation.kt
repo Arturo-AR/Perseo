@@ -23,6 +23,7 @@ import com.cv.perseo.screens.rubro.RubroScreen
 import com.cv.perseo.screens.scheduleorders.ScheduleOrdersScreen
 import com.cv.perseo.screens.servicecords.ServiceCordsScreen
 import com.cv.perseo.screens.serviceorders.ServiceOrdersScreen
+import com.cv.perseo.screens.splash.SplashScreenViewModel
 import com.cv.perseo.screens.subscribers.SubscribersScreen
 import com.cv.perseo.screens.zone.ZoneScreen
 
@@ -91,7 +92,8 @@ fun PerseoNavigation() {
         }
 
         composable(PerseoScreens.Splash.route) {
-            SplashScreen(navController = navController)
+            val viewModel = hiltViewModel<SplashScreenViewModel>()
+            SplashScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(PerseoScreens.ScheduleOrders.route) {
