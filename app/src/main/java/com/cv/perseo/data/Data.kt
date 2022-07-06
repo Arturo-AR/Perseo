@@ -14,7 +14,6 @@ object Data {
         Material(materialDesc = "CABLERG6", amount = 6786)
     )
 
-    val sectores = listOf("CIRCUITO 12", "CIRCUITO 10", "CIRCUITO 19", "CIRCUITO 4", "CIRCUITO 20")
     val colonias =
         listOf("SANTA RITA", "CENTRO", "SAN ISIDRO", "FRANCISCO I. MADERO", "ALMOLOYA", "SAN JUAN")
 

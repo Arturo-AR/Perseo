@@ -7,6 +7,8 @@ import com.cv.perseo.data.database.PerseoDatabaseDao
 import com.cv.perseo.network.ImgurApi
 import com.cv.perseo.network.MyInterceptor
 import com.cv.perseo.network.PerseoApi
+import com.cv.perseo.repository.DatabaseRepository
+import com.cv.perseo.repository.ImgurRepository
 import com.cv.perseo.repository.PerseoRepository
 import com.cv.perseo.utils.Constants
 import dagger.Module
@@ -27,6 +29,9 @@ object AppModule {
         addInterceptor(MyInterceptor())
     }.build()
 
+    /**
+     * Apis Providers
+     */
     @Singleton
     @Provides
     fun providesImgurApi(): ImgurApi {
@@ -48,10 +53,24 @@ object AppModule {
             .create(PerseoApi::class.java)
     }
 
+    /**
+     * Repositories Providers
+     */
     @Singleton
     @Provides
     fun providePerseoRepository(api: PerseoApi) = PerseoRepository(api)
 
+    @Singleton
+    @Provides
+    fun provideImgurRepository(api: ImgurApi) = ImgurRepository(api)
+
+    @Singleton
+    @Provides
+    fun provideDatabaseRepository(dao: PerseoDatabaseDao) = DatabaseRepository(dao)
+
+    /**
+     * Database Providers
+     */
     @Singleton
     @Provides
     fun providePerseoDao(perseoDatabase: PerseoDatabase): PerseoDatabaseDao =

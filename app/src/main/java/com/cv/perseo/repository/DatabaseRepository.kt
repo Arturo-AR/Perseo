@@ -15,4 +15,5 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
     suspend fun deleteGeneralData() = perseoDatabaseDao.deleteGeneralData()
     fun getGeneralData(): Flow<List<GeneralData>> =
         perseoDatabaseDao.getGeneralData().flowOn(Dispatchers.IO).conflate()
+
 }
