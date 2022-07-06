@@ -1,9 +1,6 @@
 package com.cv.perseo.data.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.cv.perseo.model.database.GeneralData
 import kotlinx.coroutines.flow.Flow
 
@@ -11,11 +8,14 @@ import kotlinx.coroutines.flow.Flow
 interface PerseoDatabaseDao {
 
     @Query("SELECT * FROM general_data")
-    fun getGeneralData(): Flow<GeneralData>
+    fun getGeneralData(): Flow<List<GeneralData>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGeneralData(data: GeneralData)
 
     @Query("DELETE FROM general_data")
     suspend fun deleteGeneralData()
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateGeneralData(data: GeneralData)
 }
