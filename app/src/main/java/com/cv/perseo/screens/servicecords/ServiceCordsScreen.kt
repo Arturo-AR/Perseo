@@ -9,22 +9,30 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cv.perseo.components.CordsServicesFilters
 import com.cv.perseo.components.CordsServicesItem
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
-import com.cv.perseo.data.Data
+import com.cv.perseo.data.Data.cords
+import com.cv.perseo.model.perseoresponse.CordsOrder
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
 @Composable
-fun ServiceCordsScreen(navController: NavController) {
-    val scaffoldState = rememberScaffoldState()
+fun ServiceCordsScreen(
+    navController: NavController,
+    viewModel: ServiceCordsScreenViewModel = hiltViewModel()
 
+) {
+    val scaffoldState = rememberScaffoldState()
+    val cords by viewModel.cordsOrder.observeAsState()
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -49,11 +57,14 @@ fun ServiceCordsScreen(navController: NavController) {
                 .background(Background)
         ) {
             CordsServicesFilters()
-            LazyColumn(contentPadding = PaddingValues(8.dp)) {
-                items(Data.cords) { cord ->
-                    CordsServicesItem(cord)
+            if (!cords.isNullOrEmpty()) {
+                LazyColumn(contentPadding = PaddingValues(8.dp)) {
+                    items(cords!!) { cord ->
+                        CordsServicesItem(cord)
+                    }
                 }
             }
+
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.cv.perseo.network
 
+import com.cv.perseo.model.perseoresponse.CordsOrdersResponse
 import com.cv.perseo.model.perseoresponse.LoginResponse
 import retrofit2.Response
 import retrofit2.http.Field
@@ -16,4 +17,12 @@ interface PerseoApi {
         @Field("USUARIO") username: String,
         @Field("CONTRASEÑA") password: String,
     ): Response<LoginResponse>
+
+    @FormUrlEncoded
+    @POST("ws.php")
+    suspend fun cordsOrders(
+        @Query("opc") opc: Int,
+        @Field("ID_USUARIO") userId: String,
+        @Field("ID_EMPRESA") enterpriseId: Int
+    ): Response<CordsOrdersResponse>
 }

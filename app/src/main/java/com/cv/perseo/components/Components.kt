@@ -41,9 +41,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.cv.perseo.data.Data
 import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.model.Material
-import com.cv.perseo.model.ServiceCords
-import com.cv.perseo.model.database.Permissions
 import com.cv.perseo.model.database.ServiceOrder
+import com.cv.perseo.model.perseoresponse.CordsOrder
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
@@ -707,7 +706,7 @@ fun EquipmentItem() {
 
 @Composable
 fun CordsServicesItem(
-    cord: ServiceCords,
+    cord: CordsOrder,
 ) {
     val checked = rememberSaveable { mutableStateOf(false) }
     Card(
@@ -718,7 +717,7 @@ fun CordsServicesItem(
         Row(
             modifier = Modifier
                 .background(
-                    if (cord.idTipoOrden == "COFAPA") cordsRed else cordsBlue
+                    if (cord.orderType == "COFAPA") cordsRed else cordsBlue
                 )
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -726,14 +725,14 @@ fun CordsServicesItem(
         ) {
             Text(
                 modifier = Modifier.weight(1.5f),
-                text = "${cord.vialidad} #${cord.noExterior}",
+                text = "${cord.highway} #${cord.outdoorNumber}",
                 color = White
             )
             Column(modifier = Modifier.weight(1.5f)) {
                 Text(text = "Etiquita", color = Yellow4)
-                Text(text = cord.etiqueta, color = White)
+                Text(text = cord.label, color = White)
                 Text(text = "Caja terminal", color = Yellow4)
-                Text(text = cord.cajaTerminal, color = White)
+                Text(text = cord.terminalBox, color = White)
             }
             Checkbox(
                 modifier = Modifier.weight(1f),

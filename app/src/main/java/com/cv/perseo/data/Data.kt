@@ -2,6 +2,7 @@ package com.cv.perseo.data
 
 import com.cv.perseo.model.*
 import com.cv.perseo.model.database.ServiceOrder
+import com.cv.perseo.model.perseoresponse.CordsOrder
 
 object Data {
 
@@ -85,7 +86,7 @@ object Data {
     )
 
     val cords = listOf(
-        ServiceCords(
+        CordsOrder(
             2540,
             "VISTA BELLA",
             "ATZIMBA",
@@ -96,7 +97,7 @@ object Data {
             "CAJA-1",
             "iwu9we8"
         ),
-        ServiceCords(
+        CordsOrder(
             2548,
             "VISTA BELLA",
             "ATZIMBA",
@@ -107,7 +108,7 @@ object Data {
             "",
             "iwu9we8"
         ),
-        ServiceCords(
+        CordsOrder(
             4798,
             "RESIDENCIAL DEL SUR",
             "DE NICOLAS BRAVO",
@@ -118,7 +119,7 @@ object Data {
             "",
             "iwu9we8"
         ),
-        ServiceCords(
+        CordsOrder(
             4776,
             "ESTRELLA",
             "LUCAS DURAN",
@@ -129,7 +130,7 @@ object Data {
             "",
             "iwu9we8"
         ),
-        ServiceCords(
+        CordsOrder(
             4772,
             "VENTURA PUENTE",
             "ANDRES DEL RIO",
@@ -140,7 +141,7 @@ object Data {
             "",
             "iwu9we8"
         ),
-        ServiceCords(
+        CordsOrder(
             27421,
             "VISTA BELLA",
             "EL RETAJO",
@@ -151,7 +152,7 @@ object Data {
             "S1-TB01",
             "123"
         ),
-        ServiceCords(
+        CordsOrder(
             3052,
             "VENTURA PUENTE",
             "MIGUEL DE CERVANTES SAAVEDRA",
@@ -162,7 +163,7 @@ object Data {
             "",
             "3456ERTY"
         ),
-        ServiceCords(
+        CordsOrder(
             2540,
             "VISTA BELLA",
             "ATZIMBA",
@@ -173,7 +174,7 @@ object Data {
             "",
             ""
         ),
-        ServiceCords(
+        CordsOrder(
             2548,
             "VISTA BELLA",
             "ATZIMBA",
@@ -184,7 +185,7 @@ object Data {
             "",
             ""
         ),
-        ServiceCords(
+        CordsOrder(
             4798,
             "RESIDENCIAL DEL SUR",
             "DE NICOLAS BRAVO",
@@ -195,7 +196,7 @@ object Data {
             "",
             ""
         ),
-        ServiceCords(
+        CordsOrder(
             4776,
             "ESTRELLA",
             "LUCAS DURAN",
@@ -206,7 +207,7 @@ object Data {
             "",
             ""
         ),
-        ServiceCords(
+        CordsOrder(
             4772,
             "VENTURA PUENTE",
             "ANDRES DEL RIO",
@@ -217,7 +218,7 @@ object Data {
             "",
             ""
         ),
-        ServiceCords(
+        CordsOrder(
             27421,
             "VISTA BELLA",
             "EL RETAJO",
@@ -228,7 +229,7 @@ object Data {
             "S1-TB01",
             "123"
         ),
-        ServiceCords(
+        CordsOrder(
             3052,
             "VENTURA PUENTE",
             "MIGUEL DE CERVANTES SAAVEDRA",
