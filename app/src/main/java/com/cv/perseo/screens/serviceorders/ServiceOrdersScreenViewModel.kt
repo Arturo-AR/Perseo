@@ -1,4 +1,4 @@
-package com.cv.perseo.screens.dashboard
+package com.cv.perseo.screens.serviceorders
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardScreenViewModel @Inject constructor(
+class ServiceOrdersScreenViewModel @Inject constructor(
     private val dbRepository: DatabaseRepository
 ) :
     ViewModel() {
@@ -26,21 +26,14 @@ class DashboardScreenViewModel @Inject constructor(
                 .collect { permissions ->
                     if (permissions.isNotEmpty()) {
                         val finalPermissions = mutableListOf<String>()
-                        for (permission in permissions){
-                            if (permission.idActivityFather == 1){
+                        for (permission in permissions) {
+                            if (permission.idActivityFather == 3) {
                                 finalPermissions.add(permission.icon)
                             }
                         }
                         _permissions.value = finalPermissions
                     }
                 }
-        }
-    }
-
-    fun signOut() {
-        viewModelScope.launch {
-            dbRepository.deleteGeneralData()
-            dbRepository.deletePermissions()
         }
     }
 }

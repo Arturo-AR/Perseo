@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import com.cv.perseo.components.ButtonsList
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
+import com.cv.perseo.model.database.Permissions
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.utils.Constants
@@ -35,6 +36,6 @@ fun ZoneScreen(navController: NavController) {
         },
         backgroundColor = Background,
     ) {
-        ButtonsList(navController = navController, Items = rubroList, true)
+        ButtonsList(navController = navController, Items = rubroList, onRubro = true)
     }
 }

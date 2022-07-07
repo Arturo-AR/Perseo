@@ -42,6 +42,7 @@ import com.cv.perseo.data.Data
 import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.model.Material
 import com.cv.perseo.model.ServiceCords
+import com.cv.perseo.model.database.Permissions
 import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
@@ -289,7 +290,7 @@ fun ButtonsList(
     ) {
         items(Items.size) { index ->
             ImageButton(
-                urlImage = Items[index],
+                urlImage = Constants.PERSEO_BASE_URL+Items[index],
                 modifier = Modifier.padding(8.dp)
             ) {
                 if (!onRubro) {
