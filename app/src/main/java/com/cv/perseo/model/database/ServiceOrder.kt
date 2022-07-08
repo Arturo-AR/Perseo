@@ -1,24 +1,25 @@
 package com.cv.perseo.model.database
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 import java.util.*
 
 @Entity(tableName = "service_orders")
 data class ServiceOrder(
     @PrimaryKey val id: UUID = UUID.randomUUID(),
-    val idOs: Int,
-    val rubroDesc: String,
-    val motivoDesc: String,
-    val vialidad: String,
-    val noExterior: String,
-    val zona: String,
-    val paquete: String,
-    val idRubro: String,
-    val fechaPreCumplimiento: String,
-    val iconoRubro: String,
-    val fecha_agenda: String?,
-    val hora_de: String?,
-    val hora_hasta: String?,
-    val detalle_agenda: String?
+    @ColumnInfo(name = "osId") val osId: Int,
+    @ColumnInfo(name = "zone") val zone: String,
+    @ColumnInfo(name = "rubro_icon") val rubroIcon: String,
+    @ColumnInfo(name = "rubro") val rubro: String,
+    @ColumnInfo(name = "motivo") val motivo: String,
+    @ColumnInfo(name = "sector") val sector: String?,
+    @ColumnInfo(name = "street") val street: String,
+    @ColumnInfo(name = "outdoor_number") val outdoorNumber: String,
+    @ColumnInfo(name = "indoor_number") val indoorNumber: String,
+    @ColumnInfo(name = "schedule_date") val scheduleDate: String?,
+    @ColumnInfo(name = "hour_from") val hourFrom: String?,
+    @ColumnInfo(name = "hour_until") val hourUntil: String?,
+    @ColumnInfo(name = "schedule_detail") val scheduleDetail: String?
 )

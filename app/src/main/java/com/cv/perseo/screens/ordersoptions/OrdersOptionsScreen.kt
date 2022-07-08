@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cv.perseo.components.DefaultButtonWithImage
 import com.cv.perseo.components.PerseoBottomBar
@@ -17,7 +18,10 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 
 @Composable
-fun OrdersOptionsScreen(navController: NavController) {
+fun OrdersOptionsScreen(
+    navController: NavController,
+    viewModel: OrdersOptionsScreenViewModel = hiltViewModel()
+) {
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(

@@ -289,7 +289,7 @@ fun ButtonsList(
     ) {
         items(Items.size) { index ->
             ImageButton(
-                urlImage = Constants.PERSEO_BASE_URL+Items[index],
+                urlImage = Constants.PERSEO_BASE_URL + Items[index],
                 modifier = Modifier.padding(8.dp)
             ) {
                 if (!onRubro) {
@@ -357,19 +357,14 @@ fun ShowAlertDialog(
 @ExperimentalFoundationApi
 @Composable
 fun ZonesButtons(
-    Items: List<String> = listOf(
-        "VILLAS DEL PEDREGAL",
-        "HUB CUAUTEPEC",
-        "NUEVO HIDALGO",
-        "COLEGIO Y BONFIL"
-    ),
+    items: List<String>,
     navController: NavController
 ) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
         contentPadding = PaddingValues(16.dp),
         content = {
-            items(Items.size) { index ->
+            items(items.size) { index ->
                 Box(
                     modifier = Modifier
                         .padding(4.dp)
@@ -396,9 +391,10 @@ fun ZonesButtons(
                     ) {
                         Text(
                             modifier = Modifier.width(100.dp),
-                            text = Items[index],
+                            text = items[index],
                             fontSize = 12.sp,
-                            maxLines = 2
+                            maxLines = 2,
+                            fontWeight = FontWeight.Bold
                         )
                         Icon(imageVector = Icons.Default.LocationOn, contentDescription = null)
                     }
@@ -409,22 +405,7 @@ fun ZonesButtons(
 
 @Composable
 fun ServiceOrderCard(
-    os: ServiceOrder = ServiceOrder(
-        idOs = 234,
-        rubroDesc = "efr",
-        motivoDesc = "INTALAR SERVICIO TV (PAQ)",
-        vialidad = "MARIANO DE JESUS TORRES",
-        noExterior = "2345",
-        zona = "wwekdfjn",
-        paquete = "wwekdfjn",
-        idRubro = "wwekdfjn",
-        fechaPreCumplimiento = "wwekdfjn",
-        iconoRubro = "wwekdfjn",
-        fecha_agenda = "",
-        hora_hasta = "",
-        hora_de = "",
-        detalle_agenda = ""
-    ),
+    os: ServiceOrder,
     onClick: () -> Unit = {}
 ) {
     Box(
@@ -452,12 +433,12 @@ fun ServiceOrderCard(
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 4.dp),
-                text = os.motivoDesc,
+                text = os.motivo,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "${os.vialidad} #${os.noExterior}",
+                text = "${os.street} #${os.outdoorNumber}",
                 color = White,
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp

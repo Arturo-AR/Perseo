@@ -3,6 +3,7 @@ package com.cv.perseo.repository
 import com.cv.perseo.data.database.PerseoDatabaseDao
 import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.database.Permissions
+import com.cv.perseo.model.database.ServiceOrder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
@@ -30,4 +31,18 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
     fun getPermissions(): Flow<List<Permissions>> =
         perseoDatabaseDao.getPermissions().flowOn(Dispatchers.IO).conflate()
 
+    /**
+     * Functions for ServiceOrders
+     */
+
+    suspend fun insertServiceOrders(order: ServiceOrder) =
+        perseoDatabaseDao.insertServiceOrder(order)
+
+    fun getZones(): Flow<List<String>> =
+        perseoDatabaseDao.getZones().flowOn(Dispatchers.IO).conflate()
+
+    suspend fun deleteServiceOrders() = perseoDatabaseDao.deleteServiceOrders()
+
+    fun getAllServiceOrders(): Flow<List<ServiceOrder>> =
+        perseoDatabaseDao.getAllServiceOrders().flowOn(Dispatchers.IO).conflate()
 }
