@@ -1,18 +1,17 @@
 package com.cv.perseo.data
 
-import com.cv.perseo.model.*
 import com.cv.perseo.model.database.ServiceOrder
-import com.cv.perseo.model.perseoresponse.CordsOrder
+import com.cv.perseo.model.perseoresponse.Inventory
 
 object Data {
 
     val Material = mutableListOf(
-        Material(materialDesc = "(RECICLADO) FIBRA DROP SIN SOPORTE", amount = 4),
-        Material(materialDesc = "MINI NODOS", amount = 234),
-        Material(materialDesc = "CONECTOR RG6", amount = 23),
-        Material(materialDesc = "FLEFE", amount = 0),
-        Material(materialDesc = "FIBRA DROP SIN SOPORTE", amount = 234),
-        Material(materialDesc = "CABLERG6", amount = 6786)
+        Inventory(materialDesc = "(RECICLADO) FIBRA DROP SIN SOPORTE", amount = 4, materialId = ""),
+        Inventory(materialDesc = "MINI NODOS", amount = 234,materialId = ""),
+        Inventory(materialDesc = "CONECTOR RG6", amount = 23,materialId = ""),
+        Inventory(materialDesc = "FLEFE", amount = 0,materialId = ""),
+        Inventory(materialDesc = "FIBRA DROP SIN SOPORTE", amount = 234,materialId = ""),
+        Inventory(materialDesc = "CABLERG6", amount = 6786,materialId = "")
     )
 
     val colonias =
@@ -85,162 +84,7 @@ object Data {
         ),
     )
 
-    val cords = listOf(
-        CordsOrder(
-            2540,
-            "VISTA BELLA",
-            "ATZIMBA",
-            "123",
-            "",
-            "COFAPA",
-            "",
-            "CAJA-1",
-            "iwu9we8"
-        ),
-        CordsOrder(
-            2548,
-            "VISTA BELLA",
-            "ATZIMBA",
-            "14",
-            "",
-            "RECO",
-            "",
-            "",
-            "iwu9we8"
-        ),
-        CordsOrder(
-            4798,
-            "RESIDENCIAL DEL SUR",
-            "DE NICOLAS BRAVO",
-            "56",
-            "",
-            "RECO",
-            "",
-            "",
-            "iwu9we8"
-        ),
-        CordsOrder(
-            4776,
-            "ESTRELLA",
-            "LUCAS DURAN",
-            "987",
-            "",
-            "RECO",
-            "",
-            "",
-            "iwu9we8"
-        ),
-        CordsOrder(
-            4772,
-            "VENTURA PUENTE",
-            "ANDRES DEL RIO",
-            "7894",
-            "",
-            "COFAPA",
-            "",
-            "",
-            "iwu9we8"
-        ),
-        CordsOrder(
-            27421,
-            "VISTA BELLA",
-            "EL RETAJO",
-            "12",
-            "A",
-            "COFAPA",
-            "SECTOR1",
-            "S1-TB01",
-            "123"
-        ),
-        CordsOrder(
-            3052,
-            "VENTURA PUENTE",
-            "MIGUEL DE CERVANTES SAAVEDRA",
-            "55",
-            "",
-            "RECO",
-            "",
-            "",
-            "3456ERTY"
-        ),
-        CordsOrder(
-            2540,
-            "VISTA BELLA",
-            "ATZIMBA",
-            "123",
-            "",
-            "COFAPA",
-            "",
-            "",
-            ""
-        ),
-        CordsOrder(
-            2548,
-            "VISTA BELLA",
-            "ATZIMBA",
-            "14",
-            "",
-            "RECO",
-            "",
-            "",
-            ""
-        ),
-        CordsOrder(
-            4798,
-            "RESIDENCIAL DEL SUR",
-            "DE NICOLAS BRAVO",
-            "56",
-            "",
-            "RECO",
-            "",
-            "",
-            ""
-        ),
-        CordsOrder(
-            4776,
-            "ESTRELLA",
-            "LUCAS DURAN",
-            "987",
-            "",
-            "COFAPA",
-            "",
-            "",
-            ""
-        ),
-        CordsOrder(
-            4772,
-            "VENTURA PUENTE",
-            "ANDRES DEL RIO",
-            "7894",
-            "",
-            "COFAPA",
-            "",
-            "",
-            ""
-        ),
-        CordsOrder(
-            27421,
-            "VISTA BELLA",
-            "EL RETAJO",
-            "12",
-            "A",
-            "COFAPA",
-            "SECTOR1",
-            "S1-TB01",
-            "123"
-        ),
-        CordsOrder(
-            3052,
-            "VENTURA PUENTE",
-            "MIGUEL DE CERVANTES SAAVEDRA",
-            "55",
-            "",
-            "RECO",
-            "",
-            "",
-            "3456ERTY"
-        ),
-    )
+
 
 }
 

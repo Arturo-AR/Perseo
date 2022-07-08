@@ -12,7 +12,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -20,8 +19,6 @@ import com.cv.perseo.components.CordsServicesFilters
 import com.cv.perseo.components.CordsServicesItem
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
-import com.cv.perseo.data.Data.cords
-import com.cv.perseo.model.perseoresponse.CordsOrder
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 

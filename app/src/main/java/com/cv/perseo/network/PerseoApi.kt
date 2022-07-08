@@ -1,6 +1,7 @@
 package com.cv.perseo.network
 
 import com.cv.perseo.model.perseoresponse.CordsOrdersResponse
+import com.cv.perseo.model.perseoresponse.InventoryResponse
 import com.cv.perseo.model.perseoresponse.LoginResponse
 import retrofit2.Response
 import retrofit2.http.Field
@@ -25,4 +26,13 @@ interface PerseoApi {
         @Field("ID_USUARIO") userId: String,
         @Field("ID_EMPRESA") enterpriseId: Int
     ): Response<CordsOrdersResponse>
+
+    @FormUrlEncoded
+    @POST("ws.php")
+    suspend fun inventory(
+        @Query("opc") opc: Int,
+        @Field("ID_EMPRESA") enterpriseId: Int,
+        @Field("ID_USUARIO") userId: String
+    ): Response<InventoryResponse>
+
 }

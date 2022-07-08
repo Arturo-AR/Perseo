@@ -1,11 +1,10 @@
-package com.cv.perseo.screens.servicecords
+package com.cv.perseo.screens.inventory
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cv.perseo.model.perseoresponse.CordsOrderBody
+import com.cv.perseo.model.perseoresponse.Inventory
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.PerseoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,25 +15,28 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class ServiceCordsScreenViewModel @Inject constructor(
+class InventoryScreenViewModel @Inject constructor(
     private val repository: PerseoRepository,
     private val dbRepository: DatabaseRepository
 ) :
     ViewModel() {
-
-    private val _cordsOrders: MutableLiveData<List<CordsOrderBody>> = MutableLiveData()
-    val cordsOrder: LiveData<List<CordsOrderBody>> = _cordsOrders
+    private val _inventory: MutableLiveData<List<Inventory>> = MutableLiveData()
+    val inventory: LiveData<List<Inventory>> = _inventory
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             dbRepository.getGeneralData().distinctUntilChanged()
                 .collect { data ->
                     if (data.isNotEmpty()) {
-                        val cords =
-                            repository.getCordsOrders(data[0].idUser, data[0].idMunicipality)
-                        Log.d("Cortes", cords.body()?.responseBody.toString())
-                        withContext(Dispatchers.Main){
-                            _cordsOrders.value = cords.body()?.responseBody
+                        val inventoryResponse =
+                            repository.getInventory(data[0].idMunicipality, data[0].idUser)
+                        if (inventoryResponse.isSuccessful) {
+                            if (inventoryResponse.body()?.responseCode == 200) {
+                                withContext(Dispatchers.Main) {
+                                    _inventory.value =
+                                        inventoryResponse.body()?.responseBody?.inventory
+                                }
+                            }
                         }
                     }
                 }

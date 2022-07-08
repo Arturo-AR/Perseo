@@ -40,9 +40,9 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.cv.perseo.data.Data
 import com.cv.perseo.model.ItemOSDetail
-import com.cv.perseo.model.Material
 import com.cv.perseo.model.database.ServiceOrder
-import com.cv.perseo.model.perseoresponse.CordsOrder
+import com.cv.perseo.model.perseoresponse.CordsOrderBody
+import com.cv.perseo.model.perseoresponse.Inventory
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
@@ -546,7 +546,7 @@ fun MaterialsAddItem() {
 
     val materiales = Data.Material
     // State variables
-    var countryName: Material by remember { mutableStateOf(materiales[0]) }
+    var countryName: Inventory by remember { mutableStateOf(materiales[0]) }
     var expanded by remember { mutableStateOf(false) }
 
     Card {
@@ -706,7 +706,7 @@ fun EquipmentItem() {
 
 @Composable
 fun CordsServicesItem(
-    cord: CordsOrder,
+    cord: CordsOrderBody,
 ) {
     val checked = rememberSaveable { mutableStateOf(false) }
     Card(
