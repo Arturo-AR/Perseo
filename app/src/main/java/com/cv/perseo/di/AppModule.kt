@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.room.Room
 import com.cv.perseo.data.database.PerseoDatabase
 import com.cv.perseo.data.database.PerseoDatabaseDao
+import com.cv.perseo.data.sharedpreferences.MyPreferences
 import com.cv.perseo.network.ImgurApi
 import com.cv.perseo.network.MyInterceptor
 import com.cv.perseo.network.PerseoApi
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.ImgurRepository
 import com.cv.perseo.repository.PerseoRepository
+import com.cv.perseo.repository.SharedRepository
 import com.cv.perseo.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -67,6 +69,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideDatabaseRepository(dao: PerseoDatabaseDao) = DatabaseRepository(dao)
+
+    @Singleton
+    @Provides
+    fun provideSharedRepository(prefs: MyPreferences) = SharedRepository(prefs)
 
     /**
      * Database Providers

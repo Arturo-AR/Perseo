@@ -26,8 +26,8 @@ class OrdersOptionsScreenViewModel @Inject constructor(
             dbRepository.getGeneralData().distinctUntilChanged()
                 .collect { generalData ->
                     val response = perseoRepository.getServiceOrders(
-                        generalData[0].idUser,
-                        generalData[0].idMunicipality
+                        userId = generalData[0].idUser,
+                        enterpriseId = generalData[0].idMunicipality
                     )
                     if (response.isSuccessful) {
                         if (response.body()?.responseCode == 200) {

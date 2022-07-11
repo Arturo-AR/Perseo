@@ -14,8 +14,8 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
         return api.login(0, userId, password)
     }
 
-    suspend fun getServiceOrders(userId: String, enterpriseId: Int): Response<ServiceOrdersResponse> {
-        return api.serviceOrders(1, userId, enterpriseId)
+    suspend fun getServiceOrders(userId: String, enterpriseId: Int, osId: Int = -1): Response<ServiceOrdersResponse> {
+        return api.serviceOrders(1, userId, enterpriseId,osId)
     }
 
     suspend fun getCordsOrders(userId: String, enterpriseId: Int): Response<CordsOrdersResponse> {

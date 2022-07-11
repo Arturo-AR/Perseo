@@ -6,11 +6,13 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.cv.perseo.components.DetailContainer
@@ -23,9 +25,14 @@ import com.cv.perseo.ui.theme.Yellow3
 import com.cv.perseo.utils.Constants
 
 @Composable
-fun OSDetailsScreen(navController: NavController) {
+fun OSDetailsScreen(
+    navController: NavController,
+    viewModel: OSDetailsScreenViewModel = hiltViewModel()
+) {
     val scaffoldState = rememberScaffoldState()
     val scrollState = rememberScrollState()
+    val idOs by viewModel.currentOs.observeAsState()
+
     val parameters = listOf(
         ItemOSDetail("Contrato No: ", "34434"),
         ItemOSDetail("Estatus: ", "POR INSTALAR"),
@@ -45,7 +52,7 @@ fun OSDetailsScreen(navController: NavController) {
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Orden no.\n3454534",
+                title = "Orden no.${if (idOs != null) idOs else ""}",
                 inDashboard = false
             ) {
                 navController.popBackStack()

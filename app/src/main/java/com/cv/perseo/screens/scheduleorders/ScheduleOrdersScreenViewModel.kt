@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.repository.DatabaseRepository
+import com.cv.perseo.repository.SharedRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleOrdersScreenViewModel @Inject constructor(
-    private val dbRepository: DatabaseRepository
+    private val dbRepository: DatabaseRepository,
+    private val prefs: SharedRepository
 ) :
     ViewModel() {
     private val _scheduleOrders = MutableStateFlow<List<ServiceOrder>>(emptyList())
@@ -22,6 +24,7 @@ class ScheduleOrdersScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            prefs.deleteId()
             dbRepository.getScheduleOrders().distinctUntilChanged()
                 .collect { schedule ->
                     if (schedule.isNotEmpty()) {
@@ -29,6 +32,10 @@ class ScheduleOrdersScreenViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun saveOsId(id: Int) {
+        prefs.saveOsId(id)
     }
 
 }

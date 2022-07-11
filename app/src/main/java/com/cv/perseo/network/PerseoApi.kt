@@ -25,7 +25,8 @@ interface PerseoApi {
     suspend fun serviceOrders(
         @Query("opc") opc: Int,
         @Field("ID_USUARIO") userId: String,
-        @Field("ID_EMPRESA") enterpriseId: Int
+        @Field("ID_EMPRESA") enterpriseId: Int,
+        @Field("ID_OS") osId: Int
     ): Response<ServiceOrdersResponse>
 
     @FormUrlEncoded
