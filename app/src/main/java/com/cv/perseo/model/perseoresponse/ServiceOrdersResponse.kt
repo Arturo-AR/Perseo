@@ -18,6 +18,7 @@ data class ServiceOrderItem(
     @SerializedName("vialidad") val street: String,
     @SerializedName("no_exterior") val outdoorNumber: String,
     @SerializedName("no_interior") val indoorNumber: String,
+    @SerializedName("fecha_pre_cumplimiento") val preCumDate:String,
     @SerializedName("fecha_agenda") val scheduleDate: String?,
     @SerializedName("hora_de") val hourFrom: String?,
     @SerializedName("hora_hasta") val hourUntil: String?,

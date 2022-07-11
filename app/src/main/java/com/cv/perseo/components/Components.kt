@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -46,6 +47,7 @@ import com.cv.perseo.model.perseoresponse.Inventory
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
+import com.cv.perseo.utils.toHourFormat
 
 @Composable
 fun LogoPerseo(modifier: Modifier) {
@@ -857,3 +859,53 @@ fun DefaultButtonWithImage(
         }
     }
 }
+
+@Preview
+@Composable
+fun ScheduleItem(
+    order: ServiceOrder = Data.orders[0],
+    onClick: () -> Unit = {}
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable { onClick() }
+    ) {
+        Row(
+            modifier = Modifier
+                .background(if (order.preCumDate == "") Yellow3 else Accent)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(4f)) {
+                Text(text = order.motivo, color = Black, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "${order.street} #${order.outdoorNumber}",
+                    color = White,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp
+                )
+                if (!order.sector.isNullOrEmpty())
+                    Text(
+                        text = "sector: ${order.sector}",
+                        fontWeight = FontWeight.Light,
+                        fontSize = 13.sp
+                    )
+
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1.5f)
+                    .height(IntrinsicSize.Max),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(text = "De: ${order.hourFrom?.toHourFormat()}", color = White)
+                Text(text = "De: ${order.hourUntil?.toHourFormat()}", color = White)
+            }
+        }
+    }
+}
+

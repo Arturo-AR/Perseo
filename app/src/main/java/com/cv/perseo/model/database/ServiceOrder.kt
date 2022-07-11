@@ -18,6 +18,7 @@ data class ServiceOrder(
     @ColumnInfo(name = "street") val street: String,
     @ColumnInfo(name = "outdoor_number") val outdoorNumber: String,
     @ColumnInfo(name = "indoor_number") val indoorNumber: String,
+    @ColumnInfo(name = "pre_cum_date") val preCumDate: String,
     @ColumnInfo(name = "schedule_date") val scheduleDate: String?,
     @ColumnInfo(name = "hour_from") val hourFrom: String?,
     @ColumnInfo(name = "hour_until") val hourUntil: String?,

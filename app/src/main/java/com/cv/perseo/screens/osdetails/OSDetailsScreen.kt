@@ -48,9 +48,7 @@ fun OSDetailsScreen(navController: NavController) {
                 title = "Orden no.\n3454534",
                 inDashboard = false
             ) {
-                navController.navigate(PerseoScreens.Rubro.route) {
-                    popUpTo(PerseoScreens.Rubro.route)
-                }
+                navController.popBackStack()
             }
         },
         bottomBar = {

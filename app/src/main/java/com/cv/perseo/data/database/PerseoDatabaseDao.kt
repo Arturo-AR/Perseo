@@ -50,4 +50,7 @@ interface PerseoDatabaseDao {
 
     @Query("SELECT DISTINCT zone FROM service_orders ")
     fun getZones(): Flow<List<String>>
+
+    @Query("SELECT * FROM service_orders WHERE schedule_date IS NOT NULL ORDER BY hour_from")
+    fun getScheduleOrders(): Flow<List<ServiceOrder>>
 }

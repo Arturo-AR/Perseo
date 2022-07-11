@@ -44,6 +44,7 @@ class OrdersOptionsScreenViewModel @Inject constructor(
                                         street = order.street,
                                         outdoorNumber = order.outdoorNumber,
                                         indoorNumber = order.indoorNumber,
+                                        preCumDate = order.preCumDate,
                                         scheduleDate = order.scheduleDate,
                                         hourFrom = order.hourFrom,
                                         hourUntil = order.hourUntil,

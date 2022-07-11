@@ -45,4 +45,7 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
 
     fun getAllServiceOrders(): Flow<List<ServiceOrder>> =
         perseoDatabaseDao.getAllServiceOrders().flowOn(Dispatchers.IO).conflate()
+
+    fun getScheduleOrders(): Flow<List<ServiceOrder>> =
+        perseoDatabaseDao.getScheduleOrders().flowOn(Dispatchers.IO).conflate()
 }
