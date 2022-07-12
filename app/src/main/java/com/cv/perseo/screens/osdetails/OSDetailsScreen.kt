@@ -22,6 +22,8 @@ import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.Yellow3
+import com.cv.perseo.ui.theme.Yellow4
+import com.cv.perseo.ui.theme.Yellow6
 import com.cv.perseo.utils.Constants
 
 @Composable
@@ -31,28 +33,36 @@ fun OSDetailsScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val scrollState = rememberScrollState()
-    val idOs by viewModel.currentOs.observeAsState()
+    val os by viewModel.currentOs.observeAsState()
 
     val parameters = listOf(
-        ItemOSDetail("Contrato No: ", "34434"),
-        ItemOSDetail("Estatus: ", "POR INSTALAR"),
-        ItemOSDetail("Celular: ", "4423736927"),
-        ItemOSDetail("Telefono: ", "3237327"),
+        ItemOSDetail("Contrato No: ", os?.noContract.toString()),
+        ItemOSDetail("Estatus: ", os?.status ?: ""),
+        ItemOSDetail("Paquete: ", os?.packageName ?: ""),
+        ItemOSDetail("Celular: ", os?.cellPhone ?: "-"),
+        ItemOSDetail("Telefono: ", os?.phone ?: "-"),
     )
     val parameters2 = listOf(
-        ItemOSDetail("Colonia: ", "Estrella"),
-        ItemOSDetail("Detalle: ", "FRENTE A UN PARQUE"),
+        ItemOSDetail("Colonia: ", os?.colony ?: ""),
+        ItemOSDetail("Detalle: ", os?.observations ?: ""),
     )
+    var equipmentString = ""
+    if (!os?.equipment.isNullOrEmpty()) {
+        for (equipment in os?.equipment!!) {
+            equipmentString += "${equipment.equipmentDesc}: ${equipment.equipmentId}\n"
+        }
+    }
     val parameters3 = listOf(
-        ItemOSDetail("Equipos: ", "Sin equipos"),
-        ItemOSDetail("Detalle 1: ", "Sin detalle"),
+        ItemOSDetail("Equipos: ", equipmentString),
+        ItemOSDetail("Detalle 1: ", os?.osDetail1 ?: ""),
+        ItemOSDetail("Detalle 2: ", os?.osDetail2 ?: ""),
     )
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Orden no.${if (idOs != null) idOs else ""}",
+                title = "Orden no. ${if (os != null) os!!.osId else ""}",
                 inDashboard = false
             ) {
                 navController.popBackStack()
@@ -111,8 +121,8 @@ fun OSDetailsScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                DetailContainer("Juan Perez", parameters)
-                DetailContainer("JUAN DE SILVA #324", parameters2)
+                DetailContainer("${os?.name} ${os?.lastName}", parameters)
+                DetailContainer("${os?.street ?: ""} #${os?.outdoorNumber ?: ""}", parameters2)
                 DetailContainer("Datos de Orden", parameters3)
                 Image(
                     modifier = Modifier
@@ -150,11 +160,11 @@ fun OSDetailsScreen(
             ) {
                 Row {
                     Text(text = "Sector: ", color = Color.White)
-                    Text(text = "A58TRG5", color = Yellow3)
+                    Text(text = os?.sector ?: "", color = Yellow6)
                 }
                 Row {
                     Text(text = "CT: ", color = Color.White)
-                    Text(text = "23423535", color = Yellow3)
+                    Text(text = os?.ct ?: "", color = Yellow6)
                 }
             }
         }
