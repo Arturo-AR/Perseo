@@ -24,7 +24,6 @@ class ScheduleOrdersScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            prefs.deleteId()
             dbRepository.getScheduleOrders().distinctUntilChanged()
                 .collect { schedule ->
                     if (schedule.isNotEmpty()) {

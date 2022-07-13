@@ -28,7 +28,6 @@ class ZoneScreenViewModel @Inject constructor(
     val rubro = _rubro.asStateFlow()
 
     init {
-        prefs.deleteRubro()
         val zone = prefs.getZone()
         _currentZone.value = zone
         viewModelScope.launch(Dispatchers.IO) {

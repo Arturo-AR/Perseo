@@ -20,10 +20,6 @@ class MyPreferences @Inject constructor(@ApplicationContext context: Context) {
         return storage.getInt(SHARED_OS_ID, -1)
     }
 
-    fun deleteId() {
-        storage.edit().remove(SHARED_OS_ID).apply()
-    }
-
     fun saveZone(zone:String) {
         storage.edit().putString(SHARED_ZONE, zone).apply()
     }
@@ -32,19 +28,11 @@ class MyPreferences @Inject constructor(@ApplicationContext context: Context) {
         return storage.getString(SHARED_ZONE, "")!!
     }
 
-    fun deleteZone() {
-        storage.edit().remove(SHARED_ZONE).apply()
-    }
-
     fun saveRubro(rubro:String) {
         storage.edit().putString(SHARED_RUBRO, rubro).apply()
     }
 
     fun getRubro():String {
         return storage.getString(SHARED_RUBRO, "")!!
-    }
-
-    fun deleteRubro() {
-        storage.edit().remove(SHARED_RUBRO).apply()
     }
 }

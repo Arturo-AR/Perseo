@@ -28,7 +28,6 @@ class RubroScreenViewModel @Inject constructor(
     val currentRubro: LiveData<String> = _currentRubro
 
     init {
-        prefs.deleteId()
         val rubro = prefs.getRubro()
         _currentRubro.value = rubro
         viewModelScope.launch(Dispatchers.IO) {

@@ -13,10 +13,6 @@ class SharedRepository @Inject constructor(private val prefs: MyPreferences) {
         return prefs.getId()
     }
 
-    fun deleteId() {
-        prefs.deleteId()
-    }
-
     fun saveZone(zone: String) {
         prefs.saveZone(zone)
     }
@@ -25,9 +21,9 @@ class SharedRepository @Inject constructor(private val prefs: MyPreferences) {
         return prefs.getZone()
     }
 
-    fun deleteZone() {
+/*    fun deleteZone() {
         prefs.deleteZone()
-    }
+    }*/
 
     fun saveRubro(rubro: String) {
         prefs.saveRubro(rubro)
@@ -37,7 +33,7 @@ class SharedRepository @Inject constructor(private val prefs: MyPreferences) {
         return prefs.getRubro()
     }
 
-    fun deleteRubro() {
+/*    fun deleteRubro() {
         prefs.deleteRubro()
-    }
+    }*/
 }

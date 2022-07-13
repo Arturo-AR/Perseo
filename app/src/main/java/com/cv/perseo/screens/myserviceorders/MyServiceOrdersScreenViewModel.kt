@@ -24,7 +24,6 @@ class MyServiceOrdersScreenViewModel @Inject constructor(
     val serviceOrders = _serviceOrders.asStateFlow()
 
     init {
-        prefs.deleteZone()
         viewModelScope.launch(Dispatchers.IO) {
             dbRepository.getZones().distinctUntilChanged()
                 .collect { zones ->
