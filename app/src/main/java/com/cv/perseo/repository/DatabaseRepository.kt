@@ -45,6 +45,8 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
     fun getRubro(zone:String): Flow<List<Rubro>> =
         perseoDatabaseDao.getRubro(zone).flowOn(Dispatchers.IO).conflate()
 
+    fun getServiceOrders(zone: String, rubro:String): Flow<List<ServiceOrder>> =
+        perseoDatabaseDao.getServiceOrders(zone, rubro).flowOn(Dispatchers.IO).conflate()
     suspend fun deleteServiceOrders() = perseoDatabaseDao.deleteServiceOrders()
 
     fun getAllServiceOrders(): Flow<List<ServiceOrder>> =

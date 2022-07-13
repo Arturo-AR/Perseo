@@ -8,8 +8,13 @@ object Constants {
     const val SHARED_DB = "myDb"
     const val SHARED_OS_ID = "osId"
     const val SHARED_ZONE = "zone"
+    const val SHARED_RUBRO = "rubro"
 
     const val RUBROS_BUTTONS_PATH = "images/rubros/"
+
+    const val OS_ACTIVE_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/os_item_background.png"
+    const val OS_INACTIVE_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/ciudad_item_background.png"
+
     /**
      *   No Final
      */
@@ -25,8 +30,7 @@ object Constants {
 
     const val BUTTON_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/zona_item_background.png"
 
-    const val OS_ACTIVE_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/os_item_background.png"
-    const val OS_INACTIVE_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/ciudad_item_background.png"
+
 
     const val RUBRO1 = "/images/rubros/ININT.png"
     const val RUBRO2 = "/images/rubros/DESCINT.png"

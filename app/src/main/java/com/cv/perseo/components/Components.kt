@@ -282,7 +282,8 @@ fun ImageButton(
 fun ButtonsList(
     navController: NavController,
     Items: List<String>,
-    onRubro: Boolean = false
+    onRubro: Boolean = false,
+    onClick: (Int) -> Unit = { }
 ) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
@@ -290,7 +291,7 @@ fun ButtonsList(
     ) {
         items(Items.size) { index ->
             ImageButton(
-                urlImage = Constants.PERSEO_BASE_URL + (if(onRubro) Constants.RUBROS_BUTTONS_PATH else "") + Items[index],
+                urlImage = Constants.PERSEO_BASE_URL + (if (onRubro) Constants.RUBROS_BUTTONS_PATH else "") + Items[index],
                 modifier = Modifier.padding(8.dp)
             ) {
                 if (!onRubro) {
@@ -315,7 +316,7 @@ fun ButtonsList(
                         }
                     }
                 } else {
-                    navController.navigate(PerseoScreens.Rubro.route)
+                    onClick(index)
                 }
 
             }
@@ -419,7 +420,7 @@ fun ServiceOrderCard(
             modifier = Modifier
                 .padding(4.dp)
                 .fillMaxSize(),
-            painter = rememberAsyncImagePainter(Constants.OS_ACTIVE_BACKGROUND), //TODO: Change painter per bitmap
+            painter = rememberAsyncImagePainter(if (os.preCumDate == "") Constants.OS_ACTIVE_BACKGROUND else Constants.OS_INACTIVE_BACKGROUND), //TODO: Change painter per bitmap
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
@@ -443,7 +444,7 @@ fun ServiceOrderCard(
                 fontSize = 12.sp
             )
             Text(
-                text = "Sector perron",
+                text = "Sector: ${os.sector}",
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp
             )

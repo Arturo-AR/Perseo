@@ -53,7 +53,10 @@ interface PerseoDatabaseDao {
     fun getZones(): Flow<List<String>>
 
     @Query("SELECT DISTINCT rubro_icon, rubro  FROM service_orders WHERE zone = :zone")
-    fun getRubro(zone:String): Flow<List<Rubro>>
+    fun getRubro(zone: String): Flow<List<Rubro>>
+
+    @Query("SELECT * FROM service_orders WHERE zone = :zone AND rubro = :rubro")
+    fun getServiceOrders(zone: String, rubro: String): Flow<List<ServiceOrder>>
 
     @Query("SELECT * FROM service_orders WHERE schedule_date IS NOT NULL ORDER BY hour_from")
     fun getScheduleOrders(): Flow<List<ServiceOrder>>

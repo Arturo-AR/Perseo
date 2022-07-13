@@ -3,6 +3,7 @@ package com.cv.perseo.data.sharedpreferences
 import android.content.Context
 import com.cv.perseo.utils.Constants.SHARED_DB
 import com.cv.perseo.utils.Constants.SHARED_OS_ID
+import com.cv.perseo.utils.Constants.SHARED_RUBRO
 import com.cv.perseo.utils.Constants.SHARED_ZONE
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -33,5 +34,17 @@ class MyPreferences @Inject constructor(@ApplicationContext context: Context) {
 
     fun deleteZone() {
         storage.edit().remove(SHARED_ZONE).apply()
+    }
+
+    fun saveRubro(rubro:String) {
+        storage.edit().putString(SHARED_RUBRO, rubro).apply()
+    }
+
+    fun getRubro():String {
+        return storage.getString(SHARED_RUBRO, "")!!
+    }
+
+    fun deleteRubro() {
+        storage.edit().remove(SHARED_RUBRO).apply()
     }
 }

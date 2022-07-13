@@ -25,7 +25,6 @@ fun ZoneScreen(
     val scaffoldState = rememberScaffoldState()
     val currentZone by viewModel.currentZone.observeAsState()
     val rubro = viewModel.rubro.collectAsState().value
-    Log.d("Screen", rubro.toString())
     val rubroList = mutableListOf<String>()
     if (rubro.isNotEmpty()) {
         for (x in rubro) {
@@ -51,7 +50,10 @@ fun ZoneScreen(
         backgroundColor = Background,
     ) {
         if (rubroList.isNotEmpty()) {
-            ButtonsList(navController = navController, Items = rubroList, onRubro = true)
+            ButtonsList(navController = navController, Items = rubroList, onRubro = true) { index ->
+                viewModel.saveRubro(rubro[index].rubro)
+                navController.navigate(PerseoScreens.Rubro.route)
+            }
         }
     }
 }

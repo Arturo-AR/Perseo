@@ -28,4 +28,16 @@ class SharedRepository @Inject constructor(private val prefs: MyPreferences) {
     fun deleteZone() {
         prefs.deleteZone()
     }
+
+    fun saveRubro(rubro: String) {
+        prefs.saveRubro(rubro)
+    }
+
+    fun getRubro(): String {
+        return prefs.getRubro()
+    }
+
+    fun deleteRubro() {
+        prefs.deleteRubro()
+    }
 }
