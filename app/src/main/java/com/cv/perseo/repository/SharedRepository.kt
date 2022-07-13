@@ -16,4 +16,16 @@ class SharedRepository @Inject constructor(private val prefs: MyPreferences) {
     fun deleteId() {
         prefs.deleteId()
     }
+
+    fun saveZone(zone: String) {
+        prefs.saveZone(zone)
+    }
+
+    fun getZone(): String {
+        return prefs.getZone()
+    }
+
+    fun deleteZone() {
+        prefs.deleteZone()
+    }
 }

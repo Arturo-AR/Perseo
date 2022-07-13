@@ -39,6 +39,9 @@ fun MyServiceOrdersScreen(
         },
         backgroundColor = Background,
     ) {
-        ZonesButtons(items = zones, navController = navController)
+        ZonesButtons(items = zones) { zone ->
+            viewModel.saveZone(zone)
+            navController.navigate(PerseoScreens.Zone.route)
+        }
     }
 }

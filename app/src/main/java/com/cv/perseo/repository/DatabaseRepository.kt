@@ -1,6 +1,7 @@
 package com.cv.perseo.repository
 
 import com.cv.perseo.data.database.PerseoDatabaseDao
+import com.cv.perseo.model.Rubro
 import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.database.Permissions
 import com.cv.perseo.model.database.ServiceOrder
@@ -40,6 +41,9 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
 
     fun getZones(): Flow<List<String>> =
         perseoDatabaseDao.getZones().flowOn(Dispatchers.IO).conflate()
+
+    fun getRubro(zone:String): Flow<List<Rubro>> =
+        perseoDatabaseDao.getRubro(zone).flowOn(Dispatchers.IO).conflate()
 
     suspend fun deleteServiceOrders() = perseoDatabaseDao.deleteServiceOrders()
 

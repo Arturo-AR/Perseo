@@ -34,7 +34,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -291,7 +290,7 @@ fun ButtonsList(
     ) {
         items(Items.size) { index ->
             ImageButton(
-                urlImage = Constants.PERSEO_BASE_URL + Items[index],
+                urlImage = Constants.PERSEO_BASE_URL + (if(onRubro) Constants.RUBROS_BUTTONS_PATH else "") + Items[index],
                 modifier = Modifier.padding(8.dp)
             ) {
                 if (!onRubro) {
@@ -360,7 +359,7 @@ fun ShowAlertDialog(
 @Composable
 fun ZonesButtons(
     items: List<String>,
-    navController: NavController
+    onPress: (String) -> Unit
 ) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
@@ -377,9 +376,7 @@ fun ZonesButtons(
                         modifier = Modifier
                             .padding(4.dp)
                             .fillMaxSize()
-                            .clickable {
-                                navController.navigate(PerseoScreens.Zone.route)
-                            },
+                            .clickable { onPress(items[index]) },
                         painter = rememberAsyncImagePainter(Constants.BUTTON_BACKGROUND), //TODO: Change painter per bitmap
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds
@@ -860,11 +857,10 @@ fun DefaultButtonWithImage(
     }
 }
 
-@Preview
 @Composable
 fun ScheduleItem(
-    order: ServiceOrder = Data.orders[0],
-    onClick: () -> Unit = {}
+    order: ServiceOrder,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier

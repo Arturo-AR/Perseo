@@ -7,7 +7,9 @@ object Constants {
 
     const val SHARED_DB = "myDb"
     const val SHARED_OS_ID = "osId"
+    const val SHARED_ZONE = "zone"
 
+    const val RUBROS_BUTTONS_PATH = "images/rubros/"
     /**
      *   No Final
      */
