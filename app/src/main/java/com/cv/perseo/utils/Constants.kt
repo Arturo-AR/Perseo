@@ -9,11 +9,17 @@ object Constants {
     const val SHARED_OS_ID = "osId"
     const val SHARED_ZONE = "zone"
     const val SHARED_RUBRO = "rubro"
+    const val SHARED_DOING = "doing"
+    const val SHARED_ON_WAY = "onWay"
 
     const val RUBROS_BUTTONS_PATH = "images/rubros/"
 
     const val OS_ACTIVE_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/os_item_background.png"
     const val OS_INACTIVE_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/ciudad_item_background.png"
+
+    const val BUTTON_FINISH = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/finalizar_orden.png"
+    const val BUTTON_START = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/iniciar_orden.png"
+    const val BUTTON_CANCEL = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/cancelar.png"
 
     /**
      *   No Final
@@ -31,14 +37,6 @@ object Constants {
     const val BUTTON_BACKGROUND = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/fondos/zona_item_background.png"
 
 
-
-    const val RUBRO1 = "/images/rubros/ININT.png"
-    const val RUBRO2 = "/images/rubros/DESCINT.png"
-    const val RUBRO3 = "/images/rubros/FATV.png"
-    const val RUBRO4 = "/images/rubros/RE.png"
-
     const val BUTTON_MATERIAL = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/materiales_agregar.png"
     const val BUTTON_EQUIPMENT = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/equipos_agregar.png"
-    const val BUTTON_FINISH = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/finalizar_orden.png"
-    const val BUTTON_CANCEL = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/cancelar.png"
 }

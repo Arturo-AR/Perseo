@@ -1,9 +1,7 @@
 package com.cv.perseo.screens.ordersoptions
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cv.perseo.data.Data.orders
 import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.PerseoRepository

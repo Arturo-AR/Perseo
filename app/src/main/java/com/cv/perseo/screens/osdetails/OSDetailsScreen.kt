@@ -2,10 +2,13 @@ package com.cv.perseo.screens.osdetails
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,8 +24,6 @@ import com.cv.perseo.components.PerseoTopBar
 import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
-import com.cv.perseo.ui.theme.Yellow3
-import com.cv.perseo.ui.theme.Yellow4
 import com.cv.perseo.ui.theme.Yellow6
 import com.cv.perseo.utils.Constants
 
@@ -33,7 +34,10 @@ fun OSDetailsScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val scrollState = rememberScrollState()
+    val doing by viewModel.doing.observeAsState()
+    val onWay by viewModel.onWay.observeAsState()
     val os by viewModel.currentOs.observeAsState()
+    val generalData = viewModel.generalData.collectAsState().value
 
     val parameters = listOf(
         ItemOSDetail("Contrato No: ", os?.noContract.toString()),
@@ -73,7 +77,6 @@ fun OSDetailsScreen(
         },
         backgroundColor = Background,
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -124,30 +127,50 @@ fun OSDetailsScreen(
                 DetailContainer("${os?.name} ${os?.lastName}", parameters)
                 DetailContainer("${os?.street ?: ""} #${os?.outdoorNumber ?: ""}", parameters2)
                 DetailContainer("Datos de Orden", parameters3)
-                Image(
-                    modifier = Modifier
-                        .height(60.dp)
-                        .padding(vertical = 6.dp)
-                        .fillMaxHeight()
-                        .clickable {
+                if (generalData.isNotEmpty()) {
+                    if (onWay == false && doing == false) {
+                        Button(onClick = {
+                            viewModel.startRoute()
+                        }) {
+                            Text(text = "Iniciar ruta")
+                        }
 
-                        },
-                    painter = rememberAsyncImagePainter(Constants.BUTTON_FINISH), //TODO: Change painter per bitmap
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-                Image(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .padding(vertical = 6.dp)
-                        .fillMaxHeight()
-                        .clickable {
-
-                        },
-                    painter = rememberAsyncImagePainter(Constants.BUTTON_CANCEL), //TODO: Change painter per bitmap
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
+                    } else {
+                        Image(
+                            modifier = Modifier
+                                .height(60.dp)
+                                .padding(vertical = 6.dp)
+                                .fillMaxHeight()
+                                .clickable {
+                                    if (onWay!! && !doing!!) {
+                                        viewModel.finishRoute()
+                                        viewModel.startDoing()
+                                    } else /*if (!generalData[0].onWay && generalData[0].doing)*/ {
+                                        viewModel.finishDoing()
+                                        navController.navigate(PerseoScreens.Dashboard.route)
+                                    }
+                                },
+                            painter = rememberAsyncImagePainter(
+                                if (doing == true) Constants.BUTTON_FINISH else Constants.BUTTON_START
+                            ),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop
+                        )
+                        Image(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .padding(vertical = 6.dp)
+                                .fillMaxHeight()
+                                .clickable {
+                                    viewModel.finishDoing()
+                                    viewModel.finishRoute()
+                                },
+                            painter = rememberAsyncImagePainter(Constants.BUTTON_CANCEL), //TODO: Change painter per bitmap
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
             }
             Row(
                 modifier = Modifier

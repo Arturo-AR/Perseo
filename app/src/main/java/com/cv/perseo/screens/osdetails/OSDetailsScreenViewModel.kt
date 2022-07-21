@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cv.perseo.model.database.ServiceOrder
+import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.perseoresponse.ServiceOrderItem
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.PerseoRepository
 import com.cv.perseo.repository.SharedRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,11 +26,24 @@ class OSDetailsScreenViewModel @Inject constructor(
     private val _currentOs: MutableLiveData<ServiceOrderItem> = MutableLiveData()
     val currentOs: LiveData<ServiceOrderItem> = _currentOs
 
+    private val _generalData = MutableStateFlow<List<GeneralData>>(emptyList())
+    val generalData = _generalData.asStateFlow()
+
+    private val _doing: MutableLiveData<Boolean> = MutableLiveData()
+    val doing: LiveData<Boolean> = _doing
+
+    private val _onWay: MutableLiveData<Boolean> = MutableLiveData()
+    val onWay: LiveData<Boolean> = _onWay
+
     init {
         viewModelScope.launch {
+            _doing.value = prefs.getDoing()
+            _onWay.value = prefs.getOnWay()
             dbRepository.deleteServiceOrders()
-            dbRepository.getGeneralData().distinctUntilChanged()
+            dbRepository.getGeneralData()
                 .collect { generalData ->
+
+                    _generalData.value = generalData
                     val response = repository.getServiceOrders(
                         userId = generalData[0].idUser,
                         enterpriseId = generalData[0].idMunicipality,
@@ -43,4 +57,25 @@ class OSDetailsScreenViewModel @Inject constructor(
                 }
         }
     }
+
+    fun startRoute() {
+        prefs.saveOnWay(true)
+        _onWay.value = prefs.getOnWay()
+    }
+
+    fun startDoing() {
+        prefs.saveDoing(true)
+        _doing.value = prefs.getDoing()
+    }
+
+    fun finishRoute() {
+        prefs.saveOnWay(false)
+        _onWay.value = prefs.getOnWay()
+    }
+
+    fun finishDoing() {
+        prefs.saveDoing(false)
+        _doing.value = prefs.getDoing()
+    }
+
 }

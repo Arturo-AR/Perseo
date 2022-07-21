@@ -27,7 +27,11 @@ class LoginScreenViewModel @Inject constructor(
                 if (data.body()?.responseCode == 200
                 ) {
                     if (data.body()?.responseBody?.enterprises?.size == 1) {
-                        saveData(userId, data.body()?.responseBody?.enterprises!![0], data.body()?.responseBody?.permissions!!)
+                        saveData(
+                            userId,
+                            data.body()?.responseBody?.enterprises!![0],
+                            data.body()?.responseBody?.permissions!!
+                        )
                     }
                     success()
                 } else {
@@ -40,17 +44,21 @@ class LoginScreenViewModel @Inject constructor(
     }
 
 
-    private suspend fun saveData(idUser: String, enterprise: EnterpriseBody, permissions: List<PermissionsBody>) {
+    private suspend fun saveData(
+        idUser: String,
+        enterprise: EnterpriseBody,
+        permissions: List<PermissionsBody>
+    ) {
         val data = GeneralData(
             idUser = idUser,
-            doing = false,
-            onWay = false,
+            //doing = false,
+            //onWay = false,
             municipality = enterprise.municipality,
             logo = enterprise.logo,
             logoIcon = enterprise.logoIcon,
             idMunicipality = enterprise.idMunicipality
         )
-        for (permission in permissions){
+        for (permission in permissions) {
             val permissionAct = Permissions(
                 idActivitySon = permission.idActivitySon,
                 idActivityFather = permission.idActivityFather,

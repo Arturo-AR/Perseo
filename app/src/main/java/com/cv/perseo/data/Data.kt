@@ -1,6 +1,5 @@
 package com.cv.perseo.data
 
-import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.model.perseoresponse.Inventory
 
 object Data {
@@ -17,71 +16,5 @@ object Data {
     val colonias =
         listOf("SANTA RITA", "CENTRO", "SAN ISIDRO", "FRANCISCO I. MADERO", "ALMOLOYA", "SAN JUAN")
 
-    val orders = listOf(
-        ServiceOrder(
-            osId = 27276,
-            rubro = "INSTALACIONES INTERNET",
-            motivo = "INSTALAR SERVICIO INTERNET (PAQ)",
-            street = "PROFESOR JESUS ROMERO FLORES",
-            outdoorNumber = "213",
-            indoorNumber = "213",
-            zone = "PRADOS",
-            rubroIcon = "ININT.png",
-            sector = "Sector 1",
-            preCumDate = "",
-            scheduleDate = null,
-            scheduleDetail = null,
-            hourUntil = null,
-            hourFrom = null
-        ),
-        ServiceOrder(
-            osId = 27280,
-            rubro = "INSTALACIONES TV",
-            motivo = "INSTALAR SERVICIO TV (PAQ)",
-            street = "PROFESOR JESUS ROMERO FLORES",
-            outdoorNumber = "213",
-            indoorNumber = "213",
-            zone = "PRADOS",
-            rubroIcon = "ININT.png",
-            sector = "Sector 1",
-            preCumDate = "",
-            scheduleDate = null,
-            scheduleDetail = null,
-            hourUntil = null,
-            hourFrom = null
-        ),
-        ServiceOrder(
-            osId = 27280,
-            rubro = "INSTALACIONES TV",
-            motivo = "INSTALAR SERVICIO TV (PAQ)",
-            street = "PROFESOR JESUS ROMERO FLORES",
-            outdoorNumber = "213",
-            indoorNumber = "213",
-            zone = "PRADOS",
-            rubroIcon = "ININT.png",
-            sector = "Sector 1",
-            scheduleDate = null,
-            scheduleDetail = null,
-            preCumDate = "",
-            hourUntil = null,
-            hourFrom = null
-        ),
-        ServiceOrder(
-            osId = 27280,
-            rubro = "INSTALACIONES TV",
-            motivo = "INSTALAR SERVICIO TV (PAQ)",
-            street = "PROFESOR JESUS ROMERO FLORES",
-            outdoorNumber = "213",
-            indoorNumber = "213",
-            zone = "PRADOS",
-            rubroIcon = "ININT.png",
-            sector = "Sector 1",
-            scheduleDate = null,
-            preCumDate = "",
-            scheduleDetail = null,
-            hourUntil = null,
-            hourFrom = null
-        ),
-    )
 }
 
