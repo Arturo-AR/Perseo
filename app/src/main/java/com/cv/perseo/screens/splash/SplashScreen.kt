@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -28,6 +30,9 @@ fun SplashScreen(
     viewModel: SplashScreenViewModel = hiltViewModel()
 ) {
 
+    val doing by viewModel.doing.observeAsState()
+    val onWay by viewModel.onWay.observeAsState()
+
     val scale = remember {
         Animatable(0f)
     }
@@ -45,7 +50,11 @@ fun SplashScreen(
         if (viewModel.generalData.value.isEmpty()) {
             navController.navigate(PerseoScreens.Login.route)
         } else {
-            navController.navigate(PerseoScreens.Dashboard.route)
+            if (doing == true || onWay == true) {
+                navController.navigate(PerseoScreens.OSDetails.route)
+            } else {
+                navController.navigate(PerseoScreens.Dashboard.route)
+            }
         }
     }
     Surface(

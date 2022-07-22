@@ -2,6 +2,7 @@ package com.cv.perseo.screens.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.repository.DatabaseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -26,8 +27,8 @@ class DashboardScreenViewModel @Inject constructor(
                 .collect { permissions ->
                     if (permissions.isNotEmpty()) {
                         val finalPermissions = mutableListOf<String>()
-                        for (permission in permissions){
-                            if (permission.idActivityFather == 1){
+                        for (permission in permissions) {
+                            if (permission.idActivityFather == PerseoScreens.Dashboard.id) {
                                 finalPermissions.add(permission.icon)
                             }
                         }
@@ -41,6 +42,7 @@ class DashboardScreenViewModel @Inject constructor(
         viewModelScope.launch {
             dbRepository.deleteGeneralData()
             dbRepository.deletePermissions()
+            dbRepository.deleteServiceOrders()
         }
     }
 }
