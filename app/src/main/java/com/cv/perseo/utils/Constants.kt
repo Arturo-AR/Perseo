@@ -3,7 +3,7 @@ package com.cv.perseo.utils
 object Constants {
 
     const val IMGUR_BASE_URL = "https://api.imgur.com/"
-    const val PERSEO_BASE_URL = "http://servermrl.no-ip.org/perseo/pruebas/webservices/aplicacion/pruebas/"
+    const val PERSEO_BASE_URL = "http://servermrl.no-ip.org/perseo/pruebas1/webservices/aplicacion/pruebas/"
 
     const val SHARED_DB = "myDb"
     const val SHARED_OS_ID = "osId"

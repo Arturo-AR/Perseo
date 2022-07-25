@@ -3,12 +3,14 @@ package com.cv.perseo.repository
 import com.cv.perseo.data.database.PerseoDatabaseDao
 import com.cv.perseo.model.Rubro
 import com.cv.perseo.model.database.GeneralData
+import com.cv.perseo.model.database.Materials
 import com.cv.perseo.model.database.Permissions
 import com.cv.perseo.model.database.ServiceOrder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
+import java.util.*
 import javax.inject.Inject
 
 class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: PerseoDatabaseDao) {
@@ -42,11 +44,12 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
     fun getZones(): Flow<List<String>> =
         perseoDatabaseDao.getZones().flowOn(Dispatchers.IO).conflate()
 
-    fun getRubro(zone:String): Flow<List<Rubro>> =
+    fun getRubro(zone: String): Flow<List<Rubro>> =
         perseoDatabaseDao.getRubro(zone).flowOn(Dispatchers.IO).conflate()
 
-    fun getServiceOrders(zone: String, rubro:String): Flow<List<ServiceOrder>> =
+    fun getServiceOrders(zone: String, rubro: String): Flow<List<ServiceOrder>> =
         perseoDatabaseDao.getServiceOrders(zone, rubro).flowOn(Dispatchers.IO).conflate()
+
     suspend fun deleteServiceOrders() = perseoDatabaseDao.deleteServiceOrders()
 
     fun getAllServiceOrders(): Flow<List<ServiceOrder>> =
@@ -54,4 +57,18 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
 
     fun getScheduleOrders(): Flow<List<ServiceOrder>> =
         perseoDatabaseDao.getScheduleOrders().flowOn(Dispatchers.IO).conflate()
+
+    /**
+     * functions for materials
+     */
+
+    suspend fun insertMaterial(material: Materials) =
+        perseoDatabaseDao.insertMaterial(material)
+
+    suspend fun deleteMaterials() = perseoDatabaseDao.deleteMaterials()
+
+    suspend fun deleteMaterialById(id: UUID) = perseoDatabaseDao.deleteMaterialById(id)
+
+    fun getAllMaterials(): Flow<List<Materials>> =
+        perseoDatabaseDao.getAllMaterials().flowOn(Dispatchers.IO).conflate()
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
@@ -34,12 +36,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.cv.perseo.data.Data
 import com.cv.perseo.model.ItemOSDetail
+import com.cv.perseo.model.database.Materials
 import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.model.perseoresponse.CordsOrderBody
 import com.cv.perseo.model.perseoresponse.Inventory
@@ -47,6 +51,7 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
 import com.cv.perseo.utils.toHourFormat
+import java.util.*
 
 @Composable
 fun LogoPerseo(modifier: Modifier) {
@@ -523,13 +528,14 @@ fun DetailItem(
 }
 
 @Composable
-fun MaterialsAddItem() {
-
-    val materiales = Data.Material
+fun MaterialsAddItem(
+    materiales: List<Inventory>,
+    onClick: (Double, Inventory) -> Unit
+) {
     // State variables
     var countryName: Inventory by remember { mutableStateOf(materiales[0]) }
     var expanded by remember { mutableStateOf(false) }
-
+    var text by remember { mutableStateOf("") }
     Card {
         Row(
             modifier = Modifier
@@ -579,7 +585,6 @@ fun MaterialsAddItem() {
                         }
                     }
                 }
-                var text by remember { mutableStateOf("") }
 
                 OutlinedTextField(
                     value = text,
@@ -610,7 +615,9 @@ fun MaterialsAddItem() {
                         )
                     )
                     .background(Yellow3),
-                onClick = {}
+                onClick = {
+                    onClick(text.toDouble(), countryName)
+                }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = White)
             }
@@ -901,6 +908,60 @@ fun ScheduleItem(
             ) {
                 Text(text = "De: ${order.hourFrom?.toHourFormat()}", color = White)
                 Text(text = "De: ${order.hourUntil?.toHourFormat()}", color = White)
+            }
+        }
+    }
+}
+
+@Composable
+fun MaterialsFinalItem(
+    material: Materials,
+    onClick: (UUID) -> Unit
+) {
+    Card {
+        Row(
+            modifier = Modifier
+                .background(Accent)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(modifier = Modifier.weight(9f)) {
+                Text(text = "${material.desc_material} ", color = Yellow4)
+                Text(text = "${material.cantidad}", color = White)
+            }
+            IconButton(
+                modifier = Modifier
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 10.dp,
+                            topEnd = 10.dp,
+                            bottomStart = 10.dp,
+                            bottomEnd = 10.dp
+                        )
+                    )
+                    .background(Gray)
+                    .weight(2f),
+                onClick = {
+                    onClick(material.id)
+                }
+            ) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = null, tint = White)
+            }
+        }
+    }
+}
+
+@Composable
+fun MaterialsFinalList(
+    materialList: List<Materials>,
+    onDelete: (UUID) -> Unit
+) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(materialList) { material ->
+            MaterialsFinalItem(material){
+                onDelete(it)
             }
         }
     }

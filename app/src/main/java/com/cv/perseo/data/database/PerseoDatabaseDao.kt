@@ -3,9 +3,11 @@ package com.cv.perseo.data.database
 import androidx.room.*
 import com.cv.perseo.model.Rubro
 import com.cv.perseo.model.database.GeneralData
+import com.cv.perseo.model.database.Materials
 import com.cv.perseo.model.database.Permissions
 import com.cv.perseo.model.database.ServiceOrder
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 @Dao
 interface PerseoDatabaseDao {
@@ -60,4 +62,19 @@ interface PerseoDatabaseDao {
 
     @Query("SELECT * FROM service_orders WHERE schedule_date IS NOT NULL ORDER BY hour_from")
     fun getScheduleOrders(): Flow<List<ServiceOrder>>
+
+    /**
+     * Queries for Materials
+     */
+    @Query("SELECT * FROM materials")
+    fun getAllMaterials(): Flow<List<Materials>>
+
+    @Query("DELETE FROM materials")
+    suspend fun deleteMaterials()
+
+    @Query("DELETE FROM materials WHERE id = :id")
+    suspend fun deleteMaterialById(id: UUID)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMaterial(material: Materials)
 }
