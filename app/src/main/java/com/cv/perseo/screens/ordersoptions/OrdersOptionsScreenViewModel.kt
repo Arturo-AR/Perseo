@@ -46,7 +46,8 @@ class OrdersOptionsScreenViewModel @Inject constructor(
                                         scheduleDate = order.scheduleDate,
                                         hourFrom = order.hourFrom,
                                         hourUntil = order.hourUntil,
-                                        scheduleDetail = order.scheduleDetail
+                                        scheduleDetail = order.scheduleDetail,
+                                        motivoId = order.motivoId
                                     )
                                 )
                             }

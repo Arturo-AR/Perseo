@@ -1,5 +1,6 @@
 package com.cv.perseo.model.perseoresponse
 
+import androidx.room.ColumnInfo
 import com.google.gson.annotations.SerializedName
 
 data class ServiceOrdersResponse(
@@ -14,6 +15,7 @@ data class ServiceOrderItem(
     @SerializedName("icono_rubro") val rubroIcon: String,
     @SerializedName("rubro") val rubro: String,
     @SerializedName("motivo") val motivo: String,
+    @SerializedName("id_motivo") val motivoId: String,
     @SerializedName("sector") val sector: String,
     @SerializedName("caja_terminal") val ct: String,
     @SerializedName("vialidad") val street: String,

@@ -626,7 +626,9 @@ fun MaterialsAddItem(
 }
 
 @Composable
-fun EquipmentItem() {
+fun EquipmentItem(
+    motivo: String
+) {
     var text by remember { mutableStateOf("") }
     Card(
         modifier = Modifier
@@ -647,7 +649,7 @@ fun EquipmentItem() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Text(text = "Etiqueta", color = White, fontSize = 20.sp)
+            Text(text = motivo, color = White, fontSize = 20.sp)
 
             TextField(
                 modifier = Modifier.padding(4.dp),
@@ -960,7 +962,7 @@ fun MaterialsFinalList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(materialList) { material ->
-            MaterialsFinalItem(material){
+            MaterialsFinalItem(material) {
                 onDelete(it)
             }
         }

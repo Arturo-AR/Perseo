@@ -1,4 +1,4 @@
-package com.cv.perseo.screens.osdetails
+package com.cv.perseo.screens.equipment
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OSDetailsScreenViewModel @Inject constructor(
+class EquipmentScreenViewModel @Inject constructor(
     private val dbRepository: DatabaseRepository,
     private val repository: PerseoRepository,
     private val prefs: SharedRepository
@@ -29,19 +29,11 @@ class OSDetailsScreenViewModel @Inject constructor(
     private val _generalData = MutableStateFlow<List<GeneralData>>(emptyList())
     val generalData = _generalData.asStateFlow()
 
-    private val _doing: MutableLiveData<Boolean> = MutableLiveData()
-    val doing: LiveData<Boolean> = _doing
-
-    private val _onWay: MutableLiveData<Boolean> = MutableLiveData()
-    val onWay: LiveData<Boolean> = _onWay
-
     private val _motivos: MutableLiveData<List<String>> = MutableLiveData()
     val motivos: LiveData<List<String>> = _motivos
 
     init {
         viewModelScope.launch {
-            _doing.value = prefs.getDoing()
-            _onWay.value = prefs.getOnWay()
             dbRepository.deleteServiceOrders()
             dbRepository.getGeneralData()
                 .collect { generalData ->
@@ -61,43 +53,27 @@ class OSDetailsScreenViewModel @Inject constructor(
         }
     }
 
+
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
             val response = repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
             if (response.isSuccessful) {
                 if (response.body()?.responseCode == 200) {
-                    _motivos.value = response.body()!!.responseBody
+                    val motivosResponse = response.body()!!.responseBody
+                    val motivos = mutableListOf<String>()
+                    motivosResponse?.map { motivo ->
+                        val motivoArray = motivo.split("_")
+                        if (motivoArray[0] == "AGREGAR" || motivoArray[0] == "QUITAR") {
+                            if (motivoArray.size > 2) {
+                                motivos.add("${motivoArray[1]} ${motivoArray[2]}")
+                            } else {
+                                motivos.add(motivoArray[1])
+                            }
+                        }
+                    }
+                    _motivos.value = motivos
                 }
             }
         }
     }
-
-    fun startRoute() {
-        prefs.saveOnWay(true)
-        _onWay.value = prefs.getOnWay()
-    }
-
-    fun startDoing() {
-        prefs.saveDoing(true)
-        _doing.value = prefs.getDoing()
-    }
-
-    fun finishRoute() {
-        prefs.saveOnWay(false)
-        _onWay.value = prefs.getOnWay()
-    }
-
-    fun finishDoing() {
-        prefs.saveDoing(false)
-        _doing.value = prefs.getDoing()
-    }
-
-    fun finishOrder() {
-        finishDoing()
-        finishRoute()
-        viewModelScope.launch {
-            dbRepository.deleteMaterials()
-        }
-    }
-
 }

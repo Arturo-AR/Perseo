@@ -1,9 +1,6 @@
 package com.cv.perseo.repository
 
-import com.cv.perseo.model.perseoresponse.CordsOrdersResponse
-import com.cv.perseo.model.perseoresponse.InventoryResponse
-import com.cv.perseo.model.perseoresponse.LoginResponse
-import com.cv.perseo.model.perseoresponse.ServiceOrdersResponse
+import com.cv.perseo.model.perseoresponse.*
 import com.cv.perseo.network.PerseoApi
 import retrofit2.Response
 import javax.inject.Inject
@@ -15,7 +12,7 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
     }
 
     suspend fun getServiceOrders(userId: String, enterpriseId: Int, osId: Int = -1): Response<ServiceOrdersResponse> {
-        return api.serviceOrders(1, userId, enterpriseId,osId)
+        return api.serviceOrders(1, userId, enterpriseId, osId)
     }
 
     suspend fun getCordsOrders(userId: String, enterpriseId: Int): Response<CordsOrdersResponse> {
@@ -24,6 +21,10 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
 
     suspend fun getInventory(enterpriseId: Int, userId: String): Response<InventoryResponse> {
         return api.inventory(3, enterpriseId, userId)
+    }
+
+    suspend fun motivoOrders(motivoId: String, enterpriseId: Int): Response<MotivosResponse> {
+        return api.motivoOrders(4, motivoId, enterpriseId)
     }
 
 }

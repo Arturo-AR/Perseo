@@ -14,6 +14,7 @@ data class ServiceOrder(
     @ColumnInfo(name = "rubro_icon") val rubroIcon: String,
     @ColumnInfo(name = "rubro") val rubro: String,
     @ColumnInfo(name = "motivo") val motivo: String,
+    @ColumnInfo(name = "id_motivo") val motivoId: String,
     @ColumnInfo(name = "sector") val sector: String?,
     @ColumnInfo(name = "street") val street: String,
     @ColumnInfo(name = "outdoor_number") val outdoorNumber: String,

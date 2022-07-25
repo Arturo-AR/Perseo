@@ -1,10 +1,11 @@
 package com.cv.perseo.screens.osdetails
 
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,6 +41,14 @@ fun OSDetailsScreen(
     val onWay by viewModel.onWay.observeAsState()
     val os by viewModel.currentOs.observeAsState()
     val generalData = viewModel.generalData.collectAsState().value
+    val motivos by viewModel.motivos.observeAsState()
+    val context = LocalContext.current
+    if (os != null && generalData.isNotEmpty()) {
+        viewModel.getMotivos(os?.motivoId!!, generalData[0].idMunicipality)
+    }
+    if (!motivos.isNullOrEmpty()) {
+        Log.d("motivos", motivos.toString())
+    }
 
     val parameters = listOf(
         ItemOSDetail("Contrato No: ", os?.noContract.toString()),
@@ -125,7 +135,17 @@ fun OSDetailsScreen(
                             .padding(vertical = 12.dp)
                             .fillMaxHeight()
                             .clickable {
-                                navController.navigate(PerseoScreens.Equipment.route)
+                                if (!motivos.isNullOrEmpty()) {
+                                    navController.navigate(PerseoScreens.Equipment.route)
+                                } else {
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "No se requieren equipos",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                        .show()
+                                }
                             },
                         painter = rememberAsyncImagePainter(Constants.BUTTON_EQUIPMENT), //TODO: Change painter per bitmap
                         contentDescription = null,
