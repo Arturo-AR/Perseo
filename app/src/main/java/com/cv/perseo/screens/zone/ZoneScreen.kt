@@ -1,28 +1,42 @@
 package com.cv.perseo.screens.zone
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cv.perseo.components.ButtonsList
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
-import com.cv.perseo.utils.Constants
 
 @ExperimentalFoundationApi
 @Composable
-fun ZoneScreen(navController: NavController) {
+fun ZoneScreen(
+    navController: NavController,
+    viewModel: ZoneScreenViewModel = hiltViewModel()
+) {
     val scaffoldState = rememberScaffoldState()
-    val rubroList = listOf(Constants.RUBRO1, Constants.RUBRO2, Constants.RUBRO3, Constants.RUBRO4)
+    val currentZone by viewModel.currentZone.observeAsState()
+    val rubro = viewModel.rubro.collectAsState().value
+    val rubroList = mutableListOf<String>()
+    if (rubro.isNotEmpty()) {
+        for (x in rubro) {
+            rubroList.add(x.rubro_icon)
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "(Zona)*",
+                title = currentZone ?: "",
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.MyServiceOrders.route) {
@@ -35,6 +49,11 @@ fun ZoneScreen(navController: NavController) {
         },
         backgroundColor = Background,
     ) {
-        ButtonsList(navController = navController, Items = rubroList, true)
+        if (rubroList.isNotEmpty()) {
+            ButtonsList(navController = navController, Items = rubroList, onRubro = true) { index ->
+                viewModel.saveRubro(rubro[index].rubro)
+                navController.navigate(PerseoScreens.Rubro.route)
+            }
+        }
     }
 }

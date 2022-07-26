@@ -9,10 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,8 +18,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cv.perseo.components.*
+import com.cv.perseo.model.database.Permissions
+import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Accent
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.ButtonText
@@ -32,7 +32,10 @@ import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @Composable
-fun DashboardScreen(navController: NavController) {
+fun DashboardScreen(
+    navController: NavController,
+    viewModel: DashboardScreenViewModel = hiltViewModel()
+) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val openDialog = remember {
@@ -55,7 +58,7 @@ fun DashboardScreen(navController: NavController) {
                 }
             }
         },
-        drawerContent = { DrawerView() },
+        drawerContent = { DrawerView(navController, viewModel) },
         bottomBar = {
             PerseoBottomBar()
         },
@@ -72,13 +75,13 @@ fun DashboardScreen(navController: NavController) {
         }
         ButtonsList(
             navController,
-            listOf(Constants.SERVICE_ORDERS, Constants.INVENTORY, Constants.SUBSCRIBER)
+            viewModel.permissions.collectAsState().value
         )
     }
 }
 
 @Composable
-fun DrawerView() {
+fun DrawerView(navController: NavController, viewModel: DashboardScreenViewModel) {
 
     val context = LocalContext.current
     Column(
@@ -112,7 +115,8 @@ fun DrawerView() {
         }
         Divider(color = Accent)
         AddDrawerHeader(title = "Cerrar Sesion", icon = Icons.Default.Close) {
-            Toast.makeText(context, "Cerrar sesion", Toast.LENGTH_SHORT).show()
+            viewModel.signOut()
+            navController.navigate(PerseoScreens.Login.route)
         }
     }
 }

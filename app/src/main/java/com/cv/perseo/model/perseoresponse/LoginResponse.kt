@@ -20,9 +20,8 @@ data class PermissionsBody(
 )
 
 data class EnterpriseBody(
-    @SerializedName("NOMBRE_COMERCIAL") val empresa: String,
-    @SerializedName("CIUDAD") val ciudad: String,
+    @SerializedName("CIUDAD") val municipality: String,
     @SerializedName("LOGOTIPO") val logo: String,
-    @SerializedName("LOGOTIPO_ICO") val logoIcono: String,
-    @SerializedName("ID_EMPRESA") val idEmpresa: Int,
+    @SerializedName("LOGOTIPO_ICO") val logoIcon: String,
+    @SerializedName("ID_EMPRESA") val idMunicipality: Int,
 )

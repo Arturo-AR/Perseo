@@ -7,9 +7,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.cv.perseo.screens.SplashScreen
+import com.cv.perseo.screens.splash.SplashScreen
 import com.cv.perseo.screens.compliance.ComplianceScreen
 import com.cv.perseo.screens.dashboard.DashboardScreen
+import com.cv.perseo.screens.dashboard.DashboardScreenViewModel
 import com.cv.perseo.screens.enterpriseselector.EnterpriseSelectorScreen
 import com.cv.perseo.screens.equipment.EquipmentScreen
 import com.cv.perseo.screens.inventory.InventoryScreen
@@ -23,6 +24,7 @@ import com.cv.perseo.screens.rubro.RubroScreen
 import com.cv.perseo.screens.scheduleorders.ScheduleOrdersScreen
 import com.cv.perseo.screens.servicecords.ServiceCordsScreen
 import com.cv.perseo.screens.serviceorders.ServiceOrdersScreen
+import com.cv.perseo.screens.splash.SplashScreenViewModel
 import com.cv.perseo.screens.subscribers.SubscribersScreen
 import com.cv.perseo.screens.zone.ZoneScreen
 
@@ -38,7 +40,8 @@ fun PerseoNavigation() {
         }
 
         composable(PerseoScreens.Dashboard.route) {
-            DashboardScreen(navController = navController)
+            val viewModel = hiltViewModel<DashboardScreenViewModel>()
+            DashboardScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(PerseoScreens.EnterpriseSelector.route) {
@@ -91,7 +94,8 @@ fun PerseoNavigation() {
         }
 
         composable(PerseoScreens.Splash.route) {
-            SplashScreen(navController = navController)
+            val viewModel = hiltViewModel<SplashScreenViewModel>()
+            SplashScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(PerseoScreens.ScheduleOrders.route) {

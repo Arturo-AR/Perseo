@@ -1,12 +1,21 @@
 package com.cv.perseo.components
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -23,31 +32,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.cv.perseo.data.Data
 import com.cv.perseo.model.ItemOSDetail
-import com.cv.perseo.model.Material
-import com.cv.perseo.model.ServiceCords
+import com.cv.perseo.model.database.Materials
 import com.cv.perseo.model.database.ServiceOrder
+import com.cv.perseo.model.perseoresponse.CordsOrderBody
+import com.cv.perseo.model.perseoresponse.Inventory
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
+import com.cv.perseo.utils.toHourFormat
+import kotlinx.coroutines.delay
+import java.util.*
 
 @Composable
 fun LogoPerseo(modifier: Modifier) {
@@ -283,7 +298,8 @@ fun ImageButton(
 fun ButtonsList(
     navController: NavController,
     Items: List<String>,
-    onRubro: Boolean = false
+    onRubro: Boolean = false,
+    onClick: (Int) -> Unit = { }
 ) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
@@ -291,7 +307,7 @@ fun ButtonsList(
     ) {
         items(Items.size) { index ->
             ImageButton(
-                urlImage = Items[index],
+                urlImage = Constants.PERSEO_BASE_URL + (if (onRubro) Constants.RUBROS_BUTTONS_PATH else "") + Items[index],
                 modifier = Modifier.padding(8.dp)
             ) {
                 if (!onRubro) {
@@ -316,7 +332,7 @@ fun ButtonsList(
                         }
                     }
                 } else {
-                    navController.navigate(PerseoScreens.Rubro.route)
+                    onClick(index)
                 }
 
             }
@@ -359,19 +375,14 @@ fun ShowAlertDialog(
 @ExperimentalFoundationApi
 @Composable
 fun ZonesButtons(
-    Items: List<String> = listOf(
-        "VILLAS DEL PEDREGAL",
-        "HUB CUAUTEPEC",
-        "NUEVO HIDALGO",
-        "COLEGIO Y BONFIL"
-    ),
-    navController: NavController
+    items: List<String>,
+    onPress: (String) -> Unit
 ) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
         contentPadding = PaddingValues(16.dp),
         content = {
-            items(Items.size) { index ->
+            items(items.size) { index ->
                 Box(
                     modifier = Modifier
                         .padding(4.dp)
@@ -382,9 +393,7 @@ fun ZonesButtons(
                         modifier = Modifier
                             .padding(4.dp)
                             .fillMaxSize()
-                            .clickable {
-                                navController.navigate(PerseoScreens.Zone.route)
-                            },
+                            .clickable { onPress(items[index]) },
                         painter = rememberAsyncImagePainter(Constants.BUTTON_BACKGROUND), //TODO: Change painter per bitmap
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds
@@ -398,9 +407,10 @@ fun ZonesButtons(
                     ) {
                         Text(
                             modifier = Modifier.width(100.dp),
-                            text = Items[index],
+                            text = items[index],
                             fontSize = 12.sp,
-                            maxLines = 2
+                            maxLines = 2,
+                            fontWeight = FontWeight.Bold
                         )
                         Icon(imageVector = Icons.Default.LocationOn, contentDescription = null)
                     }
@@ -411,18 +421,7 @@ fun ZonesButtons(
 
 @Composable
 fun ServiceOrderCard(
-    os: ServiceOrder = ServiceOrder(
-        idOs = 234,
-        rubroDesc = "efr",
-        motivoDesc = "INTALAR SERVICIO TV (PAQ)",
-        vialidad = "MARIANO DE JESUS TORRES",
-        noExterior = "2345",
-        zona = "wwekdfjn",
-        paquete = "wwekdfjn",
-        idRubro = "wwekdfjn",
-        fechaPreCumplimiento = "wwekdfjn",
-        iconoRubro = "wwekdfjn"
-    ),
+    os: ServiceOrder,
     onClick: () -> Unit = {}
 ) {
     Box(
@@ -437,7 +436,7 @@ fun ServiceOrderCard(
             modifier = Modifier
                 .padding(4.dp)
                 .fillMaxSize(),
-            painter = rememberAsyncImagePainter(Constants.OS_ACTIVE_BACKGROUND), //TODO: Change painter per bitmap
+            painter = rememberAsyncImagePainter(if (os.preCumDate == "") Constants.OS_ACTIVE_BACKGROUND else Constants.OS_INACTIVE_BACKGROUND), //TODO: Change painter per bitmap
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
@@ -450,18 +449,18 @@ fun ServiceOrderCard(
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 4.dp),
-                text = os.motivoDesc,
+                text = os.motivo,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "${os.vialidad} #${os.noExterior}",
+                text = "${os.street} #${os.outdoorNumber}",
                 color = White,
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp
             )
             Text(
-                text = "Sector perron",
+                text = "Sector: ${os.sector}",
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp
             )
@@ -540,13 +539,14 @@ fun DetailItem(
 }
 
 @Composable
-fun MaterialsAddItem() {
-
-    val materiales = Data.Material
+fun MaterialsAddItem(
+    materiales: List<Inventory>,
+    onClick: (Double, Inventory) -> Unit
+) {
     // State variables
-    var countryName: Material by remember { mutableStateOf(materiales[0]) }
+    var countryName: Inventory by remember { mutableStateOf(materiales[0]) }
     var expanded by remember { mutableStateOf(false) }
-
+    var text by remember { mutableStateOf("") }
     Card {
         Row(
             modifier = Modifier
@@ -596,7 +596,6 @@ fun MaterialsAddItem() {
                         }
                     }
                 }
-                var text by remember { mutableStateOf("") }
 
                 OutlinedTextField(
                     value = text,
@@ -627,7 +626,9 @@ fun MaterialsAddItem() {
                         )
                     )
                     .background(Yellow3),
-                onClick = {}
+                onClick = {
+                    onClick(text.toDouble(), countryName)
+                }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = White)
             }
@@ -636,7 +637,11 @@ fun MaterialsAddItem() {
 }
 
 @Composable
-fun EquipmentItem() {
+fun EquipmentItem(
+    motivo: String,
+    onAction: (String) -> Unit,
+    getImage: (Bitmap) -> Unit
+) {
     var text by remember { mutableStateOf("") }
     Card(
         modifier = Modifier
@@ -657,46 +662,40 @@ fun EquipmentItem() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Text(text = "Etiqueta", color = White, fontSize = 20.sp)
+            Text(text = motivo, color = White, fontSize = 20.sp)
+            if (motivo == "CAJA TERMINAL" || motivo == "ROUTER CENTRAL") {
+                TextFieldWithDropdownUsage(
+                    listOf("caja", "caja1", "caja2", "raton", "raton1"),
+                    "Equipo", onAction = onAction)
+            } else {
+                TextField(
+                    modifier = Modifier.padding(4.dp),
+                    value = text,
+                    onValueChange = {
+                        text = it
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions {
+                        onAction(text)
+                    },
+                    singleLine = true,
+                    label = { Text("Equipo") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = Yellow3,
 
-            TextField(
-                modifier = Modifier.padding(4.dp),
-                value = text,
-                onValueChange = { text = it },
-                label = { Text("Equipo") },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Yellow3,
-                    cursorColor = White,
-                    focusedBorderColor = White,
-                    unfocusedBorderColor = Yellow3,
-                    focusedLabelColor = Yellow3,
-                    unfocusedLabelColor = White,
-                )
-            )
-
-            IconButton(
-                modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 10.dp,
-                            topEnd = 10.dp,
-                            bottomStart = 10.dp,
-                            bottomEnd = 10.dp
-                        )
+                        cursorColor = White,
+                        focusedBorderColor = Yellow4,
+                        unfocusedBorderColor = White,
+                        focusedLabelColor = Yellow3,
+                        unfocusedLabelColor = White,
                     )
-                    .background(Yellow6)
-                    .padding(horizontal = 16.dp),
-                onClick = {}
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = null)
-                    Text(text = "FOTO", fontWeight = FontWeight.Bold)
-                }
+                )
+            }
+            RequestContentPermission {
+                getImage(it)
             }
         }
     }
@@ -704,7 +703,7 @@ fun EquipmentItem() {
 
 @Composable
 fun CordsServicesItem(
-    cord: ServiceCords,
+    cord: CordsOrderBody,
 ) {
     val checked = rememberSaveable { mutableStateOf(false) }
     Card(
@@ -715,7 +714,7 @@ fun CordsServicesItem(
         Row(
             modifier = Modifier
                 .background(
-                    if (cord.idTipoOrden == "COFAPA") cordsRed else cordsBlue
+                    if (cord.orderType == "COFAPA") cordsRed else cordsBlue
                 )
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -723,14 +722,14 @@ fun CordsServicesItem(
         ) {
             Text(
                 modifier = Modifier.weight(1.5f),
-                text = "${cord.vialidad} #${cord.noExterior}",
+                text = "${cord.highway} #${cord.outdoorNumber}",
                 color = White
             )
             Column(modifier = Modifier.weight(1.5f)) {
                 Text(text = "Etiquita", color = Yellow4)
-                Text(text = cord.etiqueta, color = White)
+                Text(text = cord.label, color = White)
                 Text(text = "Caja terminal", color = Yellow4)
-                Text(text = cord.cajaTerminal, color = White)
+                Text(text = cord.terminalBox, color = White)
             }
             Checkbox(
                 modifier = Modifier.weight(1f),
@@ -871,6 +870,256 @@ fun DefaultButtonWithImage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = title, fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Composable
+fun ScheduleItem(
+    order: ServiceOrder,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable { onClick() }
+    ) {
+        Row(
+            modifier = Modifier
+                .background(if (order.preCumDate == "") Yellow3 else Accent)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(4f)) {
+                Text(text = order.motivo, color = Black, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "${order.street} #${order.outdoorNumber}",
+                    color = White,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp
+                )
+                if (!order.sector.isNullOrEmpty())
+                    Text(
+                        text = "sector: ${order.sector}",
+                        fontWeight = FontWeight.Light,
+                        fontSize = 13.sp
+                    )
+
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1.5f)
+                    .height(IntrinsicSize.Max),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(text = "De: ${order.hourFrom?.toHourFormat()}", color = White)
+                Text(text = "De: ${order.hourUntil?.toHourFormat()}", color = White)
+            }
+        }
+    }
+}
+
+@Composable
+fun MaterialsFinalItem(
+    material: Materials,
+    onClick: (UUID) -> Unit
+) {
+    Card {
+        Row(
+            modifier = Modifier
+                .background(Accent)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(modifier = Modifier.weight(9f)) {
+                Text(text = "${material.desc_material} ", color = Yellow4)
+                Text(text = "${material.cantidad}", color = White)
+            }
+            IconButton(
+                modifier = Modifier
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 10.dp,
+                            topEnd = 10.dp,
+                            bottomStart = 10.dp,
+                            bottomEnd = 10.dp
+                        )
+                    )
+                    .background(Gray)
+                    .weight(2f),
+                onClick = {
+                    onClick(material.id)
+                }
+            ) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = null, tint = White)
+            }
+        }
+    }
+}
+
+@Composable
+fun MaterialsFinalList(
+    materialList: List<Materials>,
+    onDelete: (UUID) -> Unit
+) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(materialList) { material ->
+            MaterialsFinalItem(material) {
+                onDelete(it)
+            }
+        }
+    }
+}
+
+@Composable
+fun RequestContentPermission(
+    onReturn: (Bitmap) -> Unit
+) {
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+    val context = LocalContext.current
+    val bitmap = remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+    val launcher = rememberLauncherForActivityResult(
+        contract =
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUri = uri
+    }
+    Column {
+        Button(colors = ButtonDefaults.buttonColors(
+            backgroundColor = Yellow4
+        ), onClick = {
+            launcher.launch("image/*")
+        }) {
+            Text(text = "Imagen")
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        imageUri?.let {
+            if (Build.VERSION.SDK_INT < 28) {
+                bitmap.value = MediaStore.Images
+                    .Media.getBitmap(context.contentResolver, it)
+            } else {
+                val source = ImageDecoder
+                    .createSource(context.contentResolver, it)
+                bitmap.value = ImageDecoder.decodeBitmap(source)
+            }
+            bitmap.value?.let { btm ->
+                onReturn(btm)
+                Image(
+                    bitmap = btm.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier.size(100.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TextFieldWithDropdownUsage(
+    dataIn: List<String>,
+    label: String,
+    onAction: (String) -> Unit,
+) {
+    val dropDownOptions = remember { mutableStateOf(listOf<String>()) }
+    val textFieldValue = remember { mutableStateOf(TextFieldValue()) }
+    val dropDownExpanded = remember { mutableStateOf(false) }
+
+    fun onDropdownDismissRequest() {
+        dropDownExpanded.value = false
+    }
+
+    fun onValueChanged(value: TextFieldValue) {
+        //strSelectedData = value.text
+        dropDownExpanded.value = true
+        textFieldValue.value = value
+        dropDownOptions.value = dataIn.filter {
+            it.startsWith(value.text) && it != value.text
+        }
+    }
+
+    TextFieldWithDropdown(
+        modifier = Modifier.fillMaxWidth(),
+        value = textFieldValue.value,
+        setValue = ::onValueChanged,
+        onDismissRequest = ::onDropdownDismissRequest,
+        dropDownExpanded = dropDownExpanded.value,
+        list = dropDownOptions.value,
+        label = label,
+        onAction = onAction
+    )
+}
+
+@Composable
+fun TextFieldWithDropdown(
+    modifier: Modifier = Modifier,
+    value: TextFieldValue,
+    setValue: (TextFieldValue) -> Unit,
+    onDismissRequest: () -> Unit,
+    dropDownExpanded: Boolean,
+    list: List<String>,
+    label: String,
+    onAction: (String) -> Unit,
+) {
+    Box(modifier) {
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused)
+                        onDismissRequest()
+                },
+            value = value,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+
+            onValueChange = setValue,
+            label = { Text(text = label) },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Yellow3,
+                cursorColor = White,
+                focusedBorderColor = Yellow3,
+                unfocusedBorderColor = White,
+                focusedLabelColor = Yellow3,
+                unfocusedLabelColor = White,
+            ),
+            keyboardActions = KeyboardActions {
+                onAction(value.text)
+            },
+            singleLine = true
+        )
+        DropdownMenu(
+            expanded = dropDownExpanded,
+            properties = PopupProperties(
+                focusable = false,
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true
+            ),
+            onDismissRequest = onDismissRequest
+        ) {
+            list.forEach { text ->
+                DropdownMenuItem(onClick = {
+                    setValue(
+                        TextFieldValue(
+                            text,
+                            TextRange(text.length)
+                        )
+                    )
+                }) {
+                    Text(text = text)
+                }
+            }
+
         }
     }
 }

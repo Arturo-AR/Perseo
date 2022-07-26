@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,18 +17,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cv.perseo.components.PerseoBottomBar
 import com.cv.perseo.components.PerseoTopBar
-import com.cv.perseo.data.Data
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.Yellow3
 
 @ExperimentalFoundationApi
 @Composable
-fun InventoryScreen(navController: NavController) {
+fun InventoryScreen(
+    navController: NavController,
+    viewModel: InventoryScreenViewModel = hiltViewModel()
+) {
     val scaffoldState = rememberScaffoldState()
+    val inventory by viewModel.inventory.observeAsState()
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -59,42 +66,44 @@ fun InventoryScreen(navController: NavController) {
                     bottom = 58.dp
                 ),
                 content = {
-                    items(Data.Material.size) { item ->
-                        Card(
-                            backgroundColor = Yellow3,
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .fillMaxSize()
-                                .clip(
-                                    RoundedCornerShape(
-                                        topStart = 15.dp,
-                                        topEnd = 15.dp,
-                                        bottomEnd = 15.dp,
-                                        bottomStart = 15.dp,
-                                    )
-                                )
-                                .clickable { },
-                            elevation = 8.dp,
-                        ) {
-                            Column(
+                    if (!inventory.isNullOrEmpty()) {
+                        items(inventory!!.size) { item ->
+                            Card(
+                                backgroundColor = Yellow3,
                                 modifier = Modifier
-                                    .padding(8.dp)
-                                    .height(90.dp),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
+                                    .padding(4.dp)
+                                    .fillMaxSize()
+                                    .clip(
+                                        RoundedCornerShape(
+                                            topStart = 15.dp,
+                                            topEnd = 15.dp,
+                                            bottomEnd = 15.dp,
+                                            bottomStart = 15.dp,
+                                        )
+                                    )
+                                    .clickable { },
+                                elevation = 8.dp,
                             ) {
-                                Text(
-                                    text = Data.Material[item].materialDesc,
-                                    fontSize = 15.sp,
-                                    color = Color.Black,
-                                    textAlign = TextAlign.Center
-                                )
-                                Text(
-                                    text = Data.Material[item].amount.toString(),
-                                    fontSize = 15.sp,
-                                    color = Color.White,
-                                    textAlign = TextAlign.Center
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .height(90.dp),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Text(
+                                        text = inventory!![item].materialDesc,
+                                        fontSize = 15.sp,
+                                        color = Color.Black,
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Text(
+                                        text = inventory!![item].amount.toString(),
+                                        fontSize = 15.sp,
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
                             }
                         }
                     }
