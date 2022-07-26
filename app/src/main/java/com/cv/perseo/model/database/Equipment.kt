@@ -9,5 +9,5 @@ data class Equipment(
     @PrimaryKey val id: UUID = UUID.randomUUID(),
     val id_tipo_equipo: String,
     val id_equipo: String,
-    var url_image: String?
+    val url_image: String?
 )

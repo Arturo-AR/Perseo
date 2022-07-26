@@ -1,7 +1,10 @@
 package com.cv.perseo.utils
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.util.Base64
 import android.widget.Toast
+import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -24,4 +27,11 @@ fun Context.toast(text: String, duration: Int = Toast.LENGTH_SHORT) {
 fun String.toHourFormat(): String {
     val slices = this.split(":")
     return "${slices[0]}:${slices[1]}"
+}
+
+fun Bitmap.toBase64String(): String {
+    val bas = ByteArrayOutputStream()
+    this.compress(Bitmap.CompressFormat.JPEG, 100, bas)
+    val b = bas.toByteArray()
+    return Base64.encodeToString(b, Base64.DEFAULT)
 }

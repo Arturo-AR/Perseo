@@ -1,6 +1,14 @@
 package com.cv.perseo.components
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,15 +38,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.cv.perseo.data.Data
@@ -51,6 +61,7 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
 import com.cv.perseo.utils.toHourFormat
+import kotlinx.coroutines.delay
 import java.util.*
 
 @Composable
@@ -627,7 +638,9 @@ fun MaterialsAddItem(
 
 @Composable
 fun EquipmentItem(
-    motivo: String
+    motivo: String,
+    onAction: (String) -> Unit,
+    getImage: (Bitmap) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
     Card(
@@ -650,45 +663,39 @@ fun EquipmentItem(
             verticalArrangement = Arrangement.Top
         ) {
             Text(text = motivo, color = White, fontSize = 20.sp)
+            if (motivo == "CAJA TERMINAL" || motivo == "ROUTER CENTRAL") {
+                TextFieldWithDropdownUsage(
+                    listOf("caja", "caja1", "caja2", "raton", "raton1"),
+                    "Equipo", onAction = onAction)
+            } else {
+                TextField(
+                    modifier = Modifier.padding(4.dp),
+                    value = text,
+                    onValueChange = {
+                        text = it
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions {
+                        onAction(text)
+                    },
+                    singleLine = true,
+                    label = { Text("Equipo") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = Yellow3,
 
-            TextField(
-                modifier = Modifier.padding(4.dp),
-                value = text,
-                onValueChange = { text = it },
-                label = { Text("Equipo") },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Yellow3,
-                    cursorColor = White,
-                    focusedBorderColor = White,
-                    unfocusedBorderColor = Yellow3,
-                    focusedLabelColor = Yellow3,
-                    unfocusedLabelColor = White,
-                )
-            )
-
-            IconButton(
-                modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 10.dp,
-                            topEnd = 10.dp,
-                            bottomStart = 10.dp,
-                            bottomEnd = 10.dp
-                        )
+                        cursorColor = White,
+                        focusedBorderColor = Yellow4,
+                        unfocusedBorderColor = White,
+                        focusedLabelColor = Yellow3,
+                        unfocusedLabelColor = White,
                     )
-                    .background(Yellow6)
-                    .padding(horizontal = 16.dp),
-                onClick = {}
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = null)
-                    Text(text = "FOTO", fontWeight = FontWeight.Bold)
-                }
+                )
+            }
+            RequestContentPermission {
+                getImage(it)
             }
         }
     }
@@ -969,3 +976,150 @@ fun MaterialsFinalList(
     }
 }
 
+@Composable
+fun RequestContentPermission(
+    onReturn: (Bitmap) -> Unit
+) {
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+    val context = LocalContext.current
+    val bitmap = remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+    val launcher = rememberLauncherForActivityResult(
+        contract =
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUri = uri
+    }
+    Column {
+        Button(colors = ButtonDefaults.buttonColors(
+            backgroundColor = Yellow4
+        ), onClick = {
+            launcher.launch("image/*")
+        }) {
+            Text(text = "Imagen")
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        imageUri?.let {
+            if (Build.VERSION.SDK_INT < 28) {
+                bitmap.value = MediaStore.Images
+                    .Media.getBitmap(context.contentResolver, it)
+            } else {
+                val source = ImageDecoder
+                    .createSource(context.contentResolver, it)
+                bitmap.value = ImageDecoder.decodeBitmap(source)
+            }
+            bitmap.value?.let { btm ->
+                onReturn(btm)
+                Image(
+                    bitmap = btm.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier.size(100.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TextFieldWithDropdownUsage(
+    dataIn: List<String>,
+    label: String,
+    onAction: (String) -> Unit,
+) {
+    val dropDownOptions = remember { mutableStateOf(listOf<String>()) }
+    val textFieldValue = remember { mutableStateOf(TextFieldValue()) }
+    val dropDownExpanded = remember { mutableStateOf(false) }
+
+    fun onDropdownDismissRequest() {
+        dropDownExpanded.value = false
+    }
+
+    fun onValueChanged(value: TextFieldValue) {
+        //strSelectedData = value.text
+        dropDownExpanded.value = true
+        textFieldValue.value = value
+        dropDownOptions.value = dataIn.filter {
+            it.startsWith(value.text) && it != value.text
+        }
+    }
+
+    TextFieldWithDropdown(
+        modifier = Modifier.fillMaxWidth(),
+        value = textFieldValue.value,
+        setValue = ::onValueChanged,
+        onDismissRequest = ::onDropdownDismissRequest,
+        dropDownExpanded = dropDownExpanded.value,
+        list = dropDownOptions.value,
+        label = label,
+        onAction = onAction
+    )
+}
+
+@Composable
+fun TextFieldWithDropdown(
+    modifier: Modifier = Modifier,
+    value: TextFieldValue,
+    setValue: (TextFieldValue) -> Unit,
+    onDismissRequest: () -> Unit,
+    dropDownExpanded: Boolean,
+    list: List<String>,
+    label: String,
+    onAction: (String) -> Unit,
+) {
+    Box(modifier) {
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused)
+                        onDismissRequest()
+                },
+            value = value,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+
+            onValueChange = setValue,
+            label = { Text(text = label) },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Yellow3,
+                cursorColor = White,
+                focusedBorderColor = Yellow3,
+                unfocusedBorderColor = White,
+                focusedLabelColor = Yellow3,
+                unfocusedLabelColor = White,
+            ),
+            keyboardActions = KeyboardActions {
+                onAction(value.text)
+            },
+            singleLine = true
+        )
+        DropdownMenu(
+            expanded = dropDownExpanded,
+            properties = PopupProperties(
+                focusable = false,
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true
+            ),
+            onDismissRequest = onDismissRequest
+        ) {
+            list.forEach { text ->
+                DropdownMenuItem(onClick = {
+                    setValue(
+                        TextFieldValue(
+                            text,
+                            TextRange(text.length)
+                        )
+                    )
+                }) {
+                    Text(text = text)
+                }
+            }
+
+        }
+    }
+}
