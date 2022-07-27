@@ -1,11 +1,13 @@
 package com.cv.perseo.screens.equipment
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cv.perseo.model.EquipmentTmp
+import com.cv.perseo.model.database.Equipment
 import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.perseoresponse.ServiceOrderItem
 import com.cv.perseo.repository.DatabaseRepository
@@ -15,6 +17,7 @@ import com.cv.perseo.utils.toBase64String
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -92,10 +95,51 @@ class EquipmentScreenViewModel @Inject constructor(
             _equipmentTmp.value?.add(EquipmentTmp(equipment, idEquipment, image?.toBase64String()))
         } else {
             if (idEquipment == null) {
-                current.imageBitmap = image?.toBase64String()
+                current.image = image?.toBase64String()
             } else {
                 current.idEquipment = idEquipment
             }
+        }
+    }
+
+    fun saveEquipmentInDatabase() {
+        viewModelScope.launch {
+            dbRepository.deleteEquipment()
+            for (equipment in _equipmentTmp.value!!) {
+                dbRepository.insertEquipment(
+                    Equipment(
+                        id_tipo_equipo = equipment.equipment!!,
+                        id_equipo = equipment.idEquipment!!,
+                        url_image = equipment.image
+                    )
+                )
+            }
+        }
+    }
+
+/*
+    fun getEquipment() {
+        viewModelScope.launch {
+            dbRepository.getAllEquipment().distinctUntilChanged()
+                .collect { equipment ->
+                    Log.d("equipos", equipment.toString())
+                }
+        }
+    }
+*/
+
+    fun initEquipment() {
+        viewModelScope.launch {
+            dbRepository.getAllEquipment().distinctUntilChanged()
+                .collect { equipment ->
+                    _equipmentTmp.value = equipment.map {
+                        EquipmentTmp(
+                            equipment = it.id_tipo_equipo,
+                            idEquipment = it.id_equipo,
+                            image = it.url_image
+                        )
+                    } as MutableList
+                }
         }
     }
 }

@@ -2,10 +2,7 @@ package com.cv.perseo.data.database
 
 import androidx.room.*
 import com.cv.perseo.model.Rubro
-import com.cv.perseo.model.database.GeneralData
-import com.cv.perseo.model.database.Materials
-import com.cv.perseo.model.database.Permissions
-import com.cv.perseo.model.database.ServiceOrder
+import com.cv.perseo.model.database.*
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
@@ -77,4 +74,17 @@ interface PerseoDatabaseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMaterial(material: Materials)
+
+    /**
+     * Queries for Equipment
+     */
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertEquipment(equipment: Equipment)
+
+    @Query("DELETE FROM equipment")
+    suspend fun deleteEquipment()
+
+    @Query("SELECT * FROM equipment")
+    fun getAllEquipment(): Flow<List<Equipment>>
 }

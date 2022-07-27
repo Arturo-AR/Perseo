@@ -92,12 +92,12 @@ class OSDetailsScreenViewModel @Inject constructor(
         _doing.value = prefs.getDoing()
     }
 
-    fun finishOrder() {
+    fun cancelOrder() {
         finishDoing()
         finishRoute()
         viewModelScope.launch {
             dbRepository.deleteMaterials()
+            dbRepository.deleteEquipment()
         }
     }
-
 }

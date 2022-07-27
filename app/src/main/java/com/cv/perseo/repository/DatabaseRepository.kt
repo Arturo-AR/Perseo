@@ -2,10 +2,7 @@ package com.cv.perseo.repository
 
 import com.cv.perseo.data.database.PerseoDatabaseDao
 import com.cv.perseo.model.Rubro
-import com.cv.perseo.model.database.GeneralData
-import com.cv.perseo.model.database.Materials
-import com.cv.perseo.model.database.Permissions
-import com.cv.perseo.model.database.ServiceOrder
+import com.cv.perseo.model.database.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
@@ -71,4 +68,17 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
 
     fun getAllMaterials(): Flow<List<Materials>> =
         perseoDatabaseDao.getAllMaterials().flowOn(Dispatchers.IO).conflate()
+
+    /**
+     * functions for equipment
+     */
+
+    suspend fun insertEquipment(equipment: Equipment) =
+        perseoDatabaseDao.insertEquipment(equipment)
+
+    suspend fun deleteEquipment() = perseoDatabaseDao.deleteEquipment()
+
+    fun getAllEquipment(): Flow<List<Equipment>> =
+        perseoDatabaseDao.getAllEquipment().flowOn(Dispatchers.IO).conflate()
+
 }

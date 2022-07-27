@@ -209,7 +209,7 @@ fun OSDetailsScreen(
                                 .padding(vertical = 6.dp)
                                 .fillMaxHeight()
                                 .clickable {
-                                    viewModel.finishOrder()
+                                    viewModel.cancelOrder()
                                 },
                             painter = rememberAsyncImagePainter(Constants.BUTTON_CANCEL), //TODO: Change painter per bitmap
                             contentDescription = null,

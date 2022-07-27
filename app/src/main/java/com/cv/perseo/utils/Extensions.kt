@@ -2,6 +2,7 @@ package com.cv.perseo.utils
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Base64
 import android.widget.Toast
 import java.io.ByteArrayOutputStream
@@ -34,4 +35,9 @@ fun Bitmap.toBase64String(): String {
     this.compress(Bitmap.CompressFormat.JPEG, 100, bas)
     val b = bas.toByteArray()
     return Base64.encodeToString(b, Base64.DEFAULT)
+}
+
+fun String.toBitmap(): Bitmap {
+    val imageBytes = Base64.decode(this, 0)
+    return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 }

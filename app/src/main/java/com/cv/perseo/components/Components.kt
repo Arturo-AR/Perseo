@@ -8,7 +8,6 @@ import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,7 +43,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,7 +59,6 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
 import com.cv.perseo.utils.toHourFormat
-import kotlinx.coroutines.delay
 import java.util.*
 
 @Composable
@@ -639,10 +636,12 @@ fun MaterialsAddItem(
 @Composable
 fun EquipmentItem(
     motivo: String,
+    oldBitmap: Bitmap?,
+    idMotivo: String?,
     onAction: (String) -> Unit,
     getImage: (Bitmap) -> Unit
 ) {
-    var text by remember { mutableStateOf("") }
+    var text by remember { mutableStateOf(idMotivo ?: "") }
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -666,7 +665,9 @@ fun EquipmentItem(
             if (motivo == "CAJA TERMINAL" || motivo == "ROUTER CENTRAL") {
                 TextFieldWithDropdownUsage(
                     listOf("caja", "caja1", "caja2", "raton", "raton1"),
-                    "Equipo", onAction = onAction)
+                    "Equipo", onAction = onAction,
+                    idMotivo = idMotivo
+                )
             } else {
                 TextField(
                     modifier = Modifier.padding(4.dp),
@@ -694,7 +695,7 @@ fun EquipmentItem(
                     )
                 )
             }
-            RequestContentPermission {
+            RequestContentPermission(oldBitmap = oldBitmap) {
                 getImage(it)
             }
         }
@@ -978,6 +979,7 @@ fun MaterialsFinalList(
 
 @Composable
 fun RequestContentPermission(
+    oldBitmap: Bitmap?,
     onReturn: (Bitmap) -> Unit
 ) {
     var imageUri by remember {
@@ -985,7 +987,7 @@ fun RequestContentPermission(
     }
     val context = LocalContext.current
     val bitmap = remember {
-        mutableStateOf<Bitmap?>(null)
+        mutableStateOf(oldBitmap)
     }
     val launcher = rememberLauncherForActivityResult(
         contract =
@@ -1002,6 +1004,7 @@ fun RequestContentPermission(
             Text(text = "Imagen")
         }
         Spacer(modifier = Modifier.height(12.dp))
+
         imageUri?.let {
             if (Build.VERSION.SDK_INT < 28) {
                 bitmap.value = MediaStore.Images
@@ -1011,15 +1014,17 @@ fun RequestContentPermission(
                     .createSource(context.contentResolver, it)
                 bitmap.value = ImageDecoder.decodeBitmap(source)
             }
-            bitmap.value?.let { btm ->
-                onReturn(btm)
-                Image(
-                    bitmap = btm.asImageBitmap(),
-                    contentDescription = null,
-                    modifier = Modifier.size(100.dp)
-                )
-            }
         }
+        bitmap.value?.let { btm ->
+            onReturn(btm)
+            Image(
+                bitmap = btm.asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier.size(100.dp)
+            )
+        }
+
+
     }
 }
 
@@ -1027,22 +1032,22 @@ fun RequestContentPermission(
 fun TextFieldWithDropdownUsage(
     dataIn: List<String>,
     label: String,
+    idMotivo: String?,
     onAction: (String) -> Unit,
 ) {
     val dropDownOptions = remember { mutableStateOf(listOf<String>()) }
-    val textFieldValue = remember { mutableStateOf(TextFieldValue()) }
+    val textFieldValue = remember { mutableStateOf(idMotivo ?: "") }
     val dropDownExpanded = remember { mutableStateOf(false) }
 
     fun onDropdownDismissRequest() {
         dropDownExpanded.value = false
     }
 
-    fun onValueChanged(value: TextFieldValue) {
-        //strSelectedData = value.text
+    fun onValueChanged(value: String) {
         dropDownExpanded.value = true
         textFieldValue.value = value
         dropDownOptions.value = dataIn.filter {
-            it.startsWith(value.text) && it != value.text
+            it.startsWith(value)
         }
     }
 
@@ -1061,8 +1066,8 @@ fun TextFieldWithDropdownUsage(
 @Composable
 fun TextFieldWithDropdown(
     modifier: Modifier = Modifier,
-    value: TextFieldValue,
-    setValue: (TextFieldValue) -> Unit,
+    value: String,
+    setValue: (String) -> Unit,
     onDismissRequest: () -> Unit,
     dropDownExpanded: Boolean,
     list: List<String>,
@@ -1094,7 +1099,7 @@ fun TextFieldWithDropdown(
                 unfocusedLabelColor = White,
             ),
             keyboardActions = KeyboardActions {
-                onAction(value.text)
+                onAction(value)
             },
             singleLine = true
         )
@@ -1110,10 +1115,7 @@ fun TextFieldWithDropdown(
             list.forEach { text ->
                 DropdownMenuItem(onClick = {
                     setValue(
-                        TextFieldValue(
-                            text,
-                            TextRange(text.length)
-                        )
+                        text
                     )
                 }) {
                     Text(text = text)
