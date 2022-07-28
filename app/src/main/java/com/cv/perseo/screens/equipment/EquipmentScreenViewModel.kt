@@ -9,11 +9,15 @@ import androidx.lifecycle.viewModelScope
 import com.cv.perseo.model.EquipmentTmp
 import com.cv.perseo.model.database.Equipment
 import com.cv.perseo.model.database.GeneralData
+import com.cv.perseo.model.perseorequest.ValidateEquipmentRequest
+import com.cv.perseo.model.perseoresponse.RouterCentral
 import com.cv.perseo.model.perseoresponse.ServiceOrderItem
+import com.cv.perseo.model.perseoresponse.TerminalBox
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.PerseoRepository
 import com.cv.perseo.repository.SharedRepository
 import com.cv.perseo.utils.toBase64String
+import com.cv.perseo.utils.toJsonString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,9 +47,16 @@ class EquipmentScreenViewModel @Inject constructor(
     private val _motivos: MutableLiveData<List<String>> = MutableLiveData()
     val motivos: LiveData<List<String>> = _motivos
 
+    private val motivosOriginal: MutableLiveData<List<String>> = MutableLiveData()
+
+    private val _routers: MutableLiveData<List<RouterCentral>> = MutableLiveData()
+    val routers: LiveData<List<RouterCentral>> = _routers
+
+    private val _terminalBox: MutableLiveData<List<TerminalBox>> = MutableLiveData()
+    val terminalBox: LiveData<List<TerminalBox>> = _terminalBox
+
     init {
         viewModelScope.launch {
-            dbRepository.deleteServiceOrders()
             dbRepository.getGeneralData()
                 .collect { generalData ->
 
@@ -64,15 +75,27 @@ class EquipmentScreenViewModel @Inject constructor(
         }
     }
 
+    fun getRouterBoxes() {
+        viewModelScope.launch {
+            val response = repository.getRoutersCT(generalData.value[0].idMunicipality)
+            if (response.isSuccessful) {
+                val RC = response.body()
+                if (RC?.responseCode == 200) {
+                    _terminalBox.value = RC.responseBody.terminalBox
+                    _routers.value = RC.responseBody.routers
+                }
+            }
+        }
+    }
 
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
             val response = repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
             if (response.isSuccessful) {
                 if (response.body()?.responseCode == 200) {
-                    val motivosResponse = response.body()!!.responseBody
+                    motivosOriginal.value = response.body()!!.responseBody
                     val motivos = mutableListOf<String>()
-                    motivosResponse?.map { motivo ->
+                    motivosOriginal.value?.map { motivo ->
                         val motivoArray = motivo.split("_")
                         if (motivoArray[0] == "AGREGAR" || motivoArray[0] == "QUITAR") {
                             if (motivoArray.size > 2) {
@@ -117,17 +140,6 @@ class EquipmentScreenViewModel @Inject constructor(
         }
     }
 
-/*
-    fun getEquipment() {
-        viewModelScope.launch {
-            dbRepository.getAllEquipment().distinctUntilChanged()
-                .collect { equipment ->
-                    Log.d("equipos", equipment.toString())
-                }
-        }
-    }
-*/
-
     fun initEquipment() {
         viewModelScope.launch {
             dbRepository.getAllEquipment().distinctUntilChanged()
@@ -140,6 +152,69 @@ class EquipmentScreenViewModel @Inject constructor(
                         )
                     } as MutableList
                 }
+        }
+    }
+
+    fun validateEquipment() {
+        viewModelScope.launch {
+            val equipment = ValidateEquipmentRequest(noContract = currentOs.value?.noContract!!)
+            motivosOriginal.value?.map {
+                when (it) {
+                    "AGREGAR_CABLEMODEM" -> equipment.addCM = 1
+                    "QUITAR_CABLEMODEM" -> equipment.removeCM = 1
+                    "AGREGAR_DECO" -> equipment.addDeco = 1
+                    "QUITAR_DECO" -> equipment.removeDeco = 1
+                    "AGREGAR_ETIQUETA" -> equipment.addEtiq = 1
+                    "QUITAR_ETIQUETA" -> equipment.removeEtiq = 1
+                    "AGREGAR_CAJA_DIGITAL" -> equipment.addCD = 1
+                    "QUITAR_CAJA_DIGITAL" -> equipment.removeCD = 1
+                    "AGREGAR_CAJA_TERMINAL" -> equipment.addCT = 1
+                    "QUITAR_CAJA_TERMINAL" -> equipment.removeCT = 1
+                    "AGREGAR_ROUTER_CENTRAL" -> equipment.addRC = 1
+                    "QUITAR_ROUTER_CENTRAL" -> equipment.removeRC = 1
+                    "AGREGAR_LINEA" -> equipment.addLine = 1
+                    "QUITAR_LINEA" -> equipment.removeLine = 1
+                    "AGREGAR_ROUTER" -> equipment.addRouter = 1
+                    "QUITAR_ROUTER" -> equipment.removeRouter = 1
+                    "AGREGAR_IP_PUBLICA" -> equipment.addIp = 1
+                    "QUITAR_IP_PUBLICA" -> equipment.removeIp = 1
+                    "AGREGAR_ANTENA" -> equipment.addAntenna = 1
+                    "QUITAR_ANTENA" -> equipment.removeAntenna = 1
+                }
+            }
+            equipmentTmp.value?.map {
+                when (it.equipment) {
+                    "CABLEMODEM" -> equipment.cmId = listOf(it.idEquipment!!)
+                    "DECO" -> equipment.decoId = listOf(it.idEquipment!!)
+                    "ETIQUETA" -> equipment.etiqId = listOf(it.idEquipment!!)
+                    "CAJA DIGITAL" -> equipment.cdId = listOf(it.idEquipment!!)
+                    "CAJA TERMINAL" -> equipment.ctId = listOf(it.idEquipment!!)
+                    "ROUTER CENTRAL" -> equipment.rcId = listOf(it.idEquipment!!)
+                    "LINEA" -> equipment.lineId = listOf(it.idEquipment!!)
+                    "ROUTER" -> equipment.routerId = listOf(it.idEquipment!!)
+                    "IP PUBLICA" -> equipment.ipId = listOf(it.idEquipment!!)
+                    "ANTENA" -> equipment.antennaId = listOf(it.idEquipment!!)
+                }
+            }
+            val response = repository.validateEquipment(
+                generalData.value[0].idMunicipality,
+                equipment.toJsonString()
+            )
+            Log.d(
+                "parametros",
+                "${generalData.value[0].idMunicipality} ${equipment.toJsonString()}"
+            )
+            if (response.isSuccessful) {
+                Log.d("Exito", "Llamada exitosa")
+                val validate = response.body()
+                if (validate?.responseBody?.code == "1") {
+                    //Esta dado de alta correctamente
+                    Log.d("Validate", validate.responseBody.message)
+                } else {
+                    //No esta dado de alta o lo tiene otro contrato
+                    Log.d("Validate", validate?.responseBody?.message!!)
+                }
+            }
         }
     }
 }

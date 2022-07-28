@@ -55,6 +55,8 @@ import com.cv.perseo.model.database.Materials
 import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.model.perseoresponse.CordsOrderBody
 import com.cv.perseo.model.perseoresponse.Inventory
+import com.cv.perseo.model.perseoresponse.RouterCentral
+import com.cv.perseo.model.perseoresponse.TerminalBox
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
@@ -638,6 +640,8 @@ fun EquipmentItem(
     motivo: String,
     oldBitmap: Bitmap?,
     idMotivo: String?,
+    boxes: List<TerminalBox>,
+    routers: List<RouterCentral>,
     onAction: (String) -> Unit,
     getImage: (Bitmap) -> Unit
 ) {
@@ -664,8 +668,8 @@ fun EquipmentItem(
             Text(text = motivo, color = White, fontSize = 20.sp)
             if (motivo == "CAJA TERMINAL" || motivo == "ROUTER CENTRAL") {
                 TextFieldWithDropdownUsage(
-                    listOf("caja", "caja1", "caja2", "raton", "raton1"),
-                    "Equipo", onAction = onAction,
+                    dataIn = if (motivo == "CAJA TERMINAL") boxes.map { it.terminalBoxDesc } else routers.map { it.routerCentralDesc },
+                    label = "Equipo", onAction = onAction,
                     idMotivo = idMotivo
                 )
             } else {

@@ -49,4 +49,19 @@ interface PerseoApi {
         @Field("ID_MOTIVO_ORDEN") motivoId: String,
         @Field("ID_EMPRESA") enterpriseId: Int
     ): Response<MotivosResponse>
+
+    @FormUrlEncoded
+    @POST("ws.php")
+    suspend fun validateEquipment(
+        @Query("opc") opc: Int,
+        @Field("ID_EMPRESA") enterpriseId: Int,
+        @Field("PARAMETROS") parameters: String
+    ): Response<ValidateEquipmentResponse>
+
+    @FormUrlEncoded
+    @POST("ws.php")
+    suspend fun getRoutersCT(
+        @Query("opc") opc: Int,
+        @Field("ID_EMPRESA") enterpriseId: Int
+    ): Response<RoutersCTResponse>
 }

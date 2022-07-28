@@ -27,4 +27,12 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
         return api.motivoOrders(4, motivoId, enterpriseId)
     }
 
+    suspend fun validateEquipment(enterpriseId: Int, parameters: String): Response<ValidateEquipmentResponse> {
+        return api.validateEquipment(5, enterpriseId, parameters)
+    }
+
+    suspend fun getRoutersCT(enterpriseId: Int): Response<RoutersCTResponse> {
+        return api.getRoutersCT(6, enterpriseId)
+    }
+
 }

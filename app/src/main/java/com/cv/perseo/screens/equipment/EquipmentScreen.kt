@@ -32,12 +32,19 @@ fun EquipmentScreen(
     viewModel: EquipmentScreenViewModel = hiltViewModel()
 ) {
     viewModel.initEquipment()
+
     val scaffoldState = rememberScaffoldState()
     val os by viewModel.currentOs.observeAsState()
     val generalData = viewModel.generalData.collectAsState().value
     val motivos by viewModel.motivos.observeAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val currentEquipment by viewModel.equipmentTmp.observeAsState()
+    val routers by viewModel.routers.observeAsState()
+    val boxes by viewModel.terminalBox.observeAsState()
+
+    if (generalData.isNotEmpty()) {
+        viewModel.getRouterBoxes()
+    }
 
     if (os != null && generalData.isNotEmpty()) {
         viewModel.getMotivos(os?.motivoId!!, generalData[0].idMunicipality)
@@ -63,7 +70,7 @@ fun EquipmentScreen(
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!motivos.isNullOrEmpty()) {
+            if (!motivos.isNullOrEmpty() && !boxes.isNullOrEmpty() && !routers.isNullOrEmpty()) {
                 LazyVerticalGrid(
                     cells = GridCells.Fixed(2),
                     contentPadding = PaddingValues(16.dp)
@@ -71,6 +78,8 @@ fun EquipmentScreen(
                     items(motivos!!.size) { index ->
                         EquipmentItem(
                             motivo = motivos!![index],
+                            boxes = boxes!!,
+                            routers = routers!!,
                             oldBitmap = currentEquipment?.find { it.equipment == motivos!![index] }?.image?.toBitmap(),
                             idMotivo = currentEquipment?.find { it.equipment == motivos!![index] }?.idEquipment
                                 ?: "",
@@ -99,15 +108,14 @@ fun EquipmentScreen(
             }) {
                 Text(text = "Agregar")
             }
-
-/*            Button(colors = ButtonDefaults.buttonColors(
+            Button(colors = ButtonDefaults.buttonColors(
                 backgroundColor = Yellow4,
                 contentColor = Color.Black
             ), onClick = {
-                viewModel.getEquipment()
+                viewModel.validateEquipment()
             }) {
-                Text(text = "Ver")
-            }*/
+                Text(text = "Validar")
+            }
         }
     }
 }

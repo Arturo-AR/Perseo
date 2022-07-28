@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.widget.Toast
+import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -40,4 +41,9 @@ fun Bitmap.toBase64String(): String {
 fun String.toBitmap(): Bitmap {
     val imageBytes = Base64.decode(this, 0)
     return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+}
+
+fun Any.toJsonString(): String {
+    val gson = Gson()
+    return gson.toJson(this)
 }
