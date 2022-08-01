@@ -1,14 +1,16 @@
 package com.cv.perseo.screens.osdetails
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,15 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.cv.perseo.components.DetailContainer
-import com.cv.perseo.components.PerseoBottomBar
-import com.cv.perseo.components.PerseoTopBar
+import com.cv.perseo.components.*
 import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Accent
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.Yellow6
 import com.cv.perseo.utils.Constants
+import com.cv.perseo.utils.toBase64String
 
 @Composable
 fun OSDetailsScreen(
@@ -43,11 +44,11 @@ fun OSDetailsScreen(
     val generalData = viewModel.generalData.collectAsState().value
     val motivos by viewModel.motivos.observeAsState()
     val context = LocalContext.current
+    viewModel.updateImages()
+
+    val imagesList by viewModel.images.observeAsState()
     if (os != null && generalData.isNotEmpty()) {
         viewModel.getMotivos(os?.motivoId!!, generalData[0].idMunicipality)
-    }
-    if (!motivos.isNullOrEmpty()) {
-        Log.d("motivos", motivos.toString())
     }
 
     val parameters = listOf(
@@ -165,6 +166,28 @@ fun OSDetailsScreen(
                 DetailContainer("${os?.name} ${os?.lastName}", parameters)
                 DetailContainer("${os?.street ?: ""} #${os?.outdoorNumber ?: ""}", parameters2)
                 DetailContainer("Datos de Orden", parameters3)
+                if (doing == true) {
+                    RequestContentPermissionList(bitmapList = imagesList!!, returnUri = {
+                        var bitmap: Bitmap? = null
+                        if (Build.VERSION.SDK_INT < 28) {
+                            bitmap = MediaStore.Images
+                                .Media.getBitmap(context.contentResolver, it)
+
+                        } else {
+                            val source = it?.let { it1 ->
+                                ImageDecoder
+                                    .createSource(context.contentResolver, it1)
+                            }
+                            source?.let { it1 -> ImageDecoder.decodeBitmap(it1) }
+                                ?.let { it2 -> bitmap = it2 }
+                        }
+                        viewModel.saveImages("extra", bitmap?.toBase64String()!!)
+                        //imagesList.add(bitmap)
+                    }) {
+                        Log.d("bitmap", it.toString())
+                    }
+                }
+
                 if (generalData.isNotEmpty()) {
                     if (onWay == false && doing == false) {
                         Button(
@@ -193,8 +216,9 @@ fun OSDetailsScreen(
                                         viewModel.finishRoute()
                                         viewModel.startDoing()
                                     } else {
-                                        viewModel.finishDoing()
-                                        navController.navigate(PerseoScreens.Dashboard.route)
+                                        //viewModel.finishDoing()
+                                        viewModel.finishOrder()
+                                        //navController.navigate(PerseoScreens.Dashboard.route)
                                     }
                                 },
                             painter = rememberAsyncImagePainter(

@@ -115,7 +115,14 @@ class EquipmentScreenViewModel @Inject constructor(
 
         val current = _equipmentTmp.value?.find { it.equipment == equipment }
         if (current == null) {
-            _equipmentTmp.value?.add(EquipmentTmp(equipment, idEquipment, image?.toBase64String()))
+            _equipmentTmp.value?.add(
+                EquipmentTmp(
+                    null,
+                    equipment,
+                    idEquipment,
+                    image?.toBase64String()
+                )
+            )
         } else {
             if (idEquipment == null) {
                 current.image = image?.toBase64String()
@@ -131,6 +138,7 @@ class EquipmentScreenViewModel @Inject constructor(
             for (equipment in _equipmentTmp.value!!) {
                 dbRepository.insertEquipment(
                     Equipment(
+                        nombre_imagen_adicional = "",
                         id_tipo_equipo = equipment.equipment!!,
                         id_equipo = equipment.idEquipment!!,
                         url_image = equipment.image
@@ -146,6 +154,7 @@ class EquipmentScreenViewModel @Inject constructor(
                 .collect { equipment ->
                     _equipmentTmp.value = equipment.map {
                         EquipmentTmp(
+                            imageName = it.nombre_imagen_adicional,
                             equipment = it.id_tipo_equipo,
                             idEquipment = it.id_equipo,
                             image = it.url_image

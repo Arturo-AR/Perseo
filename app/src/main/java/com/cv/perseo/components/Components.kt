@@ -5,6 +5,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -47,10 +48,13 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import androidx.lifecycle.Transformations.map
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.cv.perseo.data.Data
+import com.cv.perseo.model.EquipmentTmp
 import com.cv.perseo.model.ItemOSDetail
+import com.cv.perseo.model.database.Equipment
 import com.cv.perseo.model.database.Materials
 import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.model.perseoresponse.CordsOrderBody
@@ -60,6 +64,7 @@ import com.cv.perseo.model.perseoresponse.TerminalBox
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
+import com.cv.perseo.utils.toBitmap
 import com.cv.perseo.utils.toHourFormat
 import java.util.*
 
@@ -1029,6 +1034,78 @@ fun RequestContentPermission(
         }
 
 
+    }
+}
+
+@Composable
+fun RequestContentPermissionList(
+    bitmapList: List<Equipment>,
+    returnUri: (Uri?) -> Unit,
+    onReturn: (Bitmap) -> Unit
+
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract =
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        returnUri(uri)
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+        backgroundColor = Accent
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Yellow4
+                ), onClick = {
+                    if (bitmapList.size<3){
+                        launcher.launch("image/*")
+                    }else{
+                        Log.d("Imagenes", "Limit of images")
+                    }
+                }) {
+                    Text(text = "Imagen")
+                }
+                Icon(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable {
+                            expanded = !expanded
+                        },
+                    tint = White,
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null
+                )
+            }
+            AnimatedVisibility(visible = expanded) {
+                Row(Modifier.padding(8.dp)) {
+                    bitmapList.map { btm ->
+                        onReturn(btm.url_image?.toBitmap()!!)
+                        Image(
+                            bitmap = btm.url_image.toBitmap().asImageBitmap(),
+                            contentDescription = null,
+                            modifier = Modifier.size(100.dp).clickable {
+                                Log.d("image", "imageneeeeee")
+                            }
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

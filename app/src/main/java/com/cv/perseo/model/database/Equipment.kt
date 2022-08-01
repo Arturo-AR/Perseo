@@ -7,6 +7,7 @@ import java.util.*
 @Entity(tableName = "equipment")
 data class Equipment(
     @PrimaryKey val id: UUID = UUID.randomUUID(),
+    val nombre_imagen_adicional: String,
     val id_tipo_equipo: String,
     val id_equipo: String,
     val url_image: String?
