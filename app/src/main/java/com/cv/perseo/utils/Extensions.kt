@@ -9,6 +9,8 @@ import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.security.MessageDigest
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Funcion para generar un MD5 Hash a partir de un String
@@ -46,4 +48,9 @@ fun String.toBitmap(): Bitmap {
 fun Any.toJsonString(): String {
     val gson = Gson()
     return gson.toJson(this)
+}
+
+fun Date.toDate(): String {
+    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    return formatter.format(this)
 }

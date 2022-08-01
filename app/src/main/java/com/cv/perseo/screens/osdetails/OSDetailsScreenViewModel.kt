@@ -123,12 +123,13 @@ class OSDetailsScreenViewModel @Inject constructor(
                 .collect { equipment ->
                     equipment.map {
                         if (!it.url_image.isNullOrEmpty()) {
-                            Log.d("Equipment", it.id_tipo_equipo)
-                            /*imgurRepository.uploadImage(
+                            val title =
+                                if (it.id_tipo_equipo == "") it.nombre_imagen_adicional else it.id_equipo
+                            imgurRepository.uploadImage(
                                 image = it.url_image,
                                 album = "9K03yxW",
-                                title = "${it.id_tipo_equipo}||${it.id_equipo}"
-                            )*/
+                                title = "$title||${currentOs.value?.osId}"
+                            )
                         }
                     }
                 }
