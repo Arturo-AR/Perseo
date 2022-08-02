@@ -81,4 +81,14 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
     fun getAllEquipment(): Flow<List<Equipment>> =
         perseoDatabaseDao.getAllEquipment().flowOn(Dispatchers.IO).conflate()
 
+    /**
+     * functions for ComplianceInfo
+     */
+
+    fun getCompliance(): Flow<ComplianceInfo> =
+        perseoDatabaseDao.getAllCompliance().flowOn(Dispatchers.IO).conflate()
+
+    suspend fun insertCompliance(complianceInfo: ComplianceInfo) =
+        perseoDatabaseDao.insertComplianceInfo(complianceInfo)
+
 }

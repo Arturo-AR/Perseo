@@ -64,4 +64,19 @@ interface PerseoApi {
         @Query("opc") opc: Int,
         @Field("ID_EMPRESA") enterpriseId: Int
     ): Response<RoutersCTResponse>
+
+    @FormUrlEncoded
+    @POST("ws.php")
+    suspend fun finalizarOrdenServicio(
+        @Query("opc") opc: Int,
+        @Field("ID_EMPRESA") empresa_id: Int,
+        @Field("ORDENES_INFO_PRE_CUMPLIMIENTO") ordenes_info_cumplimiento: String,
+        @Field("IMAGENES") fotos: String,
+        @Field("EQUIPOS") equipos: String,
+        @Field("ID_OS") orden: Int,
+        @Field("FECHA") fecha: String,
+        @Field("MATERIALES") materiales: String,
+        @Field("PARAMETROS_ROUTER") parametros: String,
+        @Field("INFO_CUMPLIMIENTO") info_cumplimiento: String,
+    ): Response<String>
 }

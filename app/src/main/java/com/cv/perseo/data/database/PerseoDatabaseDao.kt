@@ -87,4 +87,16 @@ interface PerseoDatabaseDao {
 
     @Query("SELECT * FROM equipment")
     fun getAllEquipment(): Flow<List<Equipment>>
+
+    /**
+     * Queries for Compliance Info
+     */
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertComplianceInfo(complianceInfo: ComplianceInfo)
+
+    @Query("SELECT * FROM compliance_info")
+    fun getAllCompliance(): Flow<ComplianceInfo>
+
+
 }

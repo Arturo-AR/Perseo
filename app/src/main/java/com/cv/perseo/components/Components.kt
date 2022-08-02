@@ -1072,9 +1072,9 @@ fun RequestContentPermissionList(
                 Button(colors = ButtonDefaults.buttonColors(
                     backgroundColor = Yellow4
                 ), onClick = {
-                    if (bitmapList.size<3){
+                    if (bitmapList.size < 3) {
                         launcher.launch("image/*")
-                    }else{
+                    } else {
                         Log.d("Imagenes", "Limit of images")
                     }
                 }) {
@@ -1096,7 +1096,7 @@ fun RequestContentPermissionList(
                     bitmapList.map { btm ->
                         onReturn(btm.url_image?.toBitmap()!!)
                         Image(
-                            bitmap = btm.url_image.toBitmap().asImageBitmap(),
+                            bitmap = btm.url_image?.toBitmap()?.asImageBitmap()!!,
                             contentDescription = null,
                             modifier = Modifier.size(100.dp).clickable {
                                 Log.d("image", "imageneeeeee")

@@ -34,5 +34,9 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
     suspend fun getRoutersCT(enterpriseId: Int): Response<RoutersCTResponse> {
         return api.getRoutersCT(6, enterpriseId)
     }
+    suspend fun finalizarOrdenServicio(empresa_id: Int, ordenes_info_cumplimiento: String, fotos: String, equipos: String, orden: Int, fecha: String, materiales: String, parametros: String, info_cumplimiento: String): Response<String> {
+        return api.finalizarOrdenServicio(7, empresa_id, ordenes_info_cumplimiento, fotos, equipos, orden, fecha, materiales, parametros, info_cumplimiento)
+    }
+
 
 }

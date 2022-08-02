@@ -10,5 +10,5 @@ data class Equipment(
     val nombre_imagen_adicional: String,
     val id_tipo_equipo: String,
     val id_equipo: String,
-    val url_image: String?
+    var url_image: String?
 )

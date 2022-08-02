@@ -45,9 +45,12 @@ fun OSDetailsScreen(
     val motivos by viewModel.motivos.observeAsState()
     val context = LocalContext.current
     viewModel.updateImages()
-
+    viewModel.updateMaterials()
+    viewModel.updateInfo()
     val imagesList by viewModel.images.observeAsState()
     if (os != null && generalData.isNotEmpty()) {
+        viewModel.updateEquipment()
+        viewModel.updateAllEquipment()
         viewModel.getMotivos(os?.motivoId!!, generalData[0].idMunicipality)
     }
 
@@ -215,6 +218,7 @@ fun OSDetailsScreen(
                                     if (onWay!! && !doing!!) {
                                         viewModel.finishRoute()
                                         viewModel.startDoing()
+                                        viewModel.startCompliance()
                                     } else {
                                         //viewModel.finishDoing()
                                         viewModel.finishOrder()
