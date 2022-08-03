@@ -226,4 +226,34 @@ class EquipmentScreenViewModel @Inject constructor(
             }
         }
     }
+
+    fun getIdEquipment(id: String, equipmentType: String): String {
+        return if (equipmentType == "ROUTER CENTRAL" || equipmentType == "CAJA TERMINAL") {
+            if (equipmentType == "ROUTER CENTRAL") {
+                val routerId = routers.value?.filter { it.routerCentralDesc == id }
+                routerId?.get(0)?.routerCentralId.toString()
+            } else {
+                val boxId = terminalBox.value?.filter { it.terminalBoxDesc == id }
+                boxId?.get(0)?.terminalBoxId.toString()
+            }
+        } else {
+            id
+        }
+    }
+
+    fun getEquipmentType(reason: String): String {
+        return when (reason) {
+            "CABLEMODEM" -> "CM"
+            "DECO" -> "DECO"
+            "ETIQUETA" -> "ETIQ"
+            "CAJA DIGITAL" -> "CAJADIG"
+            "CAJA TERMINAL" -> "CAJATER"
+            "ROUTER CENTRAL" -> "ROUTERCEN"
+            "LINEA" -> "LINEA"
+            "ROUTER" -> "ROUTER"
+            "IP PUBLICA" -> "IP"
+            "ANTENA" -> "ANTE"
+            else -> ""
+        }
+    }
 }

@@ -85,14 +85,14 @@ fun EquipmentScreen(
                                 ?: "",
                             onAction = {
                                 viewModel.saveTmp(
-                                    equipment = motivos!![index],
-                                    idEquipment = it,
+                                    equipment = viewModel.getEquipmentType(motivos!![index]),
+                                    idEquipment = viewModel.getIdEquipment(it, motivos!![index]),
                                     image = null
                                 )
                                 keyboardController?.hide()
                             }) {
                             viewModel.saveTmp(
-                                equipment = motivos!![index],
+                                equipment = viewModel.getEquipmentType(motivos!![index]),
                                 idEquipment = null,
                                 image = it
                             )

@@ -1,6 +1,5 @@
 package com.cv.perseo.model.perseoresponse
 
-import androidx.room.ColumnInfo
 import com.google.gson.annotations.SerializedName
 
 data class ServiceOrdersResponse(
@@ -14,6 +13,7 @@ data class ServiceOrderItem(
     @SerializedName("zona") val zone: String,
     @SerializedName("icono_rubro") val rubroIcon: String,
     @SerializedName("rubro") val rubro: String,
+    @SerializedName("no_solicitud") val requestNumber: Int,
     @SerializedName("motivo") val motivo: String,
     @SerializedName("id_motivo") val motivoId: String,
     @SerializedName("sector") val sector: String,
@@ -33,15 +33,15 @@ data class ServiceOrderItem(
     @SerializedName("detalle_pedido2") val osDetail2: String,
     @SerializedName("nombres") val name: String,
     @SerializedName("apellidos") val lastName: String,
-    @SerializedName("tvs") val tvs:Int,
+    @SerializedName("tvs") val tvs: Int,
     @SerializedName("contrato") val noContract: Int,
-    @SerializedName("observaciones") val observations:String,
-    @SerializedName("estado") val status:String,
-    @SerializedName("asentamiento") val colony:String,
+    @SerializedName("observaciones") val observations: String,
+    @SerializedName("estado") val status: String,
+    @SerializedName("asentamiento") val colony: String,
     @SerializedName("equipos") val equipment: List<EquipmentResponse>
 )
 
 data class EquipmentResponse(
-    @SerializedName("ID_EQUIPO") val equipmentId:String,
-    @SerializedName("DESC_TIPO_EQUIPO") val equipmentDesc:String,
+    @SerializedName("ID_EQUIPO") val equipmentId: String,
+    @SerializedName("DESC_TIPO_EQUIPO") val equipmentDesc: String,
 )

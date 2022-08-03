@@ -143,26 +143,26 @@ class OSDetailsScreenViewModel @Inject constructor(
                 Log.d("info_pre", complianceInfo.value?.toJsonString()!!)
                 Log.d("imagenes", finalImages.value?.toJsonString()!!)
                 Log.d("equipos", equipment.value?.toJsonString()!!)
-                Log.d("materiales", complianceInfo.value?.toJsonString()!!)
+                Log.d("materiales", material.value?.toJsonString()!!)
                 Log.d("parametros_ro", "[]")
                 Log.d("id_os", currentOs.value?.osId.toString())
                 Log.d("fecha", Date().toDate())
                 Log.d("info_cum", "{}")
-/*                val response = repository.finalizarOrdenServicio(
-                    generalData.value[0].idMunicipality,
-                    complianceInfo.value?.toJsonString()!!,
-                    finalImages.value?.toJsonString()!!,
-                    equipment.value?.toJsonString()!!,
-                    currentOs.value?.osId!!,
-                    Date().toDate(),
-                    material.value?.toJsonString()!!,
-                    "[]",
-                    "{}"
+                val response = repository.finalizarOrdenServicio(
+                    empresa_id = generalData.value[0].idMunicipality,
+                    ordenes_info_cumplimiento = complianceInfo.value?.toJsonString()!!,
+                    fotos = finalImages.value?.toJsonString()!!,
+                    equipos = equipment.value?.toJsonString()!!,
+                    orden = currentOs.value?.osId!!,
+                    fecha = Date().toDate(),
+                    materiales = material.value?.toJsonString()!!,
+                    parametros = "[]",
+                    info_cumplimiento = "{}"
                 )
 
                 if (response.isSuccessful) {
                     Log.d("Success", "Cumplimiento correcto")
-                }*/
+                }
 
             }
         }
@@ -173,11 +173,11 @@ class OSDetailsScreenViewModel @Inject constructor(
             allEquipment.value?.map {
                 if (!it.url_image.isNullOrEmpty()) {
                     val title =
-                        if (it.id_tipo_equipo == "") it.nombre_imagen_adicional else it.id_equipo
+                        if (it.id_tipo_equipo == "") it.nombre_imagen_adicional else it.id_tipo_equipo
                     val response = imgurRepository.uploadImage(
                         image = it.url_image!!,
                         album = "9K03yxW",
-                        title = "$title||${currentOs.value?.osId}"
+                        title = "$title||${currentOs.value?.requestNumber}"
                     )
                     if (response.isSuccessful) {
                         _finalImages.value?.add(
@@ -186,7 +186,7 @@ class OSDetailsScreenViewModel @Inject constructor(
                                 equipmentId = it.id_equipo,
                                 osId = currentOs.value?.osId!!,
                                 equipmentTypeId = it.id_tipo_equipo,
-                                requestNumber = currentOs.value?.noContract!!,
+                                requestNumber = currentOs.value?.requestNumber!!,
                                 link = response.body()?.upload?.link!!,
                             )
                         )
@@ -296,9 +296,5 @@ class OSDetailsScreenViewModel @Inject constructor(
             )
             updateInfo()
         }
-    }
-
-    fun printImages() {
-        Log.d("images", finalImages.value?.toJsonString()!!)
     }
 }
