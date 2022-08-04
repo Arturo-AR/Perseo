@@ -10,6 +10,7 @@ import com.cv.perseo.model.EquipmentTmp
 import com.cv.perseo.model.database.Equipment
 import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.perseorequest.ValidateEquipmentRequest
+import com.cv.perseo.model.perseoresponse.AntennaSectorial
 import com.cv.perseo.model.perseoresponse.RouterCentral
 import com.cv.perseo.model.perseoresponse.ServiceOrderItem
 import com.cv.perseo.model.perseoresponse.TerminalBox
@@ -55,6 +56,9 @@ class EquipmentScreenViewModel @Inject constructor(
     private val _terminalBox: MutableLiveData<List<TerminalBox>> = MutableLiveData()
     val terminalBox: LiveData<List<TerminalBox>> = _terminalBox
 
+    private val _antennaSectorial: MutableLiveData<List<AntennaSectorial>> = MutableLiveData()
+    val antennaSectorial: LiveData<List<AntennaSectorial>> = _antennaSectorial
+
     init {
         viewModelScope.launch {
             dbRepository.getGeneralData()
@@ -82,6 +86,7 @@ class EquipmentScreenViewModel @Inject constructor(
                 if (RC?.responseCode == 200) {
                     _terminalBox.value = RC.responseBody.terminalBox
                     _routers.value = RC.responseBody.routers
+                    _antennaSectorial.value = RC.responseBody.antennasSectorial
                 }
             }
         }
@@ -111,7 +116,9 @@ class EquipmentScreenViewModel @Inject constructor(
     }
 
     fun saveTmp(equipment: String?, idEquipment: String?, image: Bitmap?) {
-
+        Log.d("equipment", equipment.toString())
+        Log.d("idEquipment", idEquipment.toString())
+        Log.d("image", image.toString())
         val current = _equipmentTmp.value?.find { it.equipment == equipment }
         if (current == null) {
             _equipmentTmp.value?.add(
@@ -131,7 +138,7 @@ class EquipmentScreenViewModel @Inject constructor(
         }
     }
 
-    fun saveEquipmentInDatabase() {
+    private fun saveEquipmentInDatabase() {
         viewModelScope.launch {
             dbRepository.deleteEquipment()
             for (equipment in _equipmentTmp.value!!) {
@@ -163,7 +170,9 @@ class EquipmentScreenViewModel @Inject constructor(
         }
     }
 
-    fun validateEquipment() {
+    fun validateEquipment(
+        validateAction: (String) -> Unit
+    ) {
         viewModelScope.launch {
             val equipment = ValidateEquipmentRequest(noContract = currentOs.value?.noContract!!)
             motivosOriginal.value?.map {
@@ -188,56 +197,63 @@ class EquipmentScreenViewModel @Inject constructor(
                     "QUITAR_IP_PUBLICA" -> equipment.removeIp = 1
                     "AGREGAR_ANTENA" -> equipment.addAntenna = 1
                     "QUITAR_ANTENA" -> equipment.removeAntenna = 1
+                    "AGREGAR_MINI_NODO" -> equipment.addMiniNodo = 1
+                    "QUITAR_MINI_NODO" -> equipment.removeMiniNodo = 1
+                    "AGREGAR_ANTENA_SECTORIAL" -> equipment.addAntennaSectorial = 1
+                    "QUITAR_ANTENA_SECTORIAL" -> equipment.removeAntennaSectorial = 1
                 }
             }
             equipmentTmp.value?.map {
                 when (it.equipment) {
-                    "CABLEMODEM" -> equipment.cmId = listOf(it.idEquipment!!)
+                    "CM" -> equipment.cmId = listOf(it.idEquipment!!)
                     "DECO" -> equipment.decoId = listOf(it.idEquipment!!)
-                    "ETIQUETA" -> equipment.etiqId = listOf(it.idEquipment!!)
-                    "CAJA DIGITAL" -> equipment.cdId = listOf(it.idEquipment!!)
-                    "CAJA TERMINAL" -> equipment.ctId = listOf(it.idEquipment!!)
-                    "ROUTER CENTRAL" -> equipment.rcId = listOf(it.idEquipment!!)
+                    "ETIQ" -> equipment.etiqId = listOf(it.idEquipment!!)
+                    "CAJADIG" -> equipment.cdId = listOf(it.idEquipment!!)
+                    "CAJATER" -> equipment.ctId = listOf(it.idEquipment!!)
+                    "ROUTERCEN" -> equipment.rcId = listOf(it.idEquipment!!)
                     "LINEA" -> equipment.lineId = listOf(it.idEquipment!!)
                     "ROUTER" -> equipment.routerId = listOf(it.idEquipment!!)
-                    "IP PUBLICA" -> equipment.ipId = listOf(it.idEquipment!!)
-                    "ANTENA" -> equipment.antennaId = listOf(it.idEquipment!!)
+                    "IP" -> equipment.ipId = listOf(it.idEquipment!!)
+                    "ANTE" -> equipment.antennaId = listOf(it.idEquipment!!)
+                    "ANTESEC" -> equipment.antennaSectorialId = listOf(it.idEquipment!!)
+                    "MINI" -> equipment.miniNodoId = listOf(it.idEquipment!!)
                 }
             }
             val response = repository.validateEquipment(
                 generalData.value[0].idMunicipality,
                 equipment.toJsonString()
             )
-            Log.d(
-                "parametros",
-                "${generalData.value[0].idMunicipality} ${equipment.toJsonString()}"
-            )
             if (response.isSuccessful) {
-                Log.d("Exito", "Llamada exitosa")
                 val validate = response.body()
                 if (validate?.responseBody?.code == "1") {
-                    //Esta dado de alta correctamente
-                    Log.d("Validate", validate.responseBody.message)
+                    saveEquipmentInDatabase()
+                    validateAction("Equipos registrados correctamente!")
                 } else {
-                    //No esta dado de alta o lo tiene otro contrato
-                    Log.d("Validate", validate?.responseBody?.message!!)
+                    validateAction(validate?.responseBody?.message!!)
                 }
+            }else {
+                validateAction("Error del servidor")
             }
         }
     }
 
     fun getIdEquipment(id: String, equipmentType: String): String {
-        return if (equipmentType == "ROUTER CENTRAL" || equipmentType == "CAJA TERMINAL") {
-            if (equipmentType == "ROUTER CENTRAL") {
+        return when (equipmentType) {
+            "ROUTER CENTRAL" -> {
                 val routerId = routers.value?.filter { it.routerCentralDesc == id }
                 routerId?.get(0)?.routerCentralId.toString()
-            } else {
+            }
+            "CAJA TERMINAL" -> {
                 val boxId = terminalBox.value?.filter { it.terminalBoxDesc == id }
                 boxId?.get(0)?.terminalBoxId.toString()
             }
-        } else {
-            id
+            "ANTENA SECTORIAL" -> {
+                val antennaId = antennaSectorial.value?.filter { it.antennaSectorialDesc == id }
+                antennaId?.get(0)?.antennaSectorialId.toString()
+            }
+            else -> id
         }
+
     }
 
     fun getEquipmentType(reason: String): String {
@@ -252,6 +268,8 @@ class EquipmentScreenViewModel @Inject constructor(
             "ROUTER" -> "ROUTER"
             "IP PUBLICA" -> "IP"
             "ANTENA" -> "ANTE"
+            "ANTENA SECTORIAL" -> "ANTESEC"
+            "MINI NODO" -> "MINI"
             else -> ""
         }
     }

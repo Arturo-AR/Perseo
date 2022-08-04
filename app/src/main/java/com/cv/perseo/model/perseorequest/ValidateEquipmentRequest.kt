@@ -23,6 +23,10 @@ data class ValidateEquipmentRequest(
     @SerializedName("QUITAR_IP_PUBLICA") var removeIp: Int = 0,
     @SerializedName("AGREGAR_ANTENA") var addAntenna: Int = 0,
     @SerializedName("QUITAR_ANTENA") var removeAntenna: Int = 0,
+    @SerializedName("AGREGAR_MINI_NODO") var addMiniNodo: Int = 0,
+    @SerializedName("QUITAR_MINI_NODO") var removeMiniNodo: Int = 0,
+    @SerializedName("AGREGAR_ANTENA_SECTORIAL") var addAntennaSectorial: Int = 0,
+    @SerializedName("QUITAR_ANTENA_SECTORIAL") var removeAntennaSectorial: Int = 0,
     @SerializedName("id_equipo_antena") var antennaId: List<String> = listOf(),
     @SerializedName("id_equipo_caja_dig") var cdId: List<String> = listOf(),
     @SerializedName("id_equipo_caja_terminal") var ctId: List<String> = listOf(),
@@ -33,6 +37,8 @@ data class ValidateEquipmentRequest(
     @SerializedName("id_equipo_linea") var lineId: List<String> = listOf(),
     @SerializedName("id_equipo_router") var routerId: List<String> = listOf(),
     @SerializedName("id_equipo_router_central") var rcId: List<String> = listOf(),
+    @SerializedName("id_equipo_mini_nodo") var miniNodoId: List<String> = listOf(),
+    @SerializedName("id_equipo_antena_sectorial") var antennaSectorialId: List<String> = listOf(),
     @SerializedName("no_contrato") var noContract: Int,
 
 )

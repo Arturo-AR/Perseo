@@ -10,7 +10,8 @@ data class RoutersCTResponse(
 
 data class RoutersCajas(
     @SerializedName("ROUTERS") val routers: List<RouterCentral>,
-    @SerializedName("CAJAS") val terminalBox: List<TerminalBox>
+    @SerializedName("CAJAS") val terminalBox: List<TerminalBox>,
+    @SerializedName("ANTENAS") val antennasSectorial: List<AntennaSectorial>
 )
 
 data class RouterCentral(
@@ -23,4 +24,9 @@ data class RouterCentral(
 data class TerminalBox(
     @SerializedName("ID_CAJA_TERMINAL") val terminalBoxId: Int,
     @SerializedName("DESC_CAJA_TERMINAL") val terminalBoxDesc: String
+)
+
+data class AntennaSectorial(
+    @SerializedName("ID_ANTENA_SECTORIAL") val antennaSectorialId: Int,
+    @SerializedName("DESC_ANTENA_SECTORIAL") val antennaSectorialDesc: String
 )

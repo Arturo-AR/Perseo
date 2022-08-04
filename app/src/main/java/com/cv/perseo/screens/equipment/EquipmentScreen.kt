@@ -1,5 +1,6 @@
 package com.cv.perseo.screens.equipment
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,6 +25,7 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.Yellow4
 import com.cv.perseo.utils.toBitmap
+import com.cv.perseo.utils.toast
 
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
@@ -32,7 +35,7 @@ fun EquipmentScreen(
     viewModel: EquipmentScreenViewModel = hiltViewModel()
 ) {
     viewModel.initEquipment()
-
+    val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
     val os by viewModel.currentOs.observeAsState()
     val generalData = viewModel.generalData.collectAsState().value
@@ -62,7 +65,7 @@ fun EquipmentScreen(
             }
         },
         bottomBar = {
-            if (generalData.isNotEmpty()){
+            if (generalData.isNotEmpty()) {
                 PerseoBottomBar(
                     enterprise = generalData[0].municipality,
                     enterpriseIcon = generalData[0].logo
@@ -85,8 +88,16 @@ fun EquipmentScreen(
                             motivo = motivos!![index],
                             boxes = boxes!!,
                             routers = routers!!,
-                            oldBitmap = currentEquipment?.find { it.equipment == motivos!![index] }?.image?.toBitmap(),
-                            idMotivo = currentEquipment?.find { it.equipment == motivos!![index] }?.idEquipment
+                            oldBitmap = currentEquipment?.find {
+                                it.equipment == viewModel.getEquipmentType(
+                                    motivos!![index]
+                                )
+                            }?.image?.toBitmap(),
+                            idMotivo = currentEquipment?.find {
+                                it.equipment == viewModel.getEquipmentType(
+                                    motivos!![index]
+                                )
+                            }?.idEquipment
                                 ?: "",
                             onAction = {
                                 viewModel.saveTmp(
@@ -109,17 +120,15 @@ fun EquipmentScreen(
                 backgroundColor = Yellow4,
                 contentColor = Color.Black
             ), onClick = {
-                viewModel.saveEquipmentInDatabase()
+                viewModel.validateEquipment {
+                    context.toast(it, Toast.LENGTH_LONG)
+                    if (it == "Equipos registrados correctamente!") {
+                        Thread.sleep(1500)
+                        navController.navigate(PerseoScreens.OSDetails.route)
+                    }
+                }
             }) {
                 Text(text = "Agregar")
-            }
-            Button(colors = ButtonDefaults.buttonColors(
-                backgroundColor = Yellow4,
-                contentColor = Color.Black
-            ), onClick = {
-                viewModel.validateEquipment()
-            }) {
-                Text(text = "Validar")
             }
         }
     }

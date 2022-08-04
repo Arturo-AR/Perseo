@@ -683,7 +683,7 @@ fun EquipmentItem(
                 TextFieldWithDropdownUsage(
                     dataIn = if (motivo == "CAJA TERMINAL") boxes.map { it.terminalBoxDesc } else routers.map { it.routerCentralDesc },
                     label = "Equipo", onAction = onAction,
-                    idMotivo = idMotivo
+                    idMotivo = if (idMotivo == "") "" else if (motivo == "CAJA TERMINAL") boxes.filter { it.terminalBoxId == idMotivo?.toInt()!! }[0].terminalBoxDesc else routers.filter { it.routerCentralId == idMotivo?.toInt()!! }[0].routerCentralDesc
                 )
             } else {
                 TextField(

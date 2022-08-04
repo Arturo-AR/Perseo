@@ -38,6 +38,10 @@ fun OSDetailsScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val scrollState = rememberScrollState()
+    val openDialogRoute = remember { mutableStateOf(false) }
+    val openDialogStart = remember { mutableStateOf(false) }
+    val openDialogFinish = remember { mutableStateOf(false) }
+    val openDialogCancel = remember { mutableStateOf(false) }
     val doing by viewModel.doing.observeAsState()
     val onWay by viewModel.onWay.observeAsState()
     val os by viewModel.currentOs.observeAsState()
@@ -87,6 +91,53 @@ fun OSDetailsScreen(
         }
     }
 
+    if (openDialogRoute.value) {
+        ShowAlertDialog(
+            title = "Alerta",
+            message = "Desea iniciar la ruta hacia esta orden?",
+            openDialog = openDialogRoute
+        ) {
+            viewModel.startRoute()
+            openDialogRoute.value = false
+        }
+    }
+
+    if (openDialogStart.value) {
+        ShowAlertDialog(
+            title = "Alerta",
+            message = "Desea iniciar la orden de servicio?",
+            openDialog = openDialogStart
+        ) {
+            viewModel.finishRoute()
+            viewModel.startDoing()
+            viewModel.startCompliance()
+            openDialogStart.value = false
+        }
+    }
+
+    if (openDialogFinish.value) {
+        ShowAlertDialog(
+            title = "Alerta",
+            message = "Desea finalizar la orden de serivcio?",
+            openDialog = openDialogFinish,
+            positiveButtonText = "Finalizar"
+        ) {
+            viewModel.finishOrder()
+            openDialogFinish.value = false
+        }
+    }
+
+    if (openDialogCancel.value) {
+        ShowAlertDialog(
+            title = "Alerta",
+            message = "Desea cancelar esta orden de servicio?",
+            openDialog = openDialogCancel
+        ) {
+            viewModel.cancelOrder()
+            openDialogCancel.value = false
+        }
+    }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -102,7 +153,7 @@ fun OSDetailsScreen(
             }
         },
         bottomBar = {
-            if (generalData.isNotEmpty()){
+            if (generalData.isNotEmpty()) {
                 PerseoBottomBar(
                     enterprise = generalData[0].municipality,
                     enterpriseIcon = generalData[0].logo
@@ -204,7 +255,7 @@ fun OSDetailsScreen(
                                 contentColor = Color.White
                             ),
                             onClick = {
-                                viewModel.startRoute()
+                                openDialogRoute.value = true
                             }) {
                             Text(
                                 modifier = Modifier.padding(6.dp),
@@ -221,12 +272,10 @@ fun OSDetailsScreen(
                                 .fillMaxHeight()
                                 .clickable {
                                     if (onWay!! && !doing!!) {
-                                        viewModel.finishRoute()
-                                        viewModel.startDoing()
-                                        viewModel.startCompliance()
+                                        openDialogStart.value = true
                                     } else {
+                                        openDialogFinish.value = true
                                         //viewModel.finishDoing()
-                                        viewModel.finishOrder()
                                         //navController.navigate(PerseoScreens.Dashboard.route)
                                     }
                                 },
@@ -242,7 +291,7 @@ fun OSDetailsScreen(
                                 .padding(vertical = 6.dp)
                                 .fillMaxHeight()
                                 .clickable {
-                                    viewModel.cancelOrder()
+                                    openDialogCancel.value = true
                                 },
                             painter = rememberAsyncImagePainter(Constants.BUTTON_CANCEL), //TODO: Change painter per bitmap
                             contentDescription = null,

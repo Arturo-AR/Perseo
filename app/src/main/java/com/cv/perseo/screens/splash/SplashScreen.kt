@@ -50,10 +50,14 @@ fun SplashScreen(
         if (viewModel.generalData.value.isEmpty()) {
             navController.navigate(PerseoScreens.Login.route)
         } else {
-            if (doing == true || onWay == true) {
-                navController.navigate(PerseoScreens.OSDetails.route)
+            if (viewModel.generalData.value[0].idMunicipality != 0) {
+                if (doing == true || onWay == true) {
+                    navController.navigate(PerseoScreens.OSDetails.route)
+                } else {
+                    navController.navigate(PerseoScreens.Dashboard.route)
+                }
             } else {
-                navController.navigate(PerseoScreens.Dashboard.route)
+                navController.navigate(PerseoScreens.EnterpriseSelector.route)
             }
         }
     }
