@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.database.Materials
 import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.model.perseoresponse.Inventory
@@ -32,6 +33,9 @@ class MaterialsScreenViewModel @Inject constructor(
 
     private val _material = MutableStateFlow<List<Materials>>(emptyList())
     val material = _material.asStateFlow()
+
+    private val _data :  MutableLiveData<GeneralData> =MutableLiveData()
+    val data : LiveData<GeneralData> = _data
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -77,6 +81,15 @@ class MaterialsScreenViewModel @Inject constructor(
     fun deleteMaterialById(id: UUID) {
         viewModelScope.launch {
             dbRepository.deleteMaterialById(id)
+        }
+    }
+
+    fun getGeneralData() {
+        viewModelScope.launch {
+            dbRepository.getGeneralData().distinctUntilChanged()
+                .collect { data ->
+                    _data.value = data[0]
+                }
         }
     }
 }

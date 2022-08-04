@@ -1,7 +1,10 @@
 package com.cv.perseo.screens.scheduleorders
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.SharedRepository
@@ -22,6 +25,9 @@ class ScheduleOrdersScreenViewModel @Inject constructor(
     private val _scheduleOrders = MutableStateFlow<List<ServiceOrder>>(emptyList())
     val scheduleOrders = _scheduleOrders.asStateFlow()
 
+    private val _data : MutableLiveData<GeneralData> = MutableLiveData()
+    val data : LiveData<GeneralData> = _data
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             dbRepository.getScheduleOrders().distinctUntilChanged()
@@ -35,6 +41,15 @@ class ScheduleOrdersScreenViewModel @Inject constructor(
 
     fun saveOsId(id: Int) {
         prefs.saveOsId(id)
+    }
+
+    fun getGeneralData() {
+        viewModelScope.launch {
+            dbRepository.getGeneralData().distinctUntilChanged()
+                .collect { data ->
+                    _data.value = data[0]
+                }
+        }
     }
 
 }

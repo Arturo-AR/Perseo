@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.perseoresponse.CordsOrderBody
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.PerseoRepository
@@ -22,6 +23,9 @@ class ServiceCordsScreenViewModel @Inject constructor(
 ) :
     ViewModel() {
 
+    private val _data :  MutableLiveData<GeneralData> =MutableLiveData()
+    val data : LiveData<GeneralData> = _data
+
     private val _cordsOrders: MutableLiveData<List<CordsOrderBody>> = MutableLiveData()
     val cordsOrder: LiveData<List<CordsOrderBody>> = _cordsOrders
 
@@ -37,6 +41,15 @@ class ServiceCordsScreenViewModel @Inject constructor(
                             _cordsOrders.value = cords.body()?.responseBody
                         }
                     }
+                }
+        }
+    }
+
+    fun getGeneralData() {
+        viewModelScope.launch {
+            dbRepository.getGeneralData().distinctUntilChanged()
+                .collect { data ->
+                    _data.value = data[0]
                 }
         }
     }

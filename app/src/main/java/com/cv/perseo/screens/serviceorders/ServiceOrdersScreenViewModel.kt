@@ -1,7 +1,10 @@
 package com.cv.perseo.screens.serviceorders
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.repository.DatabaseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +23,9 @@ class ServiceOrdersScreenViewModel @Inject constructor(
     private val _permissions = MutableStateFlow<List<String>>(emptyList())
     val permissions = _permissions.asStateFlow()
 
+    private val _data : MutableLiveData<GeneralData> = MutableLiveData()
+    val data : LiveData<GeneralData> = _data
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             dbRepository.getPermissions().distinctUntilChanged()
@@ -33,6 +39,15 @@ class ServiceOrdersScreenViewModel @Inject constructor(
                         }
                         _permissions.value = finalPermissions
                     }
+                }
+        }
+    }
+
+    fun getGeneralData() {
+        viewModelScope.launch {
+            dbRepository.getGeneralData().distinctUntilChanged()
+                .collect { data ->
+                    _data.value = data[0]
                 }
         }
     }

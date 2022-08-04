@@ -73,6 +73,9 @@ fun LoginScreen(
                     },
                     fail = {
                         context.toast("Credenciales Inválidas")
+                    },
+                    multipleEnterprise = {
+                        navController.navigate(PerseoScreens.EnterpriseSelector.route)
                     })
             }
         }

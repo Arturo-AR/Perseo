@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.perseoresponse.Inventory
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.PerseoRepository
@@ -22,6 +23,9 @@ class InventoryScreenViewModel @Inject constructor(
     ViewModel() {
     private val _inventory: MutableLiveData<List<Inventory>> = MutableLiveData()
     val inventory: LiveData<List<Inventory>> = _inventory
+
+    private val _data :  MutableLiveData<GeneralData> =MutableLiveData()
+    val data : LiveData<GeneralData> = _data
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -42,4 +46,14 @@ class InventoryScreenViewModel @Inject constructor(
                 }
         }
     }
+
+    fun getGeneralData() {
+        viewModelScope.launch {
+            dbRepository.getGeneralData().distinctUntilChanged()
+                .collect { data ->
+                    _data.value = data[0]
+                }
+        }
+    }
+
 }

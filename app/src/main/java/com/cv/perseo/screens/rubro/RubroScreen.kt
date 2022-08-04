@@ -27,6 +27,8 @@ fun RubroScreen(
     navController: NavController,
     viewModel: RubroScreenViewModel = hiltViewModel()
 ) {
+    viewModel.getGeneralData()
+    val generalData by viewModel.data.observeAsState()
     val scaffoldState = rememberScaffoldState()
     val orders = viewModel.serviceOrders.collectAsState().value
     val currentRubro by viewModel.currentRubro.observeAsState()
@@ -43,7 +45,12 @@ fun RubroScreen(
             }
         },
         bottomBar = {
-            PerseoBottomBar()
+            if (generalData != null){
+                PerseoBottomBar(
+                    enterprise = generalData?.municipality!!,
+                    enterpriseIcon = generalData?.logo!!
+                )
+            }
         },
         backgroundColor = Background,
     ) {

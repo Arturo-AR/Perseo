@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cv.perseo.components.PerseoBottomBar
@@ -21,6 +22,8 @@ fun MyServiceOrdersScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val zones by viewModel.serviceOrdersZones.collectAsState()
+    viewModel.getGeneralData()
+    val generalData by viewModel.data.observeAsState()
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -35,7 +38,12 @@ fun MyServiceOrdersScreen(
             }
         },
         bottomBar = {
-            PerseoBottomBar()
+            if (generalData != null){
+                PerseoBottomBar(
+                    enterprise = generalData?.municipality!!,
+                    enterpriseIcon = generalData?.logo!!
+                )
+            }
         },
         backgroundColor = Background,
     ) {

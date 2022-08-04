@@ -33,6 +33,8 @@ fun InventoryScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val inventory by viewModel.inventory.observeAsState()
+    viewModel.getGeneralData()
+    val generalData by viewModel.data.observeAsState()
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -47,7 +49,12 @@ fun InventoryScreen(
             }
         },
         bottomBar = {
-            PerseoBottomBar()
+            if (generalData != null){
+                PerseoBottomBar(
+                    enterprise = generalData?.municipality!!,
+                    enterpriseIcon = generalData?.logo!!
+                )
+            }
         },
         backgroundColor = Background,
     ) {

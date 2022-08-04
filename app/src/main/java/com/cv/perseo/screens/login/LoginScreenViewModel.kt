@@ -20,20 +20,34 @@ class LoginScreenViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    fun login(userId: String, password: String, success: () -> Unit, fail: () -> Unit) {
+    fun login(
+        userId: String,
+        password: String,
+        success: () -> Unit,
+        fail: () -> Unit,
+        multipleEnterprise: () -> Unit
+    ) {
         viewModelScope.launch {
             try {
                 val data = repository.login(userId = userId, password = password)
-                if (data.body()?.responseCode == 200
-                ) {
-                    if (data.body()?.responseBody?.enterprises?.size == 1) {
+                if (data.body()?.responseCode == 200) {
+                    if (data.body()?.responseBody?.enterprises?.size!! <= 1) {
                         saveData(
                             userId,
+                            password,
                             data.body()?.responseBody?.enterprises!![0],
                             data.body()?.responseBody?.permissions!!
                         )
+                        success()
+                    } else {
+                        saveData(
+                            userId,
+                            password,
+                            null,
+                            data.body()?.responseBody?.permissions!!
+                        )
+                        multipleEnterprise()
                     }
-                    success()
                 } else {
                     fail()
                 }
@@ -46,26 +60,29 @@ class LoginScreenViewModel @Inject constructor(
 
     private suspend fun saveData(
         idUser: String,
-        enterprise: EnterpriseBody,
+        password: String,
+        enterprise: EnterpriseBody?,
         permissions: List<PermissionsBody>
     ) {
-        val data = GeneralData(
-            idUser = idUser,
-            //doing = false,
-            //onWay = false,
-            municipality = enterprise.municipality,
-            logo = enterprise.logo,
-            logoIcon = enterprise.logoIcon,
-            idMunicipality = enterprise.idMunicipality
-        )
-        for (permission in permissions) {
-            val permissionAct = Permissions(
-                idActivitySon = permission.idActivitySon,
-                idActivityFather = permission.idActivityFather,
-                icon = permission.icon
+        viewModelScope.launch {
+            val data = GeneralData(
+                idUser = idUser,
+                password = password,
+                tradeName = enterprise?.tradeName ?: "",
+                municipality = enterprise?.municipality ?: "",
+                logo = enterprise?.logo ?: "",
+                logoIcon = enterprise?.logoIcon ?: "",
+                idMunicipality = enterprise?.idMunicipality ?: 0
             )
-            dbRepository.insertPermissions(permissionAct)
-        }
-        dbRepository.insertGeneralData(data)
+            for (permission in permissions) {
+                val permissionAct = Permissions(
+                    idActivitySon = permission.idActivitySon,
+                    idActivityFather = permission.idActivityFather,
+                    icon = permission.icon
+                )
+                dbRepository.insertPermissions(permissionAct)
+            }
+            dbRepository.insertGeneralData(data)
+        }.join()
     }
 }

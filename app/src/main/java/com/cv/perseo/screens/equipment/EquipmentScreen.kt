@@ -62,7 +62,12 @@ fun EquipmentScreen(
             }
         },
         bottomBar = {
-            PerseoBottomBar()
+            if (generalData.isNotEmpty()){
+                PerseoBottomBar(
+                    enterprise = generalData[0].municipality,
+                    enterpriseIcon = generalData[0].logo
+                )
+            }
         },
         backgroundColor = Background,
     ) {

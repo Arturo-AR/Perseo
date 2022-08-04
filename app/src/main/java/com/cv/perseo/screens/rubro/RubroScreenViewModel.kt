@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.SharedRepository
@@ -23,6 +24,9 @@ class RubroScreenViewModel @Inject constructor(
     ViewModel() {
     private val _serviceOrders = MutableStateFlow<List<ServiceOrder>>(emptyList())
     val serviceOrders = _serviceOrders.asStateFlow()
+
+    private val _data :  MutableLiveData<GeneralData> =MutableLiveData()
+    val data : LiveData<GeneralData> = _data
 
     private val _currentRubro: MutableLiveData<String> = MutableLiveData()
     val currentRubro: LiveData<String> = _currentRubro
@@ -46,5 +50,13 @@ class RubroScreenViewModel @Inject constructor(
         prefs.saveOsId(id)
     }
 
+    fun getGeneralData() {
+        viewModelScope.launch {
+            dbRepository.getGeneralData().distinctUntilChanged()
+                .collect { data ->
+                    _data.value = data[0]
+                }
+        }
+    }
 
 }

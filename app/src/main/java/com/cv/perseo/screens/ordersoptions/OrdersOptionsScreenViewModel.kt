@@ -1,7 +1,10 @@
 package com.cv.perseo.screens.ordersoptions
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.PerseoRepository
@@ -17,6 +20,8 @@ class OrdersOptionsScreenViewModel @Inject constructor(
 ) :
     ViewModel() {
 
+    private val _data : MutableLiveData<GeneralData> = MutableLiveData()
+    val data : LiveData<GeneralData> = _data
 
     init {
         viewModelScope.launch {
@@ -53,6 +58,14 @@ class OrdersOptionsScreenViewModel @Inject constructor(
                             }
                         }
                     }
+                }
+        }
+    }
+    fun getGeneralData() {
+        viewModelScope.launch {
+            dbRepository.getGeneralData().distinctUntilChanged()
+                .collect { data ->
+                    _data.value = data[0]
                 }
         }
     }

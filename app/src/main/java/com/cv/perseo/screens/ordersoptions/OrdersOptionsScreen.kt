@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,7 +25,8 @@ fun OrdersOptionsScreen(
     viewModel: OrdersOptionsScreenViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
-
+    viewModel.getGeneralData()
+    val generalData by viewModel.data.observeAsState()
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -37,7 +40,12 @@ fun OrdersOptionsScreen(
             }
         },
         bottomBar = {
-            PerseoBottomBar()
+            if (generalData != null){
+                PerseoBottomBar(
+                    enterprise = generalData?.municipality!!,
+                    enterpriseIcon = generalData?.logo!!
+                )
+            }
         },
         backgroundColor = Background,
     ) {

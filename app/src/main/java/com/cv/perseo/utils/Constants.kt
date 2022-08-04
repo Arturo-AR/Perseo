@@ -23,6 +23,8 @@ object Constants {
     const val BUTTON_START = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/iniciar_orden.png"
     const val BUTTON_CANCEL = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/botones/cancelar.png"
 
+    const val ITEM_BACKGROUND_CIUDAD_PATH = "images/fondos/ciudad_item_background.png"
+
     /**
      *   No Final
      */

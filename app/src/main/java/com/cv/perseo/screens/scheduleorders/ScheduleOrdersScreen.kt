@@ -8,6 +8,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,6 +23,8 @@ fun ScheduleOrdersScreen(
     navController: NavController,
     viewModel: ScheduleOrdersScreenViewModel = hiltViewModel()
 ) {
+    viewModel.getGeneralData()
+    val generalData by viewModel.data.observeAsState()
     val scaffoldState = rememberScaffoldState()
     val schedule = viewModel.scheduleOrders.collectAsState().value
     Scaffold(
@@ -36,7 +40,12 @@ fun ScheduleOrdersScreen(
             }
         },
         bottomBar = {
-            PerseoBottomBar()
+            if (generalData != null){
+                PerseoBottomBar(
+                    enterprise = generalData?.municipality!!,
+                    enterpriseIcon = generalData?.logo!!
+                )
+            }
         },
         backgroundColor = Background,
     ) {

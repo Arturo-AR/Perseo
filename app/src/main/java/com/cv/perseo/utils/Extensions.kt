@@ -41,7 +41,8 @@ fun Bitmap.toBase64String(): String {
 }
 
 fun String.toBitmap(): Bitmap {
-    val imageBytes = Base64.decode(this, 0)
+    val newString = this.replace("data:image/png;base64,", "")
+    val imageBytes = Base64.decode(newString, 0)
     return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 }
 

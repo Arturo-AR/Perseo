@@ -9,6 +9,8 @@ import java.util.*
 data class GeneralData(
     @PrimaryKey val id: UUID = UUID.randomUUID(),
     @ColumnInfo(name = "id_user") val idUser: String,
+    @ColumnInfo(name = "password") val password: String,
+    @ColumnInfo(name = "tradeName") var tradeName: String,
     @ColumnInfo(name = "municipality") var municipality: String,
     @ColumnInfo(name = "logo") var logo: String,
     @ColumnInfo(name = "logo_icon") var logoIcon: String,

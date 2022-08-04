@@ -30,6 +30,8 @@ fun ServiceCordsScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val cords by viewModel.cordsOrder.observeAsState()
+    viewModel.getGeneralData()
+    val generalData by viewModel.data.observeAsState()
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -43,7 +45,12 @@ fun ServiceCordsScreen(
             }
         },
         bottomBar = {
-            PerseoBottomBar()
+            if (generalData != null){
+                PerseoBottomBar(
+                    enterprise = generalData?.municipality!!,
+                    enterpriseIcon = generalData?.logo!!
+                )
+            }
         },
         backgroundColor = Background,
     ) {

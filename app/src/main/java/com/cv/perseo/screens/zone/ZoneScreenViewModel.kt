@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cv.perseo.model.Rubro
+import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.SharedRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,9 @@ class ZoneScreenViewModel @Inject constructor(
     private val _currentZone: MutableLiveData<String> = MutableLiveData()
     val currentZone: LiveData<String> = _currentZone
 
+    private val _data :  MutableLiveData<GeneralData> =MutableLiveData()
+    val data : LiveData<GeneralData> = _data
+
     private val _rubro = MutableStateFlow<List<Rubro>>(emptyList())
     val rubro = _rubro.asStateFlow()
 
@@ -42,5 +46,14 @@ class ZoneScreenViewModel @Inject constructor(
 
     fun saveRubro(rubro: String){
         prefs.saveRubro(rubro)
+    }
+
+    fun getGeneralData() {
+        viewModelScope.launch {
+            dbRepository.getGeneralData().distinctUntilChanged()
+                .collect { data ->
+                    _data.value = data[0]
+                }
+        }
     }
 }

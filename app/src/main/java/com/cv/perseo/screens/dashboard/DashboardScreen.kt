@@ -1,6 +1,5 @@
 package com.cv.perseo.screens.dashboard
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -10,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,13 +21,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.cv.perseo.components.*
-import com.cv.perseo.model.database.Permissions
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Accent
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.ButtonText
 import com.cv.perseo.ui.theme.TextColor
-import com.cv.perseo.utils.Constants
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
@@ -36,6 +34,8 @@ fun DashboardScreen(
     navController: NavController,
     viewModel: DashboardScreenViewModel = hiltViewModel()
 ) {
+    viewModel.getGeneralData()
+    val generalData by viewModel.data.observeAsState()
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val openDialog = remember {
@@ -50,7 +50,7 @@ fun DashboardScreen(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Test",
+                title = generalData?.tradeName ?: "",
                 inDashboard = true
             ) {
                 scope.launch {
@@ -60,7 +60,12 @@ fun DashboardScreen(
         },
         drawerContent = { DrawerView(navController, viewModel) },
         bottomBar = {
-            PerseoBottomBar()
+            if (generalData != null){
+                PerseoBottomBar(
+                    enterprise = generalData?.municipality!!,
+                    enterpriseIcon = generalData?.logo!!
+                )
+            }
         },
         backgroundColor = Background,
     ) {
@@ -82,7 +87,9 @@ fun DashboardScreen(
 
 @Composable
 fun DrawerView(navController: NavController, viewModel: DashboardScreenViewModel) {
-
+    val openDialog = remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -91,6 +98,18 @@ fun DrawerView(navController: NavController, viewModel: DashboardScreenViewModel
             .padding(vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        if (openDialog.value) {
+            ShowAlertDialog(
+                title = "Alerta!",
+                message = "¿Desea Cerrar sesion?",
+                positiveButtonText = "Cerrar",
+                openDialog = openDialog
+            ) {
+                viewModel.signOut()
+                navController.navigate(PerseoScreens.Login.route)
+            }
+        }
 
         Card(
             modifier = Modifier
@@ -111,12 +130,11 @@ fun DrawerView(navController: NavController, viewModel: DashboardScreenViewModel
         Text(text = "Perseo App", color = ButtonText, style = MaterialTheme.typography.h6)
         Spacer(modifier = Modifier.height(32.dp))
         AddDrawerHeader(title = "Cambiar de ciudad", icon = Icons.Default.Edit) {
-            Toast.makeText(context, "Cambiar ciudad", Toast.LENGTH_SHORT).show()
+            navController.navigate(PerseoScreens.EnterpriseSelector.route)
         }
         Divider(color = Accent)
         AddDrawerHeader(title = "Cerrar Sesion", icon = Icons.Default.Close) {
-            viewModel.signOut()
-            navController.navigate(PerseoScreens.Login.route)
+            openDialog.value = true
         }
     }
 }

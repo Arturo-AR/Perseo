@@ -30,7 +30,8 @@ fun MaterialsScreen(
     val scaffoldState = rememberScaffoldState()
     val materials by viewModel.material.collectAsState()
     val inventory by viewModel.inventory.observeAsState()
-    Log.d("materials", materials.toString())
+    viewModel.getGeneralData()
+    val generalData by viewModel.data.observeAsState()
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -44,7 +45,12 @@ fun MaterialsScreen(
             }
         },
         bottomBar = {
-            PerseoBottomBar()
+            if (generalData != null){
+                PerseoBottomBar(
+                    enterprise = generalData?.municipality!!,
+                    enterpriseIcon = generalData?.logo!!
+                )
+            }
         },
         backgroundColor = Background,
     ) {

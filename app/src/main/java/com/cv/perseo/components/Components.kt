@@ -57,10 +57,7 @@ import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.model.database.Equipment
 import com.cv.perseo.model.database.Materials
 import com.cv.perseo.model.database.ServiceOrder
-import com.cv.perseo.model.perseoresponse.CordsOrderBody
-import com.cv.perseo.model.perseoresponse.Inventory
-import com.cv.perseo.model.perseoresponse.RouterCentral
-import com.cv.perseo.model.perseoresponse.TerminalBox
+import com.cv.perseo.model.perseoresponse.*
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
@@ -192,7 +189,7 @@ fun PasswordVisibility(passwordVisibility: MutableState<Boolean>) {
 @Composable
 fun PerseoTopBar(
     title: String,
-    inDashboard: Boolean = false,
+    inDashboard: Boolean? = false,
     onBackArrowClicked: () -> Unit = {}
 ) {
     TopAppBar(
@@ -202,24 +199,26 @@ fun PerseoTopBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (inDashboard) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = null,
-                        tint = White,
-                        modifier = Modifier.clickable {
-                            onBackArrowClicked.invoke()
-                        }
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Arrow Back",
-                        tint = White,
-                        modifier = Modifier.clickable {
-                            onBackArrowClicked.invoke()
-                        }
-                    )
+                if (inDashboard != null) {
+                    if (inDashboard) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = null,
+                            tint = White,
+                            modifier = Modifier.clickable {
+                                onBackArrowClicked.invoke()
+                            }
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Arrow Back",
+                            tint = White,
+                            modifier = Modifier.clickable {
+                                onBackArrowClicked.invoke()
+                            }
+                        )
+                    }
                 }
 
                 Text(
@@ -242,8 +241,8 @@ fun PerseoTopBar(
 
 @Composable
 fun PerseoBottomBar(
-    enterprise: String = "TEST",
-    enterpriseIcon: String = Constants.LOGO_TELECABLE
+    enterprise: String,
+    enterpriseIcon: String = ""
 ) {
     BottomAppBar(
         modifier = Modifier
@@ -271,7 +270,8 @@ fun PerseoBottomBar(
                     fontWeight = FontWeight.Bold
                 )
                 Image(
-                    painter = rememberAsyncImagePainter(enterpriseIcon), //TODO: Change painter per bitmap
+                    modifier = Modifier.padding(8.dp),
+                    bitmap = enterpriseIcon.toBitmap().asImageBitmap(),
                     contentDescription = null
                 )
             }
@@ -355,9 +355,17 @@ fun ShowAlertDialog(
 ) {
     if (openDialog.value) {
         AlertDialog(onDismissRequest = { openDialog.value = false },
-            title = { Text(text = title, color = Yellow4) },
-            text = { Text(text = message, color = White) },
+            title = {
+                Text(
+                    text = title,
+                    color = Yellow4,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = { Text(text = message, color = White, fontSize = 18.sp) },
             backgroundColor = Background,
+            shape = MaterialTheme.shapes.small,
             buttons = {
                 Row(
                     modifier = Modifier
@@ -366,10 +374,10 @@ fun ShowAlertDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = { openDialog.value = false }) {
-                        Text(text = negativeButtonText, color = Yellow4)
+                        Text(text = negativeButtonText, color = Yellow4, fontSize = 16.sp)
                     }
                     TextButton(onClick = { onYesPress.invoke() }) {
-                        Text(text = positiveButtonText, color = Yellow4)
+                        Text(text = positiveButtonText, color = Yellow4, fontSize = 16.sp)
                     }
                 }
             })
@@ -1098,9 +1106,11 @@ fun RequestContentPermissionList(
                         Image(
                             bitmap = btm.url_image?.toBitmap()?.asImageBitmap()!!,
                             contentDescription = null,
-                            modifier = Modifier.size(100.dp).clickable {
-                                Log.d("image", "imageneeeeee")
-                            }
+                            modifier = Modifier
+                                .size(100.dp)
+                                .clickable {
+                                    Log.d("image", "imageneeeeee")
+                                }
                         )
                     }
                 }
@@ -1205,4 +1215,61 @@ fun TextFieldWithDropdown(
 
         }
     }
+}
+
+@Composable
+fun EnterpriseOption(
+    enterprise: EnterpriseBody,
+    onSelection: (EnterpriseBody) -> Unit
+) {
+    Box(contentAlignment = Alignment.Center) {
+        Image(
+            modifier = Modifier
+                .height(80.dp)
+                .fillMaxHeight()
+                .clickable {
+                    onSelection(enterprise)
+                },
+            painter = rememberAsyncImagePainter(
+                Constants.PERSEO_BASE_URL + Constants.ITEM_BACKGROUND_CIUDAD_PATH
+            ),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+        Column(
+            modifier = Modifier.matchParentSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                modifier = Modifier.height(35.dp),
+                contentScale = ContentScale.Crop,
+                bitmap = enterprise.logoIcon.toBitmap().asImageBitmap(),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = enterprise.municipality, color = White, fontWeight = FontWeight.Bold,
+                fontSize = if (enterprise.municipality.length < 9) 16.sp else 14.sp
+            )
+        }
+    }
+}
+
+@ExperimentalFoundationApi
+@Composable
+fun EnterpriseList(
+    list: List<EnterpriseBody>,
+    onSelection: (EnterpriseBody) -> Unit
+) {
+    LazyVerticalGrid(
+        cells = GridCells.Fixed(2),
+        contentPadding = PaddingValues(16.dp),
+        content = {
+            items(list) { item ->
+                EnterpriseOption(enterprise = item) { enterprise ->
+                    onSelection(enterprise)
+                }
+            }
+        })
 }

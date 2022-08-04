@@ -15,13 +15,14 @@ data class LoginBody(
 
 data class PermissionsBody(
     @SerializedName("ID_ACTIVITY") val idActivityFather: Int,
-    @SerializedName("ID_ACTIVITY_RELACIONADA")val idActivitySon: Int,
-    @SerializedName("ICONO")val icon: String
+    @SerializedName("ID_ACTIVITY_RELACIONADA") val idActivitySon: Int,
+    @SerializedName("ICONO") val icon: String
 )
 
 data class EnterpriseBody(
     @SerializedName("CIUDAD") val municipality: String,
     @SerializedName("LOGOTIPO") val logo: String,
+    @SerializedName("NOMBRE_COMERCIAL") val tradeName: String,
     @SerializedName("LOGOTIPO_ICO") val logoIcon: String,
     @SerializedName("ID_EMPRESA") val idMunicipality: Int,
 )

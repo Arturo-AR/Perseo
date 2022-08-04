@@ -1,6 +1,5 @@
 package com.cv.perseo.screens.zone
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
@@ -22,6 +21,8 @@ fun ZoneScreen(
     navController: NavController,
     viewModel: ZoneScreenViewModel = hiltViewModel()
 ) {
+    viewModel.getGeneralData()
+    val generalData by viewModel.data.observeAsState()
     val scaffoldState = rememberScaffoldState()
     val currentZone by viewModel.currentZone.observeAsState()
     val rubro = viewModel.rubro.collectAsState().value
@@ -45,7 +46,12 @@ fun ZoneScreen(
             }
         },
         bottomBar = {
-            PerseoBottomBar()
+            if (generalData != null){
+                PerseoBottomBar(
+                    enterprise = generalData?.municipality!!,
+                    enterpriseIcon = generalData?.logo!!
+                )
+            }
         },
         backgroundColor = Background,
     ) {

@@ -59,7 +59,6 @@ class EquipmentScreenViewModel @Inject constructor(
         viewModelScope.launch {
             dbRepository.getGeneralData()
                 .collect { generalData ->
-
                     _generalData.value = generalData
                     val response = repository.getServiceOrders(
                         userId = generalData[0].idUser,
