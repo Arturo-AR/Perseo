@@ -79,4 +79,12 @@ interface PerseoApi {
         @Field("PARAMETROS_ROUTER") parametros: String,
         @Field("INFO_CUMPLIMIENTO") info_cumplimiento: String,
     ): Response<String>
+
+    @FormUrlEncoded
+    @POST("ws.php")
+    suspend fun cancelOrder(
+        @Query("opc") opc: Int,
+        @Field("ID_EMPRESA") enterpriseId: Int,
+        @Field("MOTIVO_CANCELACION") cancelReason: String
+    ): Response<String>
 }

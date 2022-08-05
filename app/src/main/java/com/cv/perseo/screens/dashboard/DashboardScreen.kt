@@ -72,7 +72,7 @@ fun DashboardScreen(
         if (openDialog.value) {
             ShowAlertDialog(
                 title = "Alerta",
-                message = "Desea salir de la aplicacion ?",
+                message = { Text(text = "Desea salir de la aplicacion ?", color = Color.White, fontSize = 18.sp) },
                 openDialog = openDialog
             ) {
                 //TODO: Close app when user tap accept
@@ -102,7 +102,7 @@ fun DrawerView(navController: NavController, viewModel: DashboardScreenViewModel
         if (openDialog.value) {
             ShowAlertDialog(
                 title = "Alerta!",
-                message = "¿Desea Cerrar sesion?",
+                message = { Text(text = "¿Desea Cerrar sesion?", color = Color.White, fontSize = 18.sp) },
                 positiveButtonText = "Cerrar",
                 openDialog = openDialog
             ) {

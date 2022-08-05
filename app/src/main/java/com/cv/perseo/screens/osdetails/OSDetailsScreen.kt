@@ -19,15 +19,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.cv.perseo.components.*
 import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.navigation.PerseoScreens
-import com.cv.perseo.ui.theme.Accent
-import com.cv.perseo.ui.theme.Background
-import com.cv.perseo.ui.theme.Yellow6
+import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
 import com.cv.perseo.utils.toBase64String
 
@@ -42,6 +41,8 @@ fun OSDetailsScreen(
     val openDialogStart = remember { mutableStateOf(false) }
     val openDialogFinish = remember { mutableStateOf(false) }
     val openDialogCancel = remember { mutableStateOf(false) }
+    var cancelReason by remember { mutableStateOf("") }
+    val cancelImages by viewModel.cancelImages.observeAsState()
     val doing by viewModel.doing.observeAsState()
     val onWay by viewModel.onWay.observeAsState()
     val os by viewModel.currentOs.observeAsState()
@@ -94,7 +95,13 @@ fun OSDetailsScreen(
     if (openDialogRoute.value) {
         ShowAlertDialog(
             title = "Alerta",
-            message = "Desea iniciar la ruta hacia esta orden?",
+            message = {
+                Text(
+                    text = "Desea iniciar la ruta hacia esta orden?",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+            },
             openDialog = openDialogRoute
         ) {
             viewModel.startRoute()
@@ -105,7 +112,13 @@ fun OSDetailsScreen(
     if (openDialogStart.value) {
         ShowAlertDialog(
             title = "Alerta",
-            message = "Desea iniciar la orden de servicio?",
+            message = {
+                Text(
+                    text = "Desea iniciar la orden de servicio?",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+            },
             openDialog = openDialogStart
         ) {
             viewModel.finishRoute()
@@ -118,7 +131,13 @@ fun OSDetailsScreen(
     if (openDialogFinish.value) {
         ShowAlertDialog(
             title = "Alerta",
-            message = "Desea finalizar la orden de serivcio?",
+            message = {
+                Text(
+                    text = "Desea finalizar la orden de serivcio?",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+            },
             openDialog = openDialogFinish,
             positiveButtonText = "Finalizar"
         ) {
@@ -129,11 +148,63 @@ fun OSDetailsScreen(
 
     if (openDialogCancel.value) {
         ShowAlertDialog(
-            title = "Alerta",
-            message = "Desea cancelar esta orden de servicio?",
+            title = "Cancelar Orden",
+            message = {
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Ingrese el motivo de cancelacion",
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
+                    TextField(
+                        value = cancelReason, onValueChange = {
+                            cancelReason = it
+                        }, colors = TextFieldDefaults.textFieldColors(
+                            textColor = Color.White,
+                            cursorColor = Yellow4,
+                            focusedIndicatorColor = Yellow4
+                        )
+                    )
+                    RequestContentPermissionCancelList(
+                        bitmapList = cancelImages,
+                        returnUri = {
+                            var bitmap: Bitmap? = null
+                            if (Build.VERSION.SDK_INT < 28) {
+                                bitmap = MediaStore.Images
+                                    .Media.getBitmap(context.contentResolver, it)
+
+                            } else {
+                                val source = it?.let { it1 ->
+                                    ImageDecoder
+                                        .createSource(context.contentResolver, it1)
+                                }
+                                source?.let { it1 -> ImageDecoder.decodeBitmap(it1) }
+                                    ?.let { it2 -> bitmap = it2 }
+                            }
+
+                            viewModel.addCancelImage(bitmap)
+                            //imagesList.add(bitmap)
+                        },
+                        onReturn = {
+
+                        }
+                    )
+
+
+                }
+            },
+            positiveButtonText = "Cancelar",
+            negativeButtonText = "Regresar",
             openDialog = openDialogCancel
         ) {
-            viewModel.cancelOrder()
+            viewModel.cancelOrder(reason = cancelReason, images = listOf("")) {
+                navController.navigate(PerseoScreens.OrderOptions.route) {
+                    popUpTo(PerseoScreens.OrderOptions.route)
+                }
+            }
             openDialogCancel.value = false
         }
     }

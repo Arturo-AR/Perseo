@@ -1,5 +1,6 @@
 package com.cv.perseo.screens.osdetails
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +10,7 @@ import com.cv.perseo.model.database.ComplianceInfo
 import com.cv.perseo.model.database.Equipment
 import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.database.Materials
+import com.cv.perseo.model.perseorequest.CancelOrderRequest
 import com.cv.perseo.model.perseorequest.EquipmentRequest
 import com.cv.perseo.model.perseorequest.ImageRequest
 import com.cv.perseo.model.perseoresponse.ServiceOrderItem
@@ -20,12 +22,10 @@ import com.cv.perseo.utils.toDate
 import com.cv.perseo.utils.toHour
 import com.cv.perseo.utils.toJsonString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
@@ -37,6 +37,9 @@ class OSDetailsScreenViewModel @Inject constructor(
     private val imgurRepository: ImgurRepository
 ) :
     ViewModel() {
+
+    private val _cancelImages: MutableLiveData<List<Bitmap>> = MutableLiveData(mutableListOf())
+    val cancelImages: MutableLiveData<List<Bitmap>>  = _cancelImages
 
     private val _images: MutableLiveData<List<Equipment>> = MutableLiveData(mutableListOf())
     val images: LiveData<List<Equipment>> = _images
@@ -126,12 +129,29 @@ class OSDetailsScreenViewModel @Inject constructor(
         _doing.value = prefs.getDoing()
     }
 
-    fun cancelOrder() {
-        finishDoing()
-        finishRoute()
+    fun cancelOrder(reason: String, images: List<String>, onSuccess: () -> Unit) {
         viewModelScope.launch {
-            dbRepository.deleteMaterials()
-            dbRepository.deleteEquipment()
+            val reasons = CancelOrderRequest(
+                osId = generalData.value[0].idMunicipality,
+                reason = reason,
+                imageUrl1 = "google.com",
+                imageUrl2 = "stackoverflow.com",
+                imageUrl3 = "",
+                location = ""
+            )
+            val response =
+                repository.cancelOrder(generalData.value[0].idMunicipality, reasons.toJsonString())
+            if (response.isSuccessful) {
+                if (response.body() == "Committed") {
+                    finishDoing()
+                    finishRoute()
+                    viewModelScope.launch {
+                        dbRepository.deleteMaterials()
+                        dbRepository.deleteEquipment()
+                    }
+                    onSuccess()
+                }
+            }
         }
     }
 
@@ -297,4 +317,12 @@ class OSDetailsScreenViewModel @Inject constructor(
             updateInfo()
         }
     }
+
+    fun addCancelImage(bitmap: Bitmap?) {
+        if (bitmap != null) {
+            _cancelImages.value = _cancelImages.value?.plus(bitmap) ?: emptyList()
+            Log.d("bitmapList", _cancelImages.value.toString())
+        }
+    }
+
 }

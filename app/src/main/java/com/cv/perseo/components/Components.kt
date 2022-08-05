@@ -48,11 +48,9 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
-import androidx.lifecycle.Transformations.map
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.cv.perseo.data.Data
-import com.cv.perseo.model.EquipmentTmp
 import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.model.database.Equipment
 import com.cv.perseo.model.database.Materials
@@ -347,7 +345,7 @@ fun ButtonsList(
 @Composable
 fun ShowAlertDialog(
     title: String,
-    message: String,
+    message: @Composable () -> Unit,
     positiveButtonText: String = "Aceptar",
     negativeButtonText: String = "Cancelar",
     openDialog: MutableState<Boolean>,
@@ -363,7 +361,7 @@ fun ShowAlertDialog(
                     fontWeight = FontWeight.Bold
                 )
             },
-            text = { Text(text = message, color = White, fontSize = 18.sp) },
+            text = message,
             backgroundColor = Background,
             shape = MaterialTheme.shapes.small,
             buttons = {
@@ -1040,8 +1038,63 @@ fun RequestContentPermission(
                 modifier = Modifier.size(100.dp)
             )
         }
+    }
+}
 
+@Composable
+fun RequestContentPermissionCancelList(
+    bitmapList: List<Bitmap>?,
+    returnUri: (Uri?) -> Unit,
+    onReturn: (Bitmap) -> Unit
 
+) {
+    val launcher = rememberLauncherForActivityResult(
+        contract =
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        returnUri(uri)
+    }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Yellow4
+                ), onClick = {
+                    launcher.launch("image/*")
+                   // if (!bitmapList.isNullOrEmpty()) {
+                      //  if (bitmapList.size < 3) {
+                      //      launcher.launch("image/*")
+                      //  } else {
+                      //      Log.d("Imagenes", "Limit of images")
+                       // }
+                    //}
+                }) {
+                    Text(text = "Agregar Imagen")
+                }
+            }
+            Row(Modifier.padding(8.dp)) {
+                bitmapList?.map { btm ->
+                    onReturn(btm)
+                    Image(
+                        bitmap = btm.asImageBitmap(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(80.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
