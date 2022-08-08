@@ -42,4 +42,8 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
         return api.cancelOrder(8, enterpriseId, cancelReason)
     }
 
+    suspend fun getSubscriberImages(enterpriseId: Int, requestNumber: Int): Response<SubscriberImagesResponse> {
+        return api.getSubscriberImages(9, enterpriseId, requestNumber)
+    }
+
 }

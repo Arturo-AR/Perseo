@@ -11,9 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,7 +35,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -523,6 +520,60 @@ fun DetailContainer(
 }
 
 @Composable
+fun DetailContainerImages(
+    title: String,
+    images: List<SubscriberImage?>
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+        backgroundColor = Accent
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp),
+                    text = title,
+                    style = MaterialTheme.typography.h6,
+                    color = Yellow6
+                )
+                Icon(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable {
+                            expanded = !expanded
+                        },
+                    tint = White,
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null
+                )
+            }
+            AnimatedVisibility(visible = expanded) {
+                LazyRow(Modifier.padding(8.dp)) {
+                    items(images) { image->
+                        Column( horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.padding(4.dp)) {
+                            Image(
+                                painter = rememberAsyncImagePainter(image?.urlImage),
+                                contentDescription = null,
+                                modifier = Modifier.size(100.dp)
+                            )
+                            Text(text = image?.descriptionImage ?: "", color = White)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun DetailItem(
     row: String,
     value: String
@@ -634,7 +685,7 @@ fun MaterialsAddItem(
                     )
                     .background(Yellow3),
                 onClick = {
-                    if (text != ""){
+                    if (text != "") {
                         onClick(text.toDouble(), materialSelected)
                     } else {
                         onClick(-1.0, materialSelected)

@@ -4,12 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -20,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -57,6 +54,7 @@ fun OSDetailsScreen(
     val os by viewModel.currentOs.observeAsState()
     val generalData = viewModel.generalData.collectAsState().value
     val motivos by viewModel.motivos.observeAsState()
+    val subscriberImages by viewModel.subscriberImages.observeAsState()
     val context = LocalContext.current
     viewModel.updateImages()
     viewModel.updateMaterials()
@@ -66,6 +64,7 @@ fun OSDetailsScreen(
         viewModel.updateEquipment()
         viewModel.updateAllEquipment()
         viewModel.getMotivos(os?.motivoId!!, generalData[0].idMunicipality)
+        viewModel.getSubscriberImages()
     }
 
     val parameters = listOf(
@@ -237,8 +236,7 @@ fun OSDetailsScreen(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Orden no. ${if (os != null) os!!.osId else ""}",
-                inDashboard = false
+                title = "Orden no. ${if (os != null) os!!.osId else ""}"
             ) {
                 if (doing != true && onWay != true) {
                     navController.navigate(PerseoScreens.OrderOptions.route) {
@@ -336,11 +334,12 @@ fun OSDetailsScreen(
                                 ?.let { it2 -> bitmap = it2 }
                         }
                         viewModel.saveImages("extra", bitmap?.toBase64String()!!)
-                        //imagesList.add(bitmap)
                     }) {
                         viewModel.deleteImage(it)
-                        //Log.d("bitmap", it.toString())
                     }
+                }
+                if (!subscriberImages.isNullOrEmpty()){
+                    DetailContainerImages("Imagenes del Abonado",subscriberImages!!)
                 }
 
                 if (generalData.isNotEmpty()) {

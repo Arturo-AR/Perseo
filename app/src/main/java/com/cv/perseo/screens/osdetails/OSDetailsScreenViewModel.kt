@@ -14,6 +14,7 @@ import com.cv.perseo.model.perseorequest.CancelOrderRequest
 import com.cv.perseo.model.perseorequest.EquipmentRequest
 import com.cv.perseo.model.perseorequest.ImageRequest
 import com.cv.perseo.model.perseoresponse.ServiceOrderItem
+import com.cv.perseo.model.perseoresponse.SubscriberImage
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.ImgurRepository
 import com.cv.perseo.repository.PerseoRepository
@@ -75,6 +76,9 @@ class OSDetailsScreenViewModel @Inject constructor(
 
     private val _motivos: MutableLiveData<List<String>> = MutableLiveData()
     val motivos: LiveData<List<String>> = _motivos
+
+    private val _subscriberImages: MutableLiveData<List<SubscriberImage?>> = MutableLiveData()
+    val subscriberImages: MutableLiveData<List<SubscriberImage?>> = _subscriberImages
 
     init {
         viewModelScope.launch {
@@ -369,4 +373,15 @@ class OSDetailsScreenViewModel @Inject constructor(
         }
     }
 
+    fun getSubscriberImages() {
+        viewModelScope.launch {
+            val response = repository.getSubscriberImages(
+                generalData.value[0].idMunicipality,
+                currentOs.value?.requestNumber!!
+            )
+            if (response.isSuccessful){
+                _subscriberImages.value = response.body()?.responseBody
+            }
+        }
+    }
 }

@@ -87,4 +87,12 @@ interface PerseoApi {
         @Field("ID_EMPRESA") enterpriseId: Int,
         @Field("MOTIVO_CANCELACION") cancelReason: String
     ): Response<String>
+
+    @FormUrlEncoded
+    @POST("ws.php")
+    suspend fun getSubscriberImages(
+        @Query("opc") opc: Int,
+        @Field("ID_EMPRESA") enterpriseId: Int,
+        @Field("NRO_SOLICITUD") requestNumber: Int
+    ): Response<SubscriberImagesResponse>
 }
