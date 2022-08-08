@@ -85,6 +85,9 @@ interface PerseoDatabaseDao {
     @Query("DELETE FROM equipment")
     suspend fun deleteEquipment()
 
+    @Delete
+    suspend fun deleteEquipmentUnit(equipment: Equipment)
+
     @Query("SELECT * FROM equipment")
     fun getAllEquipment(): Flow<List<Equipment>>
 

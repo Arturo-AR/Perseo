@@ -78,6 +78,9 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
 
     suspend fun deleteEquipment() = perseoDatabaseDao.deleteEquipment()
 
+    suspend fun deleteEquipmentByUnit(equipment: Equipment) =
+        perseoDatabaseDao.deleteEquipmentUnit(equipment)
+
     fun getAllEquipment(): Flow<List<Equipment>> =
         perseoDatabaseDao.getAllEquipment().flowOn(Dispatchers.IO).conflate()
 

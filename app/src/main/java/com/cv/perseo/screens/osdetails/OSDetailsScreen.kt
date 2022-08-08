@@ -29,7 +29,7 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
 import com.cv.perseo.utils.toBase64String
-
+@ExperimentalFoundationApi
 @Composable
 fun OSDetailsScreen(
     navController: NavController,
@@ -155,12 +155,19 @@ fun OSDetailsScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Ingrese el motivo de cancelacion",
+                        text = "Ingrese el motivo de cancelacion:",
                         color = Color.White,
                         fontSize = 18.sp
                     )
                     TextField(
-                        value = cancelReason, onValueChange = {
+                        value = cancelReason,
+                        placeholder = {
+                            Text(
+                                text = "Motivo",
+                                color = ButtonText
+                            )
+                        },
+                        onValueChange = {
                             cancelReason = it
                         }, colors = TextFieldDefaults.textFieldColors(
                             textColor = Color.White,
@@ -188,8 +195,8 @@ fun OSDetailsScreen(
                             viewModel.addCancelImage(bitmap)
                             //imagesList.add(bitmap)
                         },
-                        onReturn = {
-
+                        onReturn = { bitmap ->
+                            viewModel.deleteCancelImage(bitmap)
                         }
                     )
 
@@ -314,7 +321,8 @@ fun OSDetailsScreen(
                         viewModel.saveImages("extra", bitmap?.toBase64String()!!)
                         //imagesList.add(bitmap)
                     }) {
-                        Log.d("bitmap", it.toString())
+                        viewModel.deleteImage(it)
+                        //Log.d("bitmap", it.toString())
                     }
                 }
 

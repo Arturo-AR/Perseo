@@ -9,10 +9,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyColumn
@@ -1041,6 +1038,7 @@ fun RequestContentPermission(
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun RequestContentPermissionCancelList(
     bitmapList: List<Bitmap>?,
@@ -1059,38 +1057,41 @@ fun RequestContentPermissionCancelList(
             .fillMaxWidth(),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Background),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Button(colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Yellow4
-                ), onClick = {
-                    launcher.launch("image/*")
-                   // if (!bitmapList.isNullOrEmpty()) {
-                      //  if (bitmapList.size < 3) {
-                      //      launcher.launch("image/*")
-                      //  } else {
-                      //      Log.d("Imagenes", "Limit of images")
-                       // }
-                    //}
-                }) {
-                    Text(text = "Agregar Imagen")
+
+            Button(colors = ButtonDefaults.buttonColors(
+                backgroundColor = Yellow4
+            ), onClick = {
+                //launcher.launch("image/*")
+                if (bitmapList != null) {
+                    if (bitmapList.size < 3) {
+                        launcher.launch("image/*")
+                    } else {
+                        Log.d("Imagenes", "Limit of images")
+                    }
                 }
+            }) {
+                Text(text = "Agregar Imagen")
             }
+
             Row(Modifier.padding(8.dp)) {
                 bitmapList?.map { btm ->
-                    onReturn(btm)
                     Image(
                         bitmap = btm.asImageBitmap(),
                         contentDescription = null,
                         modifier = Modifier
                             .size(80.dp)
+                            .combinedClickable(
+                                onClick = { },
+                                onLongClick = {
+                                    onReturn(btm)
+                                },
+                            )
                     )
                 }
             }
@@ -1098,11 +1099,12 @@ fun RequestContentPermissionCancelList(
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun RequestContentPermissionList(
     bitmapList: List<Equipment>,
     returnUri: (Uri?) -> Unit,
-    onReturn: (Bitmap) -> Unit
+    onReturn: (Equipment) -> Unit
 
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -1130,6 +1132,7 @@ fun RequestContentPermissionList(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                Spacer(modifier = Modifier.width(16.dp))
                 Button(colors = ButtonDefaults.buttonColors(
                     backgroundColor = Yellow4
                 ), onClick = {
@@ -1139,7 +1142,7 @@ fun RequestContentPermissionList(
                         Log.d("Imagenes", "Limit of images")
                     }
                 }) {
-                    Text(text = "Imagen")
+                    Text(text = "Imagenes Adicionales")
                 }
                 Icon(
                     modifier = Modifier
@@ -1154,16 +1157,18 @@ fun RequestContentPermissionList(
             }
             AnimatedVisibility(visible = expanded) {
                 Row(Modifier.padding(8.dp)) {
-                    bitmapList.map { btm ->
-                        onReturn(btm.url_image?.toBitmap()!!)
+                    bitmapList.map { equipment ->
                         Image(
-                            bitmap = btm.url_image?.toBitmap()?.asImageBitmap()!!,
+                            bitmap = equipment.url_image?.toBitmap()?.asImageBitmap()!!,
                             contentDescription = null,
                             modifier = Modifier
                                 .size(100.dp)
-                                .clickable {
-                                    Log.d("image", "imageneeeeee")
-                                }
+                                .combinedClickable(
+                                    onClick = { },
+                                    onLongClick = {
+                                        onReturn(equipment)
+                                    },
+                                )
                         )
                     }
                 }

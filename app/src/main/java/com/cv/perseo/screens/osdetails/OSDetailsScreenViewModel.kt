@@ -39,7 +39,7 @@ class OSDetailsScreenViewModel @Inject constructor(
     ViewModel() {
 
     private val _cancelImages: MutableLiveData<List<Bitmap>> = MutableLiveData(mutableListOf())
-    val cancelImages: MutableLiveData<List<Bitmap>>  = _cancelImages
+    val cancelImages: MutableLiveData<List<Bitmap>> = _cancelImages
 
     private val _images: MutableLiveData<List<Equipment>> = MutableLiveData(mutableListOf())
     val images: LiveData<List<Equipment>> = _images
@@ -321,7 +321,19 @@ class OSDetailsScreenViewModel @Inject constructor(
     fun addCancelImage(bitmap: Bitmap?) {
         if (bitmap != null) {
             _cancelImages.value = _cancelImages.value?.plus(bitmap) ?: emptyList()
-            Log.d("bitmapList", _cancelImages.value.toString())
+            //Log.d("bitmapList", _cancelImages.value.toString())
+        }
+    }
+
+    fun deleteImage(equipment: Equipment) {
+        viewModelScope.launch {
+            dbRepository.deleteEquipmentByUnit(equipment)
+        }
+    }
+
+    fun deleteCancelImage(bitmap: Bitmap?) {
+        if (bitmap != null) {
+            _cancelImages.value = _cancelImages.value?.minus(bitmap)
         }
     }
 
