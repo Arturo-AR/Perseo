@@ -11,15 +11,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
 import com.cv.perseo.components.*
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
 import com.cv.perseo.ui.theme.Yellow4
+import com.cv.perseo.utils.toast
+import kotlinx.coroutines.launch
 
 @Composable
 fun MaterialsScreen(
@@ -30,6 +34,7 @@ fun MaterialsScreen(
     val scaffoldState = rememberScaffoldState()
     val materials by viewModel.material.collectAsState()
     val inventory by viewModel.inventory.observeAsState()
+    val context = LocalContext.current
     viewModel.getGeneralData()
     val generalData by viewModel.data.observeAsState()
     Scaffold(
@@ -69,12 +74,16 @@ fun MaterialsScreen(
                 fontSize = 22.sp
             )
             if (!inventory.isNullOrEmpty()) {
-                MaterialsAddItem(inventory!!) { amount, item ->
-                    if (amount <= item.amount) {
-                        viewModel.addMaterial(item, amount)
-                        Log.d("cantidad", "Correcto")
+                MaterialsAddItem(inventory!!) { amount, material ->
+                    if (amount != -1.0){
+                        if (amount <= material.amount) {
+                            viewModel.addMaterial(material, amount)
+                            Log.d("cant3idad", "Correcto")
+                        } else {
+                            context.toast("Materiales Insuficientes")
+                        }
                     } else {
-                        Log.d("cantidad", "Incorrecto")
+                        context.toast("Ingrese cantidad")
                     }
                 }
             }

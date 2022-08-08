@@ -551,7 +551,7 @@ fun MaterialsAddItem(
     onClick: (Double, Inventory) -> Unit
 ) {
     // State variables
-    var countryName: Inventory by remember { mutableStateOf(materiales[0]) }
+    var materialSelected: Inventory by remember { mutableStateOf(materiales[0]) }
     var expanded by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
     Card {
@@ -578,7 +578,7 @@ fun MaterialsAddItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = countryName.materialDesc,
+                        text = materialSelected.materialDesc,
                         fontSize = 18.sp,
                         modifier = Modifier.padding(end = 32.dp),
                         color = White,
@@ -593,12 +593,12 @@ fun MaterialsAddItem(
                     DropdownMenu(expanded = expanded, onDismissRequest = {
                         expanded = false
                     }) {
-                        materiales.forEach { country ->
+                        materiales.forEach { material ->
                             DropdownMenuItem(onClick = {
                                 expanded = false
-                                countryName = country
+                                materialSelected = material
                             }) {
-                                Text(text = country.materialDesc)
+                                Text(text = material.materialDesc)
                             }
                         }
                     }
@@ -634,7 +634,11 @@ fun MaterialsAddItem(
                     )
                     .background(Yellow3),
                 onClick = {
-                    onClick(text.toDouble(), countryName)
+                    if (text != ""){
+                        onClick(text.toDouble(), materialSelected)
+                    } else {
+                        onClick(-1.0, materialSelected)
+                    }
                 }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = White)

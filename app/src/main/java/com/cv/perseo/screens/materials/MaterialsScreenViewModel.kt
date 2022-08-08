@@ -1,13 +1,11 @@
 package com.cv.perseo.screens.materials
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.model.database.Materials
-import com.cv.perseo.model.database.ServiceOrder
 import com.cv.perseo.model.perseoresponse.Inventory
 import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.PerseoRepository
@@ -15,7 +13,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,8 +31,8 @@ class MaterialsScreenViewModel @Inject constructor(
     private val _material = MutableStateFlow<List<Materials>>(emptyList())
     val material = _material.asStateFlow()
 
-    private val _data :  MutableLiveData<GeneralData> =MutableLiveData()
-    val data : LiveData<GeneralData> = _data
+    private val _data: MutableLiveData<GeneralData> = MutableLiveData()
+    val data: LiveData<GeneralData> = _data
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -68,13 +65,16 @@ class MaterialsScreenViewModel @Inject constructor(
 
     fun addMaterial(material: Inventory, amount: Double) {
         viewModelScope.launch {
-            dbRepository.insertMaterial(
-                Materials(
-                    id_material = material.materialId,
-                    desc_material = material.materialDesc,
-                    cantidad = amount
+            if (_material.value.find { it.id_material == material.materialId }?.id_material != material.materialId) {
+                dbRepository.insertMaterial(
+                    Materials(
+                        id_material = material.materialId,
+                        desc_material = material.materialDesc,
+                        cantidad = amount
+                    )
                 )
-            )
+
+            }
         }
     }
 
