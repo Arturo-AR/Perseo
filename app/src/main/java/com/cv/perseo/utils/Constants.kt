@@ -25,6 +25,10 @@ object Constants {
 
     const val ITEM_BACKGROUND_CIUDAD_PATH = "images/fondos/ciudad_item_background.png"
 
+    const val ID_PACHUCA_ALBUM = "dqNqCuK"
+    const val ID_MORELIA_ALBUM = "BcCsOBJ"
+    const val ID_TULANCINGO_ALBUM = "MCYvwJI"
+    const val ID_TEST_ALBUM = "9K03yxW"
     /**
      *   No Final
      */

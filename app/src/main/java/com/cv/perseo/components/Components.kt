@@ -1167,8 +1167,8 @@ fun RequestContentPermissionList(
                                     onClick = { },
                                     onLongClick = {
                                         onReturn(equipment)
-                                    },
-                                )
+                                    })
+                                .padding(4.dp)
                         )
                     }
                 }

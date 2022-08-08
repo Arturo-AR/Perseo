@@ -18,6 +18,7 @@ import com.cv.perseo.repository.DatabaseRepository
 import com.cv.perseo.repository.ImgurRepository
 import com.cv.perseo.repository.PerseoRepository
 import com.cv.perseo.repository.SharedRepository
+import com.cv.perseo.utils.Constants
 import com.cv.perseo.utils.toDate
 import com.cv.perseo.utils.toHour
 import com.cv.perseo.utils.toJsonString
@@ -131,12 +132,13 @@ class OSDetailsScreenViewModel @Inject constructor(
 
     fun cancelOrder(reason: String, images: List<String>, onSuccess: () -> Unit) {
         viewModelScope.launch {
+            val links = uploadCancelImages(images)
             val reasons = CancelOrderRequest(
                 osId = generalData.value[0].idMunicipality,
                 reason = reason,
-                imageUrl1 = "google.com",
-                imageUrl2 = "stackoverflow.com",
-                imageUrl3 = "",
+                imageUrl1 = links[0],
+                imageUrl2 = links[1],
+                imageUrl3 = links[2],
                 location = ""
             )
             val response =
@@ -216,6 +218,36 @@ class OSDetailsScreenViewModel @Inject constructor(
             }
         }.join()
         return true
+    }
+
+    private suspend fun uploadCancelImages(images: List<String>): List<String> {
+        val linkList: MutableList<String> = mutableListOf()
+        viewModelScope.launch {
+            images.mapIndexed { index, it ->
+                val title =
+                    "can$index||${currentOs.value?.osId}||${Date().toDate()}||${currentOs.value?.requestNumber}"
+                val album = when (generalData.value[0].municipality) {
+                    "PACHUCA" -> Constants.ID_PACHUCA_ALBUM
+                    "MORELIA" -> Constants.ID_MORELIA_ALBUM
+                    "TULANCINGO" -> Constants.ID_TULANCINGO_ALBUM
+                    "TEST" -> Constants.ID_TEST_ALBUM
+                    else -> ""
+                }
+                val response = imgurRepository.uploadImage(
+                    image = it,
+                    album = album,
+                    title = title
+                )
+                if (response.isSuccessful) {
+                    linkList.add(response.body()?.upload?.link!!)
+                }
+                Log.d("Link", response.body()?.upload?.link!!)
+            }
+            for (x in linkList.size until 3) {
+                linkList.add("")
+            }
+        }.join()
+        return linkList
     }
 
     fun saveImages(name: String, image: String) {

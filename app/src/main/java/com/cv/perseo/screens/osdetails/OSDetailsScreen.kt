@@ -9,15 +9,21 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +35,9 @@ import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.*
 import com.cv.perseo.utils.Constants
 import com.cv.perseo.utils.toBase64String
+import com.cv.perseo.utils.toast
+
+@ExperimentalComposeUiApi
 @ExperimentalFoundationApi
 @Composable
 fun OSDetailsScreen(
@@ -167,6 +176,8 @@ fun OSDetailsScreen(
                                 color = ButtonText
                             )
                         },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                         onValueChange = {
                             cancelReason = it
                         }, colors = TextFieldDefaults.textFieldColors(
@@ -207,12 +218,18 @@ fun OSDetailsScreen(
             negativeButtonText = "Regresar",
             openDialog = openDialogCancel
         ) {
-            viewModel.cancelOrder(reason = cancelReason, images = listOf("")) {
-                navController.navigate(PerseoScreens.OrderOptions.route) {
-                    popUpTo(PerseoScreens.OrderOptions.route)
+            if (cancelReason != "" && cancelImages?.isNotEmpty()!!){
+                viewModel.cancelOrder(reason = cancelReason, images = cancelImages?.map { it.toBase64String() }!!) {
+                    navController.navigate(PerseoScreens.OrderOptions.route) {
+                        popUpTo(PerseoScreens.OrderOptions.route)
+                    }
+                    openDialogCancel.value = false
                 }
+            } else if (cancelReason == "") {
+                context.toast("Ingrese el motivo")
+            } else {
+                context.toast("Agregue al menos una imagen")
             }
-            openDialogCancel.value = false
         }
     }
 
