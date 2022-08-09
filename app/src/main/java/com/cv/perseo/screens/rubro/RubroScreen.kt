@@ -1,6 +1,5 @@
 package com.cv.perseo.screens.rubro
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
@@ -12,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -20,6 +21,7 @@ import com.cv.perseo.components.PerseoTopBar
 import com.cv.perseo.components.ServiceOrderCard
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
+import com.cv.perseo.utils.toast
 
 @ExperimentalFoundationApi
 @Composable
@@ -32,6 +34,7 @@ fun RubroScreen(
     val scaffoldState = rememberScaffoldState()
     val orders = viewModel.serviceOrders.collectAsState().value
     val currentRubro by viewModel.currentRubro.observeAsState()
+    val context = LocalContext.current
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -45,7 +48,7 @@ fun RubroScreen(
             }
         },
         bottomBar = {
-            if (generalData != null){
+            if (generalData != null) {
                 PerseoBottomBar(
                     enterprise = generalData?.municipality!!,
                     enterpriseIcon = generalData?.logo!!
@@ -56,6 +59,7 @@ fun RubroScreen(
     ) {
 
         LazyVerticalGrid(
+            modifier = Modifier.padding(bottom = 50.dp),
             cells = GridCells.Fixed(2),
             contentPadding = PaddingValues(8.dp)
         ) {
@@ -65,7 +69,7 @@ fun RubroScreen(
                         viewModel.saveOsId(order.osId)
                         navController.navigate(PerseoScreens.OSDetails.route)
                     } else {
-                        Log.d("pre completed", "Order Ready")
+                        context.toast("Orden Pre-Cumplida")
                     }
                 }
             }

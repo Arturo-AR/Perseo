@@ -23,8 +23,8 @@ class ServiceOrdersScreenViewModel @Inject constructor(
     private val _permissions = MutableStateFlow<List<String>>(emptyList())
     val permissions = _permissions.asStateFlow()
 
-    private val _data : MutableLiveData<GeneralData> = MutableLiveData()
-    val data : LiveData<GeneralData> = _data
+    private val _data: MutableLiveData<GeneralData> = MutableLiveData()
+    val data: LiveData<GeneralData> = _data
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -45,10 +45,14 @@ class ServiceOrdersScreenViewModel @Inject constructor(
 
     fun getGeneralData() {
         viewModelScope.launch {
-            dbRepository.getGeneralData().distinctUntilChanged()
-                .collect { data ->
-                    _data.value = data[0]
-                }
+            try {
+                dbRepository.getGeneralData().distinctUntilChanged()
+                    .collect { data ->
+                        _data.value = data[0]
+                    }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

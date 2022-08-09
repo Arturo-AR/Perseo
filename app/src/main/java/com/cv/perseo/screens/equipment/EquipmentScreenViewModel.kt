@@ -94,23 +94,31 @@ class EquipmentScreenViewModel @Inject constructor(
 
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
-            val response = repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
-            if (response.isSuccessful) {
-                if (response.body()?.responseCode == 200) {
-                    motivosOriginal.value = response.body()!!.responseBody
-                    val motivos = mutableListOf<String>()
-                    motivosOriginal.value?.map { motivo ->
-                        val motivoArray = motivo.split("_")
-                        if (motivoArray[0] == "AGREGAR" || motivoArray[0] == "QUITAR") {
-                            if (motivoArray.size > 2) {
-                                motivos.add("${motivoArray[1]} ${motivoArray[2]}")
-                            } else {
-                                motivos.add(motivoArray[1])
+            Log.d("motivoEQ", motivoId)
+            Log.d("motivoEQ", enterpriseId.toString())
+            try {
+                val response =
+                    repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
+                if (response.isSuccessful) {
+                    if (response.body()?.responseCode == 200) {
+                        motivosOriginal.value = response.body()!!.responseBody
+                        val motivos = mutableListOf<String>()
+                        motivosOriginal.value?.map { motivo ->
+                            val motivoArray = motivo.split("_")
+                            if (motivoArray[0] == "AGREGAR" || motivoArray[0] == "QUITAR") {
+                                if (motivoArray.size > 2) {
+                                    motivos.add("${motivoArray[1]} ${motivoArray[2]}")
+                                } else {
+                                    motivos.add(motivoArray[1])
+                                }
                             }
                         }
+                        _motivos.value = motivos
                     }
-                    _motivos.value = motivos
                 }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
@@ -231,7 +239,7 @@ class EquipmentScreenViewModel @Inject constructor(
                 } else {
                     validateAction(validate?.responseBody?.message!!)
                 }
-            }else {
+            } else {
                 validateAction("Error del servidor")
             }
         }

@@ -105,10 +105,24 @@ class OSDetailsScreenViewModel @Inject constructor(
 
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
+            Log.d("motivo", motivoId)
+            Log.d("motivo", enterpriseId.toString())
             val response = repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
             if (response.isSuccessful) {
                 if (response.body()?.responseCode == 200) {
-                    _motivos.value = response.body()!!.responseBody
+                    val motivosOriginal = response.body()!!.responseBody
+                    val motivos = mutableListOf<String>()
+                    motivosOriginal?.map { motivo ->
+                        val motivoArray = motivo.split("_")
+                        if (motivoArray[0] == "AGREGAR" || motivoArray[0] == "QUITAR") {
+                            if (motivoArray.size > 2) {
+                                motivos.add("${motivoArray[1]} ${motivoArray[2]}")
+                            } else {
+                                motivos.add(motivoArray[1])
+                            }
+                        }
+                    }
+                    _motivos.value = motivos
                 }
             }
         }
@@ -138,7 +152,7 @@ class OSDetailsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val links = uploadCancelImages(images)
             val reasons = CancelOrderRequest(
-                osId = generalData.value[0].idMunicipality,
+                osId = currentOs.value?.osId!!,
                 reason = reason,
                 imageUrl1 = links[0],
                 imageUrl2 = links[1],
@@ -154,6 +168,7 @@ class OSDetailsScreenViewModel @Inject constructor(
                     viewModelScope.launch {
                         dbRepository.deleteMaterials()
                         dbRepository.deleteEquipment()
+                        dbRepository.deleteComplianceInfo()
                     }
                     onSuccess()
                 }
@@ -161,7 +176,7 @@ class OSDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    fun finishOrder() {
+    fun finishOrder(onClick: () -> Unit) {
         viewModelScope.launch {
             val ok = uploadImages()
             if (ok) {
@@ -187,7 +202,16 @@ class OSDetailsScreenViewModel @Inject constructor(
                 )
 
                 if (response.isSuccessful) {
-                    Log.d("Success", "Cumplimiento correcto")
+                    if (response.body() == "Committed") {
+                        finishDoing()
+                        finishRoute()
+                        viewModelScope.launch {
+                            dbRepository.deleteMaterials()
+                            dbRepository.deleteEquipment()
+                            dbRepository.deleteComplianceInfo()
+                        }
+                        onClick()
+                    }
                 }
 
             }
@@ -245,7 +269,6 @@ class OSDetailsScreenViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     linkList.add(response.body()?.upload?.link!!)
                 }
-                Log.d("Link", response.body()?.upload?.link!!)
             }
             for (x in linkList.size until 3) {
                 linkList.add("")
@@ -379,7 +402,7 @@ class OSDetailsScreenViewModel @Inject constructor(
                 generalData.value[0].idMunicipality,
                 currentOs.value?.requestNumber!!
             )
-            if (response.isSuccessful){
+            if (response.isSuccessful) {
                 _subscriberImages.value = response.body()?.responseBody
             }
         }

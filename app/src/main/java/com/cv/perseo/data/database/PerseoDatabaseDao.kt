@@ -98,8 +98,12 @@ interface PerseoDatabaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertComplianceInfo(complianceInfo: ComplianceInfo)
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateComplianceInfo(complianceInfo: ComplianceInfo)
+
+    @Query("DELETE FROM compliance_info")
+    suspend fun deleteComplianceInfo()
+
     @Query("SELECT * FROM compliance_info")
     fun getAllCompliance(): Flow<ComplianceInfo>
-
-
 }

@@ -94,4 +94,8 @@ class DatabaseRepository @Inject constructor(private val perseoDatabaseDao: Pers
     suspend fun insertCompliance(complianceInfo: ComplianceInfo) =
         perseoDatabaseDao.insertComplianceInfo(complianceInfo)
 
+    suspend fun updateComplianceInfo(complianceInfo: ComplianceInfo) = perseoDatabaseDao.updateComplianceInfo(complianceInfo)
+
+    suspend fun deleteComplianceInfo() = perseoDatabaseDao.deleteComplianceInfo()
+
 }

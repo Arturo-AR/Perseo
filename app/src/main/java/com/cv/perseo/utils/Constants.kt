@@ -2,10 +2,10 @@ package com.cv.perseo.utils
 
 object Constants {
 
-    private const val DEV_URL = "http://servermrl.no-ip.org/perseo/pruebas1/webservices/aplicacion/pruebas/"
-    private const val PROD_URL = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/pruebas/"
+    private const val DEV_URL = "http://servermrl.no-ip.org/perseo/pruebas1/webservices/aplicacion/"
+    private const val PROD_URL = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/"
     const val IMGUR_BASE_URL = "https://api.imgur.com/"
-    const val PERSEO_BASE_URL = DEV_URL
+    const val PERSEO_BASE_URL = PROD_URL
 
     const val SHARED_DB = "myDb"
     const val SHARED_OS_ID = "osId"
@@ -33,7 +33,6 @@ object Constants {
      *   No Final
      */
     const val LOGO_PERSEO = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/logos/cabeza_perseo.png"
-    const val LOGO_TELECABLE = "http://servermrl.no-ip.org/perseo/webservices/aplicacion/images/logos/telecable_logo.png"
 
     const val SERVICE_ORDERS = "/images/activities/ordenes_servicio.png"
     const val MY_SERVICE_ORDERS = "/images/activities/mis_os.png"

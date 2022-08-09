@@ -49,17 +49,24 @@ class DashboardScreenViewModel @Inject constructor(
             dbRepository.deleteGeneralData()
             dbRepository.deletePermissions()
             dbRepository.deleteServiceOrders()
+            dbRepository.deleteComplianceInfo()
+            dbRepository.deleteEquipment()
+            dbRepository.deleteMaterials()
         }
     }
 
     fun getGeneralData() {
         viewModelScope.launch {
-            dbRepository.getGeneralData().distinctUntilChanged()
-                .collect { data ->
-                    if (data.isNotEmpty()) {
-                        _data.value = data[0]
+            try {
+                dbRepository.getGeneralData().distinctUntilChanged()
+                    .collect { data ->
+                        if (data.isNotEmpty()) {
+                            _data.value = data[0]
+                        }
                     }
-                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 }

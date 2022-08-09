@@ -398,7 +398,7 @@ fun ZonesButtons(
                             .padding(4.dp)
                             .fillMaxSize()
                             .clickable { onPress(items[index]) },
-                        painter = rememberAsyncImagePainter(Constants.BUTTON_BACKGROUND), //TODO: Change painter per bitmap
+                        painter = rememberAsyncImagePainter(Constants.BUTTON_BACKGROUND),
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds
                     )
@@ -440,7 +440,7 @@ fun ServiceOrderCard(
             modifier = Modifier
                 .padding(4.dp)
                 .fillMaxSize(),
-            painter = rememberAsyncImagePainter(if (os.preCumDate == "") Constants.OS_ACTIVE_BACKGROUND else Constants.OS_INACTIVE_BACKGROUND), //TODO: Change painter per bitmap
+            painter = rememberAsyncImagePainter(if (os.preCumDate == "") Constants.OS_ACTIVE_BACKGROUND else Constants.OS_INACTIVE_BACKGROUND),
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
@@ -557,8 +557,12 @@ fun DetailContainerImages(
             }
             AnimatedVisibility(visible = expanded) {
                 LazyRow(Modifier.padding(8.dp)) {
-                    items(images) { image->
-                        Column( horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.padding(4.dp)) {
+                    items(images) { image ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(4.dp)
+                        ) {
                             Image(
                                 painter = rememberAsyncImagePainter(image?.urlImage),
                                 contentDescription = null,
@@ -1355,14 +1359,14 @@ fun EnterpriseOption(
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                modifier = Modifier.height(35.dp),
+                modifier = Modifier.height(40.dp),
                 contentScale = ContentScale.Crop,
                 bitmap = enterprise.logoIcon.toBitmap().asImageBitmap(),
                 contentDescription = null
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = enterprise.municipality, color = White, fontWeight = FontWeight.Bold,
+                text = enterprise.tradeName, color = White, fontWeight = FontWeight.Bold,
                 fontSize = if (enterprise.municipality.length < 9) 16.sp else 14.sp
             )
         }

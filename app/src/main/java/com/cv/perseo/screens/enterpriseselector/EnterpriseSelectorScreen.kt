@@ -1,6 +1,5 @@
 package com.cv.perseo.screens.enterpriseselector
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,7 +43,6 @@ fun EnterpriseSelectorScreen(
         ) {
             if (!options.isNullOrEmpty())
                 EnterpriseList(options!!){
-                    Log.d("selector", it.tradeName)
                     viewModel.updateData(it)
                     navController.navigate(PerseoScreens.Dashboard.route)
                 }

@@ -47,6 +47,7 @@ fun OSDetailsScreen(
     val openDialogStart = remember { mutableStateOf(false) }
     val openDialogFinish = remember { mutableStateOf(false) }
     val openDialogCancel = remember { mutableStateOf(false) }
+    val loading = remember { mutableStateOf(false) }
     var cancelReason by remember { mutableStateOf("") }
     val cancelImages by viewModel.cancelImages.observeAsState()
     val doing by viewModel.doing.observeAsState()
@@ -149,8 +150,14 @@ fun OSDetailsScreen(
             openDialog = openDialogFinish,
             positiveButtonText = "Finalizar"
         ) {
-            viewModel.finishOrder()
             openDialogFinish.value = false
+            loading.value = true
+            viewModel.finishOrder {
+                loading.value = false
+                navController.navigate(PerseoScreens.OrderOptions.route) {
+                    popUpTo(PerseoScreens.OrderOptions.route)
+                }
+            }
         }
     }
 
@@ -176,7 +183,10 @@ fun OSDetailsScreen(
                             )
                         },
                         singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done
+                        ),
                         onValueChange = {
                             cancelReason = it
                         }, colors = TextFieldDefaults.textFieldColors(
@@ -209,20 +219,23 @@ fun OSDetailsScreen(
                             viewModel.deleteCancelImage(bitmap)
                         }
                     )
-
-
                 }
             },
             positiveButtonText = "Cancelar",
             negativeButtonText = "Regresar",
             openDialog = openDialogCancel
         ) {
-            if (cancelReason != "" && cancelImages?.isNotEmpty()!!){
-                viewModel.cancelOrder(reason = cancelReason, images = cancelImages?.map { it.toBase64String() }!!) {
+            if (cancelReason != "" && cancelImages?.isNotEmpty()!!) {
+                loading.value = true
+                openDialogCancel.value = false
+                viewModel.cancelOrder(
+                    reason = cancelReason,
+                    images = cancelImages?.map { it.toBase64String() }!!
+                ) {
                     navController.navigate(PerseoScreens.OrderOptions.route) {
                         popUpTo(PerseoScreens.OrderOptions.route)
                     }
-                    openDialogCancel.value = false
+                    loading.value = false
                 }
             } else if (cancelReason == "") {
                 context.toast("Ingrese el motivo")
@@ -318,6 +331,9 @@ fun OSDetailsScreen(
                 DetailContainer("${os?.name} ${os?.lastName}", parameters)
                 DetailContainer("${os?.street ?: ""} #${os?.outdoorNumber ?: ""}", parameters2)
                 DetailContainer("Datos de Orden", parameters3)
+                if (!subscriberImages.isNullOrEmpty()) {
+                    DetailContainerImages("Imagenes del Abonado", subscriberImages!!)
+                }
                 if (doing == true) {
                     RequestContentPermissionList(bitmapList = imagesList!!, returnUri = {
                         var bitmap: Bitmap? = null
@@ -333,14 +349,12 @@ fun OSDetailsScreen(
                             source?.let { it1 -> ImageDecoder.decodeBitmap(it1) }
                                 ?.let { it2 -> bitmap = it2 }
                         }
-                        viewModel.saveImages("extra", bitmap?.toBase64String()!!)
+                        viewModel.saveImages("EXTRA", bitmap?.toBase64String()!!)
                     }) {
                         viewModel.deleteImage(it)
                     }
                 }
-                if (!subscriberImages.isNullOrEmpty()){
-                    DetailContainerImages("Imagenes del Abonado",subscriberImages!!)
-                }
+
 
                 if (generalData.isNotEmpty()) {
                     if (onWay == false && doing == false) {
@@ -412,6 +426,15 @@ fun OSDetailsScreen(
                     Text(text = "CT: ", color = Color.White)
                     Text(text = os?.ct ?: "", color = Yellow6)
                 }
+            }
+        }
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            if (loading.value) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(80.dp),
+                    color = Yellow4,
+                    strokeWidth = 8.dp
+                )
             }
         }
     }

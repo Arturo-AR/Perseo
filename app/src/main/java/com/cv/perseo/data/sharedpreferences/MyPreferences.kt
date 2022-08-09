@@ -46,7 +46,6 @@ class MyPreferences @Inject constructor(@ApplicationContext context: Context) {
         storage.edit().putBoolean(SHARED_DOING, doing).apply()
     }
 
-
     fun getOnWay(): Boolean {
         return storage.getBoolean(SHARED_ON_WAY, false)
     }
