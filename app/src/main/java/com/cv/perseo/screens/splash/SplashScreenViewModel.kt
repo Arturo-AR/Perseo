@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cv.perseo.model.database.GeneralData
 import com.cv.perseo.repository.DatabaseRepository
+import com.cv.perseo.repository.PerseoRepository
 import com.cv.perseo.repository.SharedRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashScreenViewModel @Inject constructor(
-    private val repository: DatabaseRepository,
+    private val dbRepository: DatabaseRepository,
+    private val perseoRepository: PerseoRepository,
     private val prefs: SharedRepository
 ) :
     ViewModel() {
@@ -29,13 +31,15 @@ class SplashScreenViewModel @Inject constructor(
     private val _onWay: MutableLiveData<Boolean> = MutableLiveData()
     val onWay: LiveData<Boolean> = _onWay
 
-    init {
+    private val _versionOk: MutableLiveData<Boolean> = MutableLiveData(false)
+    val versionOk: LiveData<Boolean> = _versionOk
 
+    init {
         _doing.value = prefs.getDoing()
         _onWay.value = prefs.getOnWay()
 
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getGeneralData().distinctUntilChanged()
+            dbRepository.getGeneralData().distinctUntilChanged()
                 .collect { data ->
                     if (data.isEmpty()) {
                         Log.d("Splashscreen", "No General Data")
@@ -43,6 +47,17 @@ class SplashScreenViewModel @Inject constructor(
                         _generalData.value = data
                     }
                 }
+        }
+    }
+
+    fun verifyVersion(version:String) {
+        viewModelScope.launch {
+            val response = perseoRepository.verifyVersion(version)
+            if (response.isSuccessful){
+                if (response.body()?.responseCode == 200){
+                    _versionOk.value = true
+                }
+            }
         }
     }
 }

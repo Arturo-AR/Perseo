@@ -1,5 +1,6 @@
 package com.cv.perseo.screens.splash
 
+import android.util.Log
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -8,17 +9,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.cv.perseo.BuildConfig
 import com.cv.perseo.components.LogoPerseo
+import com.cv.perseo.components.ShowAlertDialog
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Accent
 import com.cv.perseo.ui.theme.Yellow2
@@ -32,7 +35,9 @@ fun SplashScreen(
 
     val doing by viewModel.doing.observeAsState()
     val onWay by viewModel.onWay.observeAsState()
-
+    val showDialog = remember { mutableStateOf(false) }
+    val versionOk by viewModel.versionOk.observeAsState()
+    viewModel.verifyVersion(BuildConfig.VERSION_NAME)
     val scale = remember {
         Animatable(0f)
     }
@@ -47,18 +52,40 @@ fun SplashScreen(
                 })
         )
         delay(1500L) //On screen total time
-        if (viewModel.generalData.value.isEmpty()) {
-            navController.navigate(PerseoScreens.Login.route)
-        } else {
-            if (viewModel.generalData.value[0].idMunicipality != 0) {
-                if (doing == true || onWay == true) {
-                    navController.navigate(PerseoScreens.OSDetails.route)
+        if (versionOk != null)
+            if (versionOk!!) {
+                if (viewModel.generalData.value.isEmpty()) {
+                    navController.navigate(PerseoScreens.Login.route)
                 } else {
-                    navController.navigate(PerseoScreens.Dashboard.route)
+                    if (viewModel.generalData.value[0].idMunicipality != 0) {
+                        if (doing == true || onWay == true) {
+                            navController.navigate(PerseoScreens.OSDetails.route)
+                        } else {
+                            navController.navigate(PerseoScreens.Dashboard.route)
+                        }
+                    } else {
+                        navController.navigate(PerseoScreens.EnterpriseSelector.route)
+                    }
                 }
             } else {
-                navController.navigate(PerseoScreens.EnterpriseSelector.route)
+                showDialog.value = true
+                Log.d("version", "error")
             }
+    }
+
+    if (showDialog.value) {
+        ShowAlertDialog(
+            title = "Alerta",
+            message = {
+                Text(
+                    text = "La version de la app con la que cuentas esta deprecada, por favor actualiza",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+            },
+            openDialog = showDialog
+        ) {
+            //todo: open play store to update
         }
     }
     Surface(
