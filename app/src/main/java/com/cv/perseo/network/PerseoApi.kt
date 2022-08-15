@@ -95,4 +95,11 @@ interface PerseoApi {
         @Field("ID_EMPRESA") enterpriseId: Int,
         @Field("NRO_SOLICITUD") requestNumber: Int
     ): Response<SubscriberImagesResponse>
+
+    @FormUrlEncoded
+    @POST("ws.php")
+    suspend fun verifyVersion(
+        @Query("opc") opc: Int,
+        @Field("VERSION") version:String
+    ):Response<VerifyVersionResponse>
 }

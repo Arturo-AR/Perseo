@@ -38,7 +38,7 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
         return api.finalizarOrdenServicio(7, empresa_id, ordenes_info_cumplimiento, fotos, equipos, orden, fecha, materiales, parametros, info_cumplimiento)
     }
 
-    suspend fun cancelOrder(enterpriseId: Int, cancelReason:String): Response<String> {
+    suspend fun cancelOrder(enterpriseId: Int, cancelReason: String): Response<String> {
         return api.cancelOrder(8, enterpriseId, cancelReason)
     }
 
@@ -46,4 +46,7 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
         return api.getSubscriberImages(9, enterpriseId, requestNumber)
     }
 
+    suspend fun verifyVersion(version: String): Response<VerifyVersionResponse> {
+        return api.verifyVersion(10, version)
+    }
 }
