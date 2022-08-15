@@ -95,4 +95,13 @@ interface PerseoApi {
         @Field("ID_EMPRESA") enterpriseId: Int,
         @Field("NRO_SOLICITUD") requestNumber: Int
     ): Response<SubscriberImagesResponse>
+
+    @FormUrlEncoded
+    @POST("ws.php")
+    suspend fun oSBlockCompliance(
+        @Query("opc") opc: Int,
+        @Field("ID_EMPRESA") enterpriseId: Int,
+        @Field("FECHA") date: String,
+        @Field("ID_OS_ARRAY") osIdsArray: String,
+    ): Response<String>
 }

@@ -1,26 +1,27 @@
 package com.cv.perseo.screens.servicecords
 
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.cv.perseo.components.CordsServicesFilters
-import com.cv.perseo.components.CordsServicesItem
-import com.cv.perseo.components.PerseoBottomBar
-import com.cv.perseo.components.PerseoTopBar
+import com.cv.perseo.components.*
 import com.cv.perseo.navigation.PerseoScreens
 import com.cv.perseo.ui.theme.Background
+import com.cv.perseo.utils.toJsonString
+import com.cv.perseo.utils.toast
 
 @Composable
 fun ServiceCordsScreen(
@@ -32,6 +33,30 @@ fun ServiceCordsScreen(
     val cords by viewModel.cordsOrder.observeAsState()
     viewModel.getGeneralData()
     val generalData by viewModel.data.observeAsState()
+    val context = LocalContext.current
+    val osList by viewModel.osList.observeAsState()
+    val openConfirmDialog = remember { mutableStateOf(false) }
+    val options by viewModel.filterOptions.observeAsState()
+    if (openConfirmDialog.value) {
+        ShowAlertDialog(
+            title = "Alerta",
+            message = {
+                Text(
+                    text = "Desea cumplir las ordenes:\n${osList?.toJsonString()}",
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+            },
+            positiveButtonText = "Cumplir",
+            openDialog = openConfirmDialog
+        ) {
+            viewModel.completeOrders {
+                navController.navigate(PerseoScreens.ServiceOrders.route) {
+                    popUpTo(PerseoScreens.ServiceOrders.route)
+                }
+            }
+        }
+    }
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -45,7 +70,7 @@ fun ServiceCordsScreen(
             }
         },
         bottomBar = {
-            if (generalData != null){
+            if (generalData != null) {
                 PerseoBottomBar(
                     enterprise = generalData?.municipality!!,
                     enterpriseIcon = generalData?.logo!!
@@ -60,15 +85,42 @@ fun ServiceCordsScreen(
                 .padding(bottom = 50.dp)
                 .background(Background)
         ) {
-            CordsServicesFilters()
-            if (!cords.isNullOrEmpty()) {
-                LazyColumn(contentPadding = PaddingValues(8.dp)) {
-                    items(cords!!) { cord ->
-                        CordsServicesItem(cord)
+            Column(modifier = Modifier.weight(1f)) {
+                if (!options.isNullOrEmpty()){
+                    CordsServicesFilters(options ?: emptyList(), onChangeFilter = {
+                        viewModel.cleanOsList()
+                        viewModel.updateOptions(it)
+                    },
+                    onChangeOption = {
+                        viewModel.cleanOsList()
+                        Log.d("Option", it)
+                    })
+                }
+            }
+            Column(modifier = Modifier.weight(8f)) {
+                if (!cords.isNullOrEmpty()) {
+                    LazyColumn(contentPadding = PaddingValues(8.dp)) {
+                        items(cords!!) { cord ->
+                            CordsServicesItem(cord) { os, checked ->
+                                if (checked) {
+                                    viewModel.addOs(os.osId)
+                                } else {
+                                    viewModel.deleteOs(cord.osId)
+                                }
+                            }
+                        }
                     }
                 }
             }
-
+            Column(modifier = Modifier.weight(1f)) {
+                CordsServicesFooter {
+                    if (osList.isNullOrEmpty()) {
+                        context.toast("No has seleccionado ninguna orden")
+                    } else {
+                        openConfirmDialog.value = true
+                    }
+                }
+            }
         }
     }
 }
