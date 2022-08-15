@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.cv.perseo.data.Data
 import com.cv.perseo.model.ItemOSDetail
 import com.cv.perseo.model.database.Equipment
 import com.cv.perseo.model.database.Materials
@@ -776,6 +775,7 @@ fun EquipmentItem(
 @Composable
 fun CordsServicesItem(
     cord: CordsOrderBody,
+    onChecked: (CordsOrderBody, Boolean) -> Unit
 ) {
     val checked = rememberSaveable { mutableStateOf(false) }
     Card(
@@ -806,19 +806,26 @@ fun CordsServicesItem(
             Checkbox(
                 modifier = Modifier.weight(1f),
                 checked = checked.value,
-                onCheckedChange = { checked.value = !checked.value })
+                onCheckedChange = {
+                    checked.value = !checked.value
+                    onChecked(cord, checked.value)
+
+                })
         }
     }
 }
 
 @Composable
-fun CordsServicesFilters() {
-    val colonias = Data.colonias
+fun CordsServicesFilters(
+    filters:List<String>,
+    onChangeFilter:(String)->Unit,
+    onChangeOption:(String)->Unit
+) {
     val spinners = listOf("Colonia", "Sector")
     val currentSelection = remember { mutableStateOf(spinners.first()) }
 
     // State variables
-    var colonia: String by remember { mutableStateOf(colonias.first()) }
+    var currentFilter: String by remember { mutableStateOf(filters.first()) }
     var expanded by remember { mutableStateOf(false) }
 
     Row(
@@ -838,7 +845,7 @@ fun CordsServicesFilters() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = colonia,
+                text = currentFilter,
                 fontSize = 18.sp,
                 color = White,
                 maxLines = 1,
@@ -847,12 +854,13 @@ fun CordsServicesFilters() {
             DropdownMenu(expanded = expanded, onDismissRequest = {
                 expanded = false
             }) {
-                colonias.forEach { coloniaNew ->
+                filters.forEach { newFilter ->
                     DropdownMenuItem(onClick = {
                         expanded = false
-                        colonia = coloniaNew
+                        currentFilter = newFilter
+                        onChangeOption(currentFilter)
                     }) {
-                        Text(text = coloniaNew)
+                        Text(text = newFilter)
                     }
                 }
             }
@@ -869,6 +877,9 @@ fun CordsServicesFilters() {
             selection = currentSelection.value
         ) { clickedItem ->
             currentSelection.value = clickedItem
+            onChangeFilter(clickedItem)
+            currentFilter = ""
+            onChangeOption(currentFilter)
         }
     }
 }
@@ -1389,4 +1400,67 @@ fun EnterpriseList(
                 }
             }
         })
+}
+
+
+@Composable
+fun CordsServicesFooter(
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
+        ) {
+
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 0.dp,
+                            topEnd = 90.dp,
+                            bottomStart = 10.dp,
+                            bottomEnd = 0.dp
+                        )
+                    )
+                    .background(cordsRed)
+                    .padding(start = 4.dp),
+                text = "Cortes",
+                color = White
+            )
+
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 0.dp,
+                            topEnd = 90.dp,
+                            bottomStart = 10.dp,
+                            bottomEnd = 0.dp
+                        )
+                    )
+                    .background(cordsBlue)
+                    .padding(start = 4.dp),
+                text = "Reconexiones",
+                color = White
+            )
+        }
+        Row(modifier = Modifier.weight(2f)) {
+            Button(
+                onClick = { onClick() }, colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Yellow4,
+                    contentColor = Black
+                )
+            ) {
+                Text(text = "Cumplir")
+            }
+        }
+    }
 }

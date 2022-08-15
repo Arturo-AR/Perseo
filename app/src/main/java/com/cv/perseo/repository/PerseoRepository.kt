@@ -46,4 +46,7 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
         return api.getSubscriberImages(9, enterpriseId, requestNumber)
     }
 
+    suspend fun oSBlockCompliance(enterpriseId: Int, date: String, osIdsArray: String): Response<String> {
+        return api.oSBlockCompliance(11, enterpriseId = enterpriseId, date = date, osIdsArray = osIdsArray)
+    }
 }
