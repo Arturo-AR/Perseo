@@ -139,9 +139,9 @@ class EquipmentScreenViewModel @Inject constructor(
             )
         } else {
             if (idEquipment == null) {
-                current.image = image?.toBase64String()
+                _equipmentTmp.value?.find { it.equipment == equipment }?.image = image?.toBase64String()
             } else {
-                current.idEquipment = idEquipment
+                _equipmentTmp.value?.find { it.equipment == equipment }?.idEquipment = idEquipment
             }
         }
     }

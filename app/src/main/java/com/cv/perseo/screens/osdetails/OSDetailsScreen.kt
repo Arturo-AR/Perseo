@@ -152,11 +152,15 @@ fun OSDetailsScreen(
         ) {
             openDialogFinish.value = false
             loading.value = true
-            viewModel.finishOrder {
-                loading.value = false
-                navController.navigate(PerseoScreens.OrderOptions.route) {
-                    popUpTo(PerseoScreens.OrderOptions.route)
+            try {
+                viewModel.finishOrder {
+                    loading.value = false
+                    navController.navigate(PerseoScreens.OrderOptions.route) {
+                        popUpTo(PerseoScreens.OrderOptions.route)
+                    }
                 }
+            } catch (ex:Exception) {
+                ex.printStackTrace()
             }
         }
     }
@@ -349,9 +353,17 @@ fun OSDetailsScreen(
                             source?.let { it1 -> ImageDecoder.decodeBitmap(it1) }
                                 ?.let { it2 -> bitmap = it2 }
                         }
-                        viewModel.saveImages("EXTRA", bitmap?.toBase64String()!!)
+                        try {
+                            viewModel.saveImages("EXTRA", bitmap?.toBase64String()!!)
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
                     }) {
-                        viewModel.deleteImage(it)
+                        try {
+                            viewModel.deleteImage(it)
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
                     }
                 }
 

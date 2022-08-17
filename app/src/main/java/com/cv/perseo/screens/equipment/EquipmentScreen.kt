@@ -44,6 +44,7 @@ fun EquipmentScreen(
     val currentEquipment by viewModel.equipmentTmp.observeAsState()
     val routers by viewModel.routers.observeAsState()
     val boxes by viewModel.terminalBox.observeAsState()
+    val antennas by viewModel.antennaSectorial.observeAsState()
 
     if (generalData.isNotEmpty()) {
         viewModel.getRouterBoxes()
@@ -78,7 +79,7 @@ fun EquipmentScreen(
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!motivos.isNullOrEmpty() && !boxes.isNullOrEmpty() && !routers.isNullOrEmpty()) {
+            if (!motivos.isNullOrEmpty() && boxes != null && routers != null && antennas != null) {
                 LazyVerticalGrid(
                     cells = GridCells.Fixed(2),
                     contentPadding = PaddingValues(16.dp)
@@ -88,6 +89,7 @@ fun EquipmentScreen(
                             motivo = motivos!![index],
                             boxes = boxes!!,
                             routers = routers!!,
+                            antennas = antennas!!,
                             oldBitmap = currentEquipment?.find {
                                 it.equipment == viewModel.getEquipmentType(
                                     motivos!![index]
@@ -100,11 +102,19 @@ fun EquipmentScreen(
                             }?.idEquipment
                                 ?: "",
                             onAction = {
-                                viewModel.saveTmp(
-                                    equipment = viewModel.getEquipmentType(motivos!![index]),
-                                    idEquipment = viewModel.getIdEquipment(it, motivos!![index]),
-                                    image = null
-                                )
+                                try {
+                                    viewModel.saveTmp(
+                                        equipment = viewModel.getEquipmentType(motivos!![index]),
+                                        idEquipment = viewModel.getIdEquipment(
+                                            it,
+                                            motivos!![index]
+                                        ),
+                                        image = null
+                                    )
+                                } catch (ex: Exception) {
+                                    ex.printStackTrace()
+                                }
+
                                 keyboardController?.hide()
                             }) {
                             viewModel.saveTmp(
@@ -120,13 +130,18 @@ fun EquipmentScreen(
                 backgroundColor = Yellow4,
                 contentColor = Color.Black
             ), onClick = {
-                viewModel.validateEquipment {
-                    context.toast(it, Toast.LENGTH_LONG)
-                    if (it == "Equipos registrados correctamente!") {
-                        Thread.sleep(1500)
-                        navController.navigate(PerseoScreens.OSDetails.route)
+                try {
+                    viewModel.validateEquipment {
+                        context.toast(it, Toast.LENGTH_LONG)
+                        if (it == "Equipos registrados correctamente!") {
+                            Thread.sleep(1500)
+                            navController.navigate(PerseoScreens.OSDetails.route)
+                        }
                     }
+                } catch (ex:Exception) {
+                    ex.printStackTrace()
                 }
+
             }) {
                 Text(text = "Agregar")
             }

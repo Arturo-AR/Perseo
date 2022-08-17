@@ -35,7 +35,7 @@ fun String.toHourFormat(): String {
 
 fun Bitmap.toBase64String(): String {
     val bas = ByteArrayOutputStream()
-    this.compress(Bitmap.CompressFormat.JPEG, 100, bas)
+    this.compress(Bitmap.CompressFormat.JPEG, 80, bas)
     val b = bas.toByteArray()
     return Base64.encodeToString(b, Base64.DEFAULT)
 }

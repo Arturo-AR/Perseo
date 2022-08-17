@@ -709,6 +709,7 @@ fun EquipmentItem(
     idMotivo: String?,
     boxes: List<TerminalBox>,
     routers: List<RouterCentral>,
+    antennas: List<AntennaSectorial>,
     onAction: (String) -> Unit,
     getImage: (Bitmap) -> Unit
 ) {
@@ -733,11 +734,11 @@ fun EquipmentItem(
             verticalArrangement = Arrangement.Top
         ) {
             Text(text = motivo, color = White, fontSize = 20.sp)
-            if (motivo == "CAJA TERMINAL" || motivo == "ROUTER CENTRAL") {
+            if (motivo == "CAJA TERMINAL" || motivo == "ROUTER CENTRAL" || motivo == "ANTENA SECTORIAL") {
                 TextFieldWithDropdownUsage(
-                    dataIn = if (motivo == "CAJA TERMINAL") boxes.map { it.terminalBoxDesc } else routers.map { it.routerCentralDesc },
+                    dataIn = if (motivo == "CAJA TERMINAL") boxes.map { it.terminalBoxDesc } else if (motivo == "ROUTER CENTRAL") routers.map { it.routerCentralDesc } else antennas.map { it.antennaSectorialDesc },
                     label = "Equipo", onAction = onAction,
-                    idMotivo = if (idMotivo == "") "" else if (motivo == "CAJA TERMINAL") boxes.filter { it.terminalBoxId == idMotivo?.toInt()!! }[0].terminalBoxDesc else routers.filter { it.routerCentralId == idMotivo?.toInt()!! }[0].routerCentralDesc
+                    idMotivo = if (idMotivo == "") "" else if (motivo == "CAJA TERMINAL") boxes.filter { it.terminalBoxId == idMotivo?.toInt()!! }[0].terminalBoxDesc else if (motivo == "ROUTER CENTRAL") routers.filter { it.routerCentralId == idMotivo?.toInt()!! }[0].routerCentralDesc else antennas.filter { it.antennaSectorialId == idMotivo?.toInt()!! }[0].antennaSectorialDesc
                 )
             } else {
                 TextField(
