@@ -10,7 +10,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.cv.perseo"
+        applicationId "com.perseo.telecable"
         minSdk 21
         targetSdk 32
         versionCode 1
