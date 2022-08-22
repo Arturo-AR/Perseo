@@ -253,7 +253,7 @@ class OSDetailsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             images.mapIndexed { index, it ->
                 val title =
-                    "can$index||${currentOs.value?.osId}||${Date().toDate()}||${currentOs.value?.requestNumber}"
+                    "can${index+1}||${currentOs.value?.osId}||${Date().toDate()}||${currentOs.value?.requestNumber}"
                 val album = when (generalData.value[0].municipality) {
                     "PACHUCA" -> Constants.ID_PACHUCA_ALBUM
                     "MORELIA" -> Constants.ID_MORELIA_ALBUM

@@ -1,5 +1,6 @@
 package com.perseo.telecable.screens.splash
 
+import android.util.Log
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -51,25 +52,25 @@ fun SplashScreen(
                 })
         )
         delay(1500L) //On screen total time
-        //if (versionOk != null)
-        //  if (versionOk!!) {
-        if (viewModel.generalData.value.isEmpty()) {
-            navController.navigate(PerseoScreens.Login.route)
-        } else {
-            if (viewModel.generalData.value[0].idMunicipality != 0) {
-                if (doing == true || onWay == true) {
-                    navController.navigate(PerseoScreens.OSDetails.route)
+        if (versionOk != null)
+            if (versionOk!!) {
+                if (viewModel.generalData.value.isEmpty()) {
+                    navController.navigate(PerseoScreens.Login.route)
                 } else {
-                    navController.navigate(PerseoScreens.Dashboard.route)
+                    if (viewModel.generalData.value[0].idMunicipality != 0) {
+                        if (doing == true || onWay == true) {
+                            navController.navigate(PerseoScreens.OSDetails.route)
+                        } else {
+                            navController.navigate(PerseoScreens.Dashboard.route)
+                        }
+                    } else {
+                        navController.navigate(PerseoScreens.EnterpriseSelector.route)
+                    }
                 }
             } else {
-                navController.navigate(PerseoScreens.EnterpriseSelector.route)
+                showDialog.value = true
+                Log.d("version", "error")
             }
-        }
-        //} else {
-        // showDialog.value = true
-        // Log.d("version", "error")
-        //}
     }
 
     if (showDialog.value) {
