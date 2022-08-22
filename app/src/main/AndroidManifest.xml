@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.cv.perseo">
+    package="com.perseo.telecable">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
-        android:name=".PerseoApplication"
+        android:name="com.perseo.telecable.PerseoApplication"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher_foreground"
@@ -18,8 +18,9 @@
         android:theme="@style/Theme.Perseo"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.perseo.telecable.MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Perseo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
