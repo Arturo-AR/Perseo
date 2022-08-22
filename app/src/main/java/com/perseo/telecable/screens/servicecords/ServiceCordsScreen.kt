@@ -17,17 +17,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.cv.perseo.components.*
-import com.cv.perseo.navigation.PerseoScreens
-import com.cv.perseo.ui.theme.Background
-import com.cv.perseo.utils.toJsonString
-import com.cv.perseo.utils.toast
-import com.perseo.telecable.components.CordsServicesFilters
-import com.perseo.telecable.components.CordsServicesItem
-import com.perseo.telecable.components.PerseoBottomBar
-import com.perseo.telecable.components.PerseoTopBar
+import com.perseo.telecable.components.*
 import com.perseo.telecable.navigation.PerseoScreens
 import com.perseo.telecable.ui.theme.Background
+import com.perseo.telecable.utils.toJsonString
+import com.perseo.telecable.utils.toast
 
 @Composable
 fun ServiceCordsScreen(

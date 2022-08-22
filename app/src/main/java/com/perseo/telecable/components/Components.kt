@@ -44,17 +44,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.cv.perseo.model.ItemOSDetail
-import com.cv.perseo.model.database.Equipment
-import com.cv.perseo.model.database.Materials
-import com.cv.perseo.model.database.ServiceOrder
-import com.cv.perseo.model.perseoresponse.*
-import com.cv.perseo.navigation.PerseoScreens
-import com.cv.perseo.ui.theme.*
-import com.cv.perseo.utils.Constants
-import com.cv.perseo.utils.toBitmap
-import com.cv.perseo.utils.toHourFormat
-import com.perseo.telecable.data.Data
 import com.perseo.telecable.model.ItemOSDetail
 import com.perseo.telecable.model.database.Equipment
 import com.perseo.telecable.model.database.Materials
