@@ -5,7 +5,6 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -64,7 +63,7 @@ fun LogoPerseo(modifier: Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = rememberAsyncImagePainter(Constants.LOGO_PERSEO),
+            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.LOGO_PERSEO),
             contentDescription = "Logo Perseo"
         )
     }
@@ -397,7 +396,7 @@ fun ZonesButtons(
                             .padding(4.dp)
                             .fillMaxSize()
                             .clickable { onPress(items[index]) },
-                        painter = rememberAsyncImagePainter(Constants.BUTTON_BACKGROUND),
+                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_BACKGROUND),
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds
                     )
@@ -439,7 +438,7 @@ fun ServiceOrderCard(
             modifier = Modifier
                 .padding(4.dp)
                 .fillMaxSize(),
-            painter = rememberAsyncImagePainter(if (os.preCumDate == "") Constants.OS_ACTIVE_BACKGROUND else Constants.OS_INACTIVE_BACKGROUND),
+            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + if (os.preCumDate == "") Constants.OS_ACTIVE_BACKGROUND else Constants.OS_INACTIVE_BACKGROUND),
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
@@ -799,7 +798,7 @@ fun CordsServicesItem(
                 color = White
             )
             Column(modifier = Modifier.weight(1.5f)) {
-                Text(text = "Etiquita", color = Yellow4)
+                Text(text = "Etiqueta", color = Yellow4)
                 Text(text = cord.label, color = White)
                 Text(text = "Caja terminal", color = Yellow4)
                 Text(text = cord.terminalBox, color = White)
@@ -945,7 +944,7 @@ fun DefaultButtonWithImage(
     onClick: () -> Unit
 ) {
     Box {
-        ImageButton(urlImage = Constants.BUTTON_BACKGROUND, modifier = Modifier) {
+        ImageButton(urlImage = Constants.PERSEO_BASE_URL + Constants.BUTTON_BACKGROUND, modifier = Modifier) {
             onClick()
         }
         Column(
@@ -1142,8 +1141,6 @@ fun RequestContentPermissionCancelList(
                 if (bitmapList != null) {
                     if (bitmapList.size < 3) {
                         launcher.launch("image/*")
-                    } else {
-                        Log.d("Imagenes", "Limit of images")
                     }
                 }
             }) {
@@ -1209,8 +1206,6 @@ fun RequestContentPermissionList(
                 ), onClick = {
                     if (bitmapList.size < 3) {
                         launcher.launch("image/*")
-                    } else {
-                        Log.d("Imagenes", "Limit of images")
                     }
                 }) {
                     Text(text = "Imagenes Adicionales")

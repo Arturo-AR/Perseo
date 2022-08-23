@@ -295,7 +295,7 @@ fun OSDetailsScreen(
                             .clickable {
                                 navController.navigate(PerseoScreens.Materials.route)
                             },
-                        painter = rememberAsyncImagePainter(Constants.BUTTON_MATERIAL), //TODO: Change painter per bitmap
+                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_MATERIAL), //TODO: Change painter per bitmap
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -317,7 +317,7 @@ fun OSDetailsScreen(
                                         .show()
                                 }
                             },
-                        painter = rememberAsyncImagePainter(Constants.BUTTON_EQUIPMENT), //TODO: Change painter per bitmap
+                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_EQUIPMENT), //TODO: Change painter per bitmap
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -400,8 +400,8 @@ fun OSDetailsScreen(
                                         //navController.navigate(PerseoScreens.Dashboard.route)
                                     }
                                 },
-                            painter = rememberAsyncImagePainter(
-                                if (doing == true) Constants.BUTTON_FINISH else Constants.BUTTON_START
+                            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL +
+                                    if (doing == true) Constants.BUTTON_FINISH else Constants.BUTTON_START
                             ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop
@@ -414,7 +414,7 @@ fun OSDetailsScreen(
                                 .clickable {
                                     openDialogCancel.value = true
                                 },
-                            painter = rememberAsyncImagePainter(Constants.BUTTON_CANCEL), //TODO: Change painter per bitmap
+                            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_CANCEL), //TODO: Change painter per bitmap
                             contentDescription = null,
                             contentScale = ContentScale.Crop
                         )

@@ -1,5 +1,6 @@
 package com.perseo.telecable.screens.splash
 
+import android.net.Uri
 import android.util.Log
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
@@ -15,6 +16,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +27,7 @@ import com.perseo.telecable.components.ShowAlertDialog
 import com.perseo.telecable.navigation.PerseoScreens
 import com.perseo.telecable.ui.theme.Accent
 import com.perseo.telecable.ui.theme.Yellow2
+import com.perseo.telecable.utils.Constants
 import kotlinx.coroutines.delay
 
 @Composable
@@ -37,6 +40,7 @@ fun SplashScreen(
     val onWay by viewModel.onWay.observeAsState()
     val showDialog = remember { mutableStateOf(false) }
     val versionOk by viewModel.versionOk.observeAsState()
+    val uriHandler = LocalUriHandler.current
     viewModel.verifyVersion(BuildConfig.VERSION_NAME)
     val scale = remember {
         Animatable(0f)
@@ -83,9 +87,11 @@ fun SplashScreen(
                     fontSize = 18.sp
                 )
             },
-            openDialog = showDialog
+            openDialog = showDialog,
+            positiveButtonText = "Actualizar",
+            negativeButtonText = ""
         ) {
-            //todo: open play store to update
+            uriHandler.openUri(Constants.PERSEO_GOOGLE_PLAY_LINK)
         }
     }
     Surface(

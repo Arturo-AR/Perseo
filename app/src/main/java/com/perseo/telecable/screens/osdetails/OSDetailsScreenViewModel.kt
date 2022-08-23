@@ -1,7 +1,6 @@
 package com.perseo.telecable.screens.osdetails
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -105,8 +104,8 @@ class OSDetailsScreenViewModel @Inject constructor(
 
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
-            Log.d("motivo", motivoId)
-            Log.d("motivo", enterpriseId.toString())
+            //Log.d("motivo", motivoId)
+            //Log.d("motivo", enterpriseId.toString())
             val response = repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
             if (response.isSuccessful) {
                 if (response.body()?.responseCode == 200) {
@@ -180,15 +179,15 @@ class OSDetailsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val ok = uploadImages()
             if (ok) {
-                Log.d("id_empresa", generalData.value[0].idMunicipality.toString())
-                Log.d("info_pre", complianceInfo.value?.toJsonString()!!)
-                Log.d("imagenes", finalImages.value?.toJsonString()!!)
-                Log.d("equipos", equipment.value?.toJsonString()!!)
-                Log.d("materiales", material.value?.toJsonString()!!)
-                Log.d("parametros_ro", "[]")
-                Log.d("id_os", currentOs.value?.osId.toString())
-                Log.d("fecha", Date().toDate())
-                Log.d("info_cum", "{}")
+                //Log.d("id_empresa", generalData.value[0].idMunicipality.toString())
+                //Log.d("info_pre", complianceInfo.value?.toJsonString()!!)
+                //Log.d("imagenes", finalImages.value?.toJsonString()!!)
+                //Log.d("equipos", equipment.value?.toJsonString()!!)
+                //Log.d("materiales", material.value?.toJsonString()!!)
+                //Log.d("parametros_ro", "[]")
+                //Log.d("id_os", currentOs.value?.osId.toString())
+                //Log.d("fecha", Date().toDate())
+                //Log.d("info_cum", "{}")
                 val response = repository.finalizarOrdenServicio(
                     empresa_id = generalData.value[0].idMunicipality,
                     ordenes_info_cumplimiento = complianceInfo.value?.toJsonString()!!,
@@ -241,7 +240,7 @@ class OSDetailsScreenViewModel @Inject constructor(
                             )
                         )
                     }
-                    Log.d("Link", response.body()?.upload?.link!!)
+                    //Log.d("Link", response.body()?.upload?.link!!)
                 }
             }
         }.join()

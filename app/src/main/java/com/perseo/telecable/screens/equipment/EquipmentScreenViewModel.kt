@@ -1,7 +1,6 @@
 package com.perseo.telecable.screens.equipment
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -82,11 +81,11 @@ class EquipmentScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val response = repository.getRoutersCT(generalData.value[0].idMunicipality)
             if (response.isSuccessful) {
-                val RC = response.body()
-                if (RC?.responseCode == 200) {
-                    _terminalBox.value = RC.responseBody.terminalBox
-                    _routers.value = RC.responseBody.routers
-                    _antennaSectorial.value = RC.responseBody.antennasSectorial
+                val rCA = response.body()
+                if (rCA?.responseCode == 200) {
+                    _terminalBox.value = rCA.responseBody.terminalBox
+                    _routers.value = rCA.responseBody.routers
+                    _antennaSectorial.value = rCA.responseBody.antennasSectorial
                 }
             }
         }
@@ -94,8 +93,8 @@ class EquipmentScreenViewModel @Inject constructor(
 
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
-            Log.d("motivoEQ", motivoId)
-            Log.d("motivoEQ", enterpriseId.toString())
+            //Log.d("motivoEQ", motivoId)
+            //Log.d("motivoEQ", enterpriseId.toString())
             try {
                 val response =
                     repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
@@ -124,9 +123,9 @@ class EquipmentScreenViewModel @Inject constructor(
     }
 
     fun saveTmp(equipment: String?, idEquipment: String?, image: Bitmap?) {
-        Log.d("equipment", equipment.toString())
-        Log.d("idEquipment", idEquipment.toString())
-        Log.d("image", image.toString())
+        //Log.d("equipment", equipment.toString())
+        //Log.d("idEquipment", idEquipment.toString())
+        //Log.d("image", image.toString())
         val current = _equipmentTmp.value?.find { it.equipment == equipment }
         if (current == null) {
             _equipmentTmp.value?.add(
@@ -261,7 +260,6 @@ class EquipmentScreenViewModel @Inject constructor(
             }
             else -> id
         }
-
     }
 
     fun getEquipmentType(reason: String): String {
