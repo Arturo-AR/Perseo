@@ -1,10 +1,12 @@
 package com.perseo.telecable.screens.osdetails
 
+import android.app.Application
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.perseo.telecable.ApplicationViewModel
 import com.perseo.telecable.model.database.ComplianceInfo
 import com.perseo.telecable.model.database.Equipment
 import com.perseo.telecable.model.database.GeneralData
@@ -32,12 +34,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OSDetailsScreenViewModel @Inject constructor(
+    application: Application,
     private val dbRepository: DatabaseRepository,
     private val repository: PerseoRepository,
     private val prefs: SharedRepository,
     private val imgurRepository: ImgurRepository
 ) :
-    ViewModel() {
+    ApplicationViewModel(application) {
 
     private val _cancelImages: MutableLiveData<List<Bitmap>> = MutableLiveData(mutableListOf())
     val cancelImages: MutableLiveData<List<Bitmap>> = _cancelImages

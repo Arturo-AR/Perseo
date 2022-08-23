@@ -57,6 +57,8 @@ fun OSDetailsScreen(
     val motivos by viewModel.motivos.observeAsState()
     val subscriberImages by viewModel.subscriberImages.observeAsState()
     val context = LocalContext.current
+    val currentLocation by viewModel.getLocationLiveData().observeAsState()
+    viewModel.startLocationUpdates()
     viewModel.updateImages()
     viewModel.updateMaterials()
     viewModel.updateInfo()
@@ -159,7 +161,7 @@ fun OSDetailsScreen(
                         popUpTo(PerseoScreens.OrderOptions.route)
                     }
                 }
-            } catch (ex:Exception) {
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
@@ -295,7 +297,7 @@ fun OSDetailsScreen(
                             .clickable {
                                 navController.navigate(PerseoScreens.Materials.route)
                             },
-                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_MATERIAL), //TODO: Change painter per bitmap
+                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_MATERIAL),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -317,7 +319,7 @@ fun OSDetailsScreen(
                                         .show()
                                 }
                             },
-                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_EQUIPMENT), //TODO: Change painter per bitmap
+                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_EQUIPMENT),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -400,8 +402,9 @@ fun OSDetailsScreen(
                                         //navController.navigate(PerseoScreens.Dashboard.route)
                                     }
                                 },
-                            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL +
-                                    if (doing == true) Constants.BUTTON_FINISH else Constants.BUTTON_START
+                            painter = rememberAsyncImagePainter(
+                                Constants.PERSEO_BASE_URL +
+                                        if (doing == true) Constants.BUTTON_FINISH else Constants.BUTTON_START
                             ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop
@@ -414,11 +417,18 @@ fun OSDetailsScreen(
                                 .clickable {
                                     openDialogCancel.value = true
                                 },
-                            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_CANCEL), //TODO: Change painter per bitmap
+                            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_CANCEL),
                             contentDescription = null,
                             contentScale = ContentScale.Crop
                         )
                     }
+                }
+            }
+            Column {
+                Text(text = "Column perrona")
+                currentLocation.let {
+                    Text(text = it?.latitude.toString(), color = Color.White)
+                    Text(text = it?.longitude.toString(), color = Color.White)
                 }
             }
             Row(
