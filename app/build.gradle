@@ -112,4 +112,6 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
 
+    //Permissions
+    implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
 }

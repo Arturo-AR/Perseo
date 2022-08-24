@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.widget.Toast
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
@@ -59,4 +61,9 @@ fun Date.toDate(): String {
 fun Date.toHour(): String {
     val formatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     return formatter.format(this)
+}
+
+@ExperimentalPermissionsApi
+fun PermissionState.isPermanentlyDenied(): Boolean {
+    return !shouldShowRationale && !hasPermission
 }

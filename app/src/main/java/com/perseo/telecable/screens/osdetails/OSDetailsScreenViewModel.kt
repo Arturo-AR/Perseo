@@ -27,6 +27,7 @@ import com.perseo.telecable.utils.toJsonString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.util.*
@@ -180,6 +181,10 @@ class OSDetailsScreenViewModel @Inject constructor(
 
     fun finishOrder(onClick: () -> Unit) {
         viewModelScope.launch {
+            endCompliance(
+                getLocationLiveData().value?.latitude!!,
+                getLocationLiveData().value?.longitude!!
+            )
             val ok = uploadImages()
             if (ok) {
                 //Log.d("id_empresa", generalData.value[0].idMunicipality.toString())
@@ -255,7 +260,7 @@ class OSDetailsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             images.mapIndexed { index, it ->
                 val title =
-                    "can${index+1}||${currentOs.value?.osId}||${Date().toDate()}||${currentOs.value?.requestNumber}"
+                    "can${index + 1}||${currentOs.value?.osId}||${Date().toDate()}||${currentOs.value?.requestNumber}"
                 val album = when (generalData.value[0].municipality) {
                     "PACHUCA" -> Constants.ID_PACHUCA_ALBUM
                     "MORELIA" -> Constants.ID_MORELIA_ALBUM
@@ -357,19 +362,19 @@ class OSDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    fun startCompliance() {
+    fun startCompliance(lat: String, lon: String) {
         viewModelScope.launch {
             val myDate = Date()
             dbRepository.insertCompliance(
                 ComplianceInfo(
                     id_empresa = generalData.value[0].idMunicipality,
                     id_os = currentOs.value?.osId!!,
-                    fecha_fin = myDate.toDate(),
+                    fecha_fin = "",
                     fecha_inicio = myDate.toDate(),
-                    hora_fin = myDate.toHour(),
+                    hora_fin = "",
                     hora_inicio = myDate.toHour(),
                     ubicacion_fin = "",
-                    ubicacion_inicio = "",
+                    ubicacion_inicio = "$lat, $lon",
                     respuesta1 = "",
                     respuesta2 = "",
                     respuesta3 = ""
@@ -377,6 +382,17 @@ class OSDetailsScreenViewModel @Inject constructor(
             )
             updateInfo()
         }
+    }
+
+    private suspend fun endCompliance(lat: String, lon: String) {
+        viewModelScope.launch {
+            val myDate = Date()
+            _complianceInfo.value?.fecha_fin = myDate.toDate()
+            _complianceInfo.value?.hora_fin = myDate.toHour()
+            _complianceInfo.value?.ubicacion_fin = "$lat, $lon"
+            dbRepository.updateComplianceInfo(complianceInfo.value!!)
+            updateInfo()
+        }.join()
     }
 
     fun addCancelImage(bitmap: Bitmap?) {
