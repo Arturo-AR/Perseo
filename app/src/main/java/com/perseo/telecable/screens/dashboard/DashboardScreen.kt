@@ -1,5 +1,6 @@
 package com.perseo.telecable.screens.dashboard
 
+import android.os.Process
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -14,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,10 +72,10 @@ fun DashboardScreen(
         if (openDialog.value) {
             ShowAlertDialog(
                 title = "Alerta",
-                message = { Text(text = "Desea salir de la aplicacion ?", color = Color.White, fontSize = 18.sp) },
+                message = { Text(text = "Desea salir de la aplicacion ?\n(No se cerrará la sesion).", color = Color.White, fontSize = 18.sp) },
                 openDialog = openDialog
             ) {
-                //TODO: Close app when user tap accept
+                Process.sendSignal(Process.myPid(), Process.SIGNAL_KILL)
             }
         }
         ButtonsList(
@@ -90,7 +90,6 @@ fun DrawerView(navController: NavController, viewModel: DashboardScreenViewModel
     val openDialog = remember {
         mutableStateOf(false)
     }
-    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
