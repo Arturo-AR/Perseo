@@ -1,6 +1,5 @@
 package com.perseo.telecable.screens.servicecords
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -85,19 +84,18 @@ fun ServiceCordsScreen(
                 .padding(bottom = 50.dp)
                 .background(Background)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                if (!options.isNullOrEmpty()){
-                    CordsServicesFilters(options ?: emptyList(), onChangeFilter = {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
+
+                CordsServicesFilters(options ?: emptyList(), onChangeFilter = {
+                    viewModel.cleanOsList()
+                    viewModel.updateFilter(it)
+                },
+                    onChangeOption = { option, filter ->
                         viewModel.cleanOsList()
-                        viewModel.updateOptions(it)
-                    },
-                    onChangeOption = {
-                        viewModel.cleanOsList()
-                        Log.d("Option", it)
+                        viewModel.updateList(option, filter)
                     })
-                }
             }
-            Column(modifier = Modifier.weight(8f)) {
+            Column(modifier = Modifier.weight(10f)) {
                 if (!cords.isNullOrEmpty()) {
                     LazyColumn(contentPadding = PaddingValues(8.dp)) {
                         items(cords!!) { cord ->
@@ -112,7 +110,7 @@ fun ServiceCordsScreen(
                     }
                 }
             }
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
                 CordsServicesFooter {
                     if (osList.isNullOrEmpty()) {
                         context.toast("No has seleccionado ninguna orden")

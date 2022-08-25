@@ -817,15 +817,15 @@ fun CordsServicesItem(
 
 @Composable
 fun CordsServicesFilters(
-    filters:List<String>,
-    onChangeFilter:(String)->Unit,
-    onChangeOption:(String)->Unit
+    filters: List<String>,
+    onChangeFilter: (String) -> Unit,
+    onChangeOption: (String, String) -> Unit
 ) {
     val spinners = listOf("Colonia", "Sector")
-    val currentSelection = remember { mutableStateOf(spinners.first()) }
+    val currentSelection = remember { mutableStateOf("") }
 
     // State variables
-    var currentFilter: String by remember { mutableStateOf(filters.first()) }
+    var currentFilter: String by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
     Row(
@@ -858,7 +858,7 @@ fun CordsServicesFilters(
                     DropdownMenuItem(onClick = {
                         expanded = false
                         currentFilter = newFilter
-                        onChangeOption(currentFilter)
+                        onChangeOption(currentFilter, currentSelection.value)
                     }) {
                         Text(text = newFilter)
                     }
@@ -879,7 +879,7 @@ fun CordsServicesFilters(
             currentSelection.value = clickedItem
             onChangeFilter(clickedItem)
             currentFilter = ""
-            onChangeOption(currentFilter)
+            //onChangeOption(currentFilter)
         }
     }
 }
@@ -944,7 +944,10 @@ fun DefaultButtonWithImage(
     onClick: () -> Unit
 ) {
     Box {
-        ImageButton(urlImage = Constants.PERSEO_BASE_URL + Constants.BUTTON_BACKGROUND, modifier = Modifier) {
+        ImageButton(
+            urlImage = Constants.PERSEO_BASE_URL + Constants.BUTTON_BACKGROUND,
+            modifier = Modifier
+        ) {
             onClick()
         }
         Column(
