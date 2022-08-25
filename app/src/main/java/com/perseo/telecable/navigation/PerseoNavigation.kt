@@ -7,6 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.perseo.telecable.screens.splash.SplashScreen
 import com.perseo.telecable.screens.compliance.ComplianceScreen
 import com.perseo.telecable.screens.dashboard.DashboardScreen
@@ -28,6 +29,7 @@ import com.perseo.telecable.screens.splash.SplashScreenViewModel
 import com.perseo.telecable.screens.subscribers.SubscribersScreen
 import com.perseo.telecable.screens.zone.ZoneScreen
 
+@ExperimentalPermissionsApi
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
 @Composable

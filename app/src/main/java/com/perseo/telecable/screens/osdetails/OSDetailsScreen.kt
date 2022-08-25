@@ -1,5 +1,6 @@
 package com.perseo.telecable.screens.osdetails
 
+import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
@@ -18,22 +19,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.perseo.telecable.components.*
 import com.perseo.telecable.model.ItemOSDetail
 import com.perseo.telecable.navigation.PerseoScreens
 import com.perseo.telecable.ui.theme.*
 import com.perseo.telecable.utils.Constants
+import com.perseo.telecable.utils.isPermanentlyDenied
 import com.perseo.telecable.utils.toBase64String
 import com.perseo.telecable.utils.toast
 
+@ExperimentalPermissionsApi
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
 @Composable
@@ -57,6 +65,61 @@ fun OSDetailsScreen(
     val motivos by viewModel.motivos.observeAsState()
     val subscriberImages by viewModel.subscriberImages.observeAsState()
     val context = LocalContext.current
+    val currentLocation by viewModel.getLocationLiveData().observeAsState()
+    val permissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        )
+    )
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(
+        key1 = lifecycleOwner,
+        effect = {
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_START) {
+                    permissionsState.launchMultiplePermissionRequest()
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
+    )
+    permissionsState.permissions.forEach { perm ->
+        when (perm.permission) {
+            Manifest.permission.ACCESS_COARSE_LOCATION -> {
+                when {
+                    perm.hasPermission -> {
+                    }
+                    perm.shouldShowRationale -> {
+                    }
+                    perm.isPermanentlyDenied() -> {
+                    }
+                }
+            }
+            Manifest.permission.ACCESS_FINE_LOCATION -> {
+                when {
+                    perm.hasPermission -> {
+                        viewModel.startLocationUpdates()
+                    }
+                    perm.shouldShowRationale -> {
+                    }
+                    perm.isPermanentlyDenied() -> {
+                    }
+                }
+            }
+        }
+    }
+
+    currentLocation.let {
+        if (!it?.latitude.isNullOrEmpty()) {
+            Text(text = it?.latitude.toString(), color = Color.White)
+            Text(text = it?.longitude.toString(), color = Color.White)
+        }
+    }
+
     viewModel.updateImages()
     viewModel.updateMaterials()
     viewModel.updateInfo()
@@ -132,7 +195,12 @@ fun OSDetailsScreen(
         ) {
             viewModel.finishRoute()
             viewModel.startDoing()
-            viewModel.startCompliance()
+            currentLocation.let {
+                if (!it?.latitude.isNullOrEmpty()) {
+                    viewModel.startCompliance(it?.latitude!!, it.longitude)
+                }
+            }
+            //viewModel.startCompliance()
             openDialogStart.value = false
         }
     }
@@ -159,7 +227,7 @@ fun OSDetailsScreen(
                         popUpTo(PerseoScreens.OrderOptions.route)
                     }
                 }
-            } catch (ex:Exception) {
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
@@ -295,7 +363,7 @@ fun OSDetailsScreen(
                             .clickable {
                                 navController.navigate(PerseoScreens.Materials.route)
                             },
-                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_MATERIAL), //TODO: Change painter per bitmap
+                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_MATERIAL),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -317,7 +385,7 @@ fun OSDetailsScreen(
                                         .show()
                                 }
                             },
-                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_EQUIPMENT), //TODO: Change painter per bitmap
+                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_EQUIPMENT),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -400,8 +468,9 @@ fun OSDetailsScreen(
                                         //navController.navigate(PerseoScreens.Dashboard.route)
                                     }
                                 },
-                            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL +
-                                    if (doing == true) Constants.BUTTON_FINISH else Constants.BUTTON_START
+                            painter = rememberAsyncImagePainter(
+                                Constants.PERSEO_BASE_URL +
+                                        if (doing == true) Constants.BUTTON_FINISH else Constants.BUTTON_START
                             ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop
@@ -414,13 +483,14 @@ fun OSDetailsScreen(
                                 .clickable {
                                     openDialogCancel.value = true
                                 },
-                            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_CANCEL), //TODO: Change painter per bitmap
+                            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_CANCEL),
                             contentDescription = null,
                             contentScale = ContentScale.Crop
                         )
                     }
                 }
             }
+
             Row(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
