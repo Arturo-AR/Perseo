@@ -114,15 +114,15 @@ fun EquipmentScreen(
                                 } catch (ex: Exception) {
                                     ex.printStackTrace()
                                 }
-
                                 keyboardController?.hide()
-                            }) {
-                            viewModel.saveTmp(
-                                equipment = viewModel.getEquipmentType(motivos!![index]),
-                                idEquipment = null,
-                                image = it
-                            )
-                        }
+                            },
+                            getImage = {
+                                viewModel.saveTmp(
+                                    equipment = viewModel.getEquipmentType(motivos!![index]),
+                                    idEquipment = null,
+                                    image = it
+                                )
+                            })
                     }
                 }
             }
@@ -138,10 +138,9 @@ fun EquipmentScreen(
                             navController.navigate(PerseoScreens.OSDetails.route)
                         }
                     }
-                } catch (ex:Exception) {
+                } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
-
             }) {
                 Text(text = "Agregar")
             }

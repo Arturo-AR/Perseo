@@ -5,6 +5,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -709,7 +710,7 @@ fun EquipmentItem(
     routers: List<RouterCentral>,
     antennas: List<AntennaSectorial>,
     onAction: (String) -> Unit,
-    getImage: (Bitmap) -> Unit
+    getImage: (Bitmap?) -> Unit
 ) {
     var text by remember { mutableStateOf(idMotivo ?: "") }
     Card(
@@ -765,9 +766,9 @@ fun EquipmentItem(
                     )
                 )
             }
-            RequestContentPermission(oldBitmap = oldBitmap) {
+            RequestContentPermission(oldBitmap = oldBitmap, onReturn = {
                 getImage(it)
-            }
+            })
         }
     }
 }
@@ -817,9 +818,9 @@ fun CordsServicesItem(
 
 @Composable
 fun CordsServicesFilters(
-    filters:List<String>,
-    onChangeFilter:(String)->Unit,
-    onChangeOption:(String)->Unit
+    filters: List<String>,
+    onChangeFilter: (String) -> Unit,
+    onChangeOption: (String) -> Unit
 ) {
     val spinners = listOf("Colonia", "Sector")
     val currentSelection = remember { mutableStateOf(spinners.first()) }
@@ -944,7 +945,10 @@ fun DefaultButtonWithImage(
     onClick: () -> Unit
 ) {
     Box {
-        ImageButton(urlImage = Constants.PERSEO_BASE_URL + Constants.BUTTON_BACKGROUND, modifier = Modifier) {
+        ImageButton(
+            urlImage = Constants.PERSEO_BASE_URL + Constants.BUTTON_BACKGROUND,
+            modifier = Modifier
+        ) {
             onClick()
         }
         Column(
@@ -989,7 +993,6 @@ fun ScheduleItem(
                         fontWeight = FontWeight.Light,
                         fontSize = 13.sp
                     )
-
             }
             Column(
                 modifier = Modifier
@@ -1062,11 +1065,8 @@ fun MaterialsFinalList(
 @Composable
 fun RequestContentPermission(
     oldBitmap: Bitmap?,
-    onReturn: (Bitmap) -> Unit
+    onReturn: (Bitmap?) -> Unit
 ) {
-    var imageUri by remember {
-        mutableStateOf<Uri?>(null)
-    }
     val context = LocalContext.current
     val bitmap = remember {
         mutableStateOf(oldBitmap)
@@ -1074,8 +1074,20 @@ fun RequestContentPermission(
     val launcher = rememberLauncherForActivityResult(
         contract =
         ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        imageUri = uri
+    ) {
+        var currentBitmap: Bitmap? = null
+        if (Build.VERSION.SDK_INT < 28) {
+            currentBitmap = MediaStore.Images
+                .Media.getBitmap(context.contentResolver, it)
+        } else {
+            val source = it?.let { it1 ->
+                ImageDecoder
+                    .createSource(context.contentResolver, it1)
+            }
+            source?.let { it1 -> ImageDecoder.decodeBitmap(it1) }
+                ?.let { it2 -> currentBitmap = it2 }
+        }
+        bitmap.value = currentBitmap
     }
     Column {
         Button(colors = ButtonDefaults.buttonColors(
@@ -1086,17 +1098,6 @@ fun RequestContentPermission(
             Text(text = "Imagen")
         }
         Spacer(modifier = Modifier.height(12.dp))
-
-        imageUri?.let {
-            if (Build.VERSION.SDK_INT < 28) {
-                bitmap.value = MediaStore.Images
-                    .Media.getBitmap(context.contentResolver, it)
-            } else {
-                val source = ImageDecoder
-                    .createSource(context.contentResolver, it)
-                bitmap.value = ImageDecoder.decodeBitmap(source)
-            }
-        }
         bitmap.value?.let { btm ->
             onReturn(btm)
             Image(
