@@ -599,29 +599,43 @@ fun DetailItem(
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun MaterialsList(
     materials: List<Material>,
     materialsOld: List<Materials>,
-    onAction: (String, Material) -> Unit
+    onAction: (String, Material) -> Unit,
+    onLongClick: (String) -> Unit
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(materials) { material ->
-            MaterialsItem(material, materialsOld) { amount, materialDesc ->
-                onAction(amount, materialDesc)
-            }
+            MaterialsItem(
+                material = material,
+                materialsOld = materialsOld,
+                onAction = { amount, materialDesc ->
+                    onAction(amount, materialDesc)
+                },
+                onLongClick = {
+                    onLongClick(it)
+                }
+            )
         }
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun MaterialsItem(
     material: Material,
     materialsOld: List<Materials>,
-    onAction: (String, Material) -> Unit
+    onAction: (String, Material) -> Unit,
+    onLongClick: (String) -> Unit
 ) {
+    val oldValue =
+        materialsOld.find { it.id_material == material.materialId }?.cantidad?.toInt().toString()
+    var text by rememberSaveable { mutableStateOf(if (oldValue == "null") "" else oldValue) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -634,7 +648,14 @@ fun MaterialsItem(
                 )
             )
             .background(Accent)
-            .padding(horizontal = 8.dp, vertical = 2.dp),
+            .padding(horizontal = 8.dp, vertical = 2.dp)
+            .combinedClickable(
+                onClick = {},
+                onLongClick = {
+                    text = ""
+                    onLongClick(material.materialId)
+                }
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -642,16 +663,66 @@ fun MaterialsItem(
             Text(text = material.materialDesc, modifier = Modifier.fillMaxWidth(), color = White)
         }
         Column(modifier = Modifier.weight(2f)) {
-            CustomTextField(
+            BasicTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .background(
+                        MaterialTheme.colors.surface,
+                        MaterialTheme.shapes.small,
+                    )
+                    .fillMaxWidth(),
+                value = text,
+                onValueChange = {
+                    text = it
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions {
+                    onAction(text, material)
+                },
+                singleLine = true,
+                cursorBrush = SolidColor(MaterialTheme.colors.primary),
+                textStyle = LocalTextStyle.current.copy(
+                    color = MaterialTheme.colors.onSurface,
+                    fontSize = 12.sp
+                ),
+                decorationBox = { innerTextField ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(Modifier.weight(1f)) {
+                            if (text.isEmpty()) Text(
+                                "cantidad",
+                                style = LocalTextStyle.current.copy(
+                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                                    fontSize = 12.sp
+                                )
+                            )
+                            innerTextField()
+                        }
+                    }
+                }
+            )
+/*            CustomTextField(
                 material = material,
                 materialsOld = materialsOld,
                 placeholderText = "cantidad",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
-            ) { amount, materialDesc ->
-                onAction(amount, materialDesc)
-            }
+                    .padding(8.dp),
+                onAction = { amount, materialDesc ->
+                    onAction(amount, materialDesc)
+                },
+                onLongClick = {
+                    onLongClick(it)
+                }
+            )*/
         }
     }
 }
@@ -664,52 +735,9 @@ private fun CustomTextField(
     fontSize: TextUnit = 12.sp,
     material: Material,
     onAction: (String, Material) -> Unit,
+    onLongClick: (String) -> Unit
 ) {
-    val oldValue =
-        materialsOld.find { it.id_material == material.materialId }?.cantidad?.toInt().toString()
-    var text by rememberSaveable { mutableStateOf(if (oldValue == "null") "" else oldValue) }
-    BasicTextField(
-        modifier = modifier
-            .background(
-                MaterialTheme.colors.surface,
-                MaterialTheme.shapes.small,
-            )
-            .fillMaxWidth(),
-        value = text,
-        onValueChange = {
-            text = it
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions {
-            onAction(text, material)
-        },
-        singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colors.primary),
-        textStyle = LocalTextStyle.current.copy(
-            color = MaterialTheme.colors.onSurface,
-            fontSize = fontSize
-        ),
-        decorationBox = { innerTextField ->
-            Row(
-                modifier,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(Modifier.weight(1f)) {
-                    if (text.isEmpty()) Text(
-                        placeholderText,
-                        style = LocalTextStyle.current.copy(
-                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
-                            fontSize = fontSize
-                        )
-                    )
-                    innerTextField()
-                }
-            }
-        }
-    )
+
 }
 
 @Composable

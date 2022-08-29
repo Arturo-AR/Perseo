@@ -1,5 +1,6 @@
 package com.perseo.telecable.screens.materials
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,7 +29,7 @@ class MaterialsScreenViewModel @Inject constructor(
     ViewModel() {
     private val _materialTmp: MutableLiveData<MutableList<MaterialTmp>> =
         MutableLiveData(mutableListOf())
-    val materialTmp: LiveData<MutableList<MaterialTmp>> = _materialTmp
+    //val materialTmp: LiveData<MutableList<MaterialTmp>> = _materialTmp
 
     private val _inventory: MutableLiveData<List<Inventory>> = MutableLiveData()
     val inventory: LiveData<List<Inventory>> = _inventory
@@ -92,22 +93,41 @@ class MaterialsScreenViewModel @Inject constructor(
             dbRepository.getAllMaterials().distinctUntilChanged()
                 .collect { materials ->
                     _materialSaved.value = materials
+                    _materialTmp.value = materials.map {
+                        MaterialTmp(
+                            it.id_material,
+                            it.desc_material,
+                            it.cantidad
+                        )
+                    } as MutableList<MaterialTmp>
                 }
         }
     }
 
-    fun saveTmp(materialId: String, materialDesc: String, amount: Double) {
-        val current = _materialTmp.value?.find { it.materialId == materialId }
-        if (current == null) {
-            _materialTmp.value?.add(
-                MaterialTmp(
-                    materialId = materialId,
-                    materialDesc = materialDesc,
-                    amount = amount
+    fun saveTmp(
+        materialId: String,
+        materialDesc: String,
+        amount: Double,
+        maxSize: (String) -> Unit
+    ) {
+        if (_materialTmp.value?.size!! < 10) {
+            Log.d("Size", "Entro, ${_materialTmp.value?.size!!}")
+            val current = _materialTmp.value?.find { it.materialId == materialId }
+            if (current == null) {
+                _materialTmp.value?.add(
+                    MaterialTmp(
+                        materialId = materialId,
+                        materialDesc = materialDesc,
+                        amount = amount
+                    )
                 )
-            )
+            } else {
+                _materialTmp.value?.find { it.materialId == materialId }?.amount = amount
+            }
+            maxSize("Registrado")
         } else {
-            _materialTmp.value?.find { it.materialId == materialId }?.amount = amount
+            Log.d("Size", "No Entro, ${_materialTmp.value?.size!!}")
+            maxSize("No puedes agregar mas de 10 materiales")
         }
     }
 
@@ -124,5 +144,11 @@ class MaterialsScreenViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun deleteTmp(tmpId: String) {
+        val tmpToRemove = _materialTmp.value?.find { it.materialId == tmpId }
+        _materialTmp.value?.remove(tmpToRemove)
+        Log.d("Eliminado...", _materialTmp.value.toString())
     }
 }
