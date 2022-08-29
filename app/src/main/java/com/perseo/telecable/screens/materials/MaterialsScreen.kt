@@ -1,17 +1,15 @@
 package com.perseo.telecable.screens.materials
 
-import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,17 +21,24 @@ import com.perseo.telecable.ui.theme.Background
 import com.perseo.telecable.ui.theme.Yellow4
 import com.perseo.telecable.utils.toast
 
+@ExperimentalFoundationApi
+@ExperimentalComposeUiApi
 @Composable
 fun MaterialsScreen(
     navController: NavController,
     viewModel: MaterialsScreenViewModel = hiltViewModel()
 ) {
-    viewModel.getMaterials()
     val scaffoldState = rememberScaffoldState()
-    val materials by viewModel.material.collectAsState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val materialsSaved by viewModel.materialSaved.collectAsState()
     val inventory by viewModel.inventory.observeAsState()
+    //val materialTmp by viewModel.materialTmp.observeAsState()
+    val material by viewModel.material.observeAsState()
+    //val openDialogAddMaterials = remember { mutableStateOf(false) }
     val context = LocalContext.current
-    viewModel.getGeneralData()
+    viewModel.getMaterialsSaved()
+    viewModel.getInventory()
+    viewModel.getMaterial()
     val generalData by viewModel.data.observeAsState()
     Scaffold(
         scaffoldState = scaffoldState,
@@ -48,7 +53,7 @@ fun MaterialsScreen(
             }
         },
         bottomBar = {
-            if (generalData != null){
+            if (generalData != null) {
                 PerseoBottomBar(
                     enterprise = generalData?.municipality!!,
                     enterpriseIcon = generalData?.logo!!
@@ -57,37 +62,114 @@ fun MaterialsScreen(
         },
         backgroundColor = Background,
     ) {
+        /*       if (openDialogAddMaterials.value) {
+                   ShowAlertDialog(
+                       title = "Alerta",
+                       message = {
+                           Column {
+                               Text(
+                                   text = "Desea agregar los siguientes materiales ?\n",
+                                   color = Color.White,
+                                   fontSize = 18.sp
+                               )
+                               materialTmp?.map {
+                                   Text(
+                                       text = "${it.materialDesc}: ${it.amount}",
+                                       color = Color.White,
+                                       fontSize = 16.sp
+                                   )
+                               }
+                           }
+                       },
+                       openDialog = openDialogAddMaterials,
+                       positiveButtonText = "Agregar"
+                   ) {
+                       openDialogAddMaterials.value = false
+                       try {
+                           viewModel.saveMaterialsInDatabase()
+                           context.toast("Materiales registrados correctamente")
+                           Thread.sleep(1500)
+                           navController.navigate(PerseoScreens.OSDetails.route)
+                       } catch (ex: Exception) {
+                           context.toast(ex.message.toString())
+
+                       }
+                   }
+               }*/
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 55.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                modifier = Modifier.padding(bottom = 8.dp),
-                text = "Agregar Material",
-                color = Yellow4,
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp
-            )
-            if (!inventory.isNullOrEmpty()) {
-                MaterialsAddItem(inventory!!) { amount, material ->
-                    if (amount != -1.0){
-                        if (amount <= material.amount) {
-                            viewModel.addMaterial(material, amount)
-                            Log.d("cant3idad", "Correcto")
-                        } else {
-                            context.toast("Materiales Insuficientes")
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
+                Text(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    text = "Agregar Material",
+                    color = Yellow4,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 22.sp
+                )
+            }
+            Column(modifier = Modifier.weight(7f), verticalArrangement = Arrangement.Center) {
+                if (!material.isNullOrEmpty() && materialsSaved != null) {
+                    MaterialsList(
+                        materials = material!!,
+                        materialsOld = materialsSaved,
+                        onAction = { amount, material ->
+                            try {
+                                if ((inventory?.find { it.materialDesc == material.materialDesc }?.amount
+                                        ?: 0) >= amount.toDouble()
+                                ) {
+                                    viewModel.saveTmp(
+                                        materialId = material.materialId,
+                                        materialDesc = material.materialDesc,
+                                        amount.toDouble()
+                                    ) {
+                                        context.toast(it)
+                                    }
+                                } else {
+                                    context.toast("materiales insuficientes")
+                                }
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
+                                context.toast("cantidad no valida")
+                            }
+                            keyboardController?.hide()
+                        },
+                        onLongClick = {
+                            try {
+                                viewModel.deleteTmp(it)
+                                context.toast("Eliminado")
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
+                            }
                         }
-                    } else {
-                        context.toast("Ingrese cantidad")
-                    }
+                    )
+                } else {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(80.dp),
+                        color = Yellow4,
+                        strokeWidth = 8.dp
+                    )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            MaterialsFinalList(materials) {
-                viewModel.deleteMaterialById(it)
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
+                Button(
+                    onClick = {
+                        //openDialogAddMaterials.value = true
+                        viewModel.saveMaterialsInDatabase()
+                        context.toast("Materiales actualizados correctamente")
+                        Thread.sleep(1500)
+                        navController.navigate(PerseoScreens.OSDetails.route)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Yellow4
+                    )
+                ) {
+                    Text(text = "Actualizar")
+                }
             }
         }
     }

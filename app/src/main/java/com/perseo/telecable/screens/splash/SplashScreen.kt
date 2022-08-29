@@ -1,6 +1,5 @@
 package com.perseo.telecable.screens.splash
 
-import android.net.Uri
 import android.util.Log
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
