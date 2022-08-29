@@ -5,7 +5,6 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -15,6 +14,7 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
@@ -36,9 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
@@ -54,7 +55,6 @@ import com.perseo.telecable.ui.theme.*
 import com.perseo.telecable.utils.Constants
 import com.perseo.telecable.utils.toBitmap
 import com.perseo.telecable.utils.toHourFormat
-import java.util.*
 
 @Composable
 fun LogoPerseo(modifier: Modifier) {
@@ -600,105 +600,116 @@ fun DetailItem(
 }
 
 @Composable
-fun MaterialsAddItem(
-    materiales: List<Inventory>,
-    onClick: (Double, Inventory) -> Unit
+fun MaterialsList(
+    materials: List<Material>,
+    materialsOld: List<Materials>,
+    onAction: (String, Material) -> Unit
 ) {
-    // State variables
-    var materialSelected: Inventory by remember { mutableStateOf(materiales[0]) }
-    var expanded by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf("") }
-    Card {
-        Row(
-            modifier = Modifier
-                .background(Accent)
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(9f)
-                    .padding(end = 32.dp)
-            ) {
-                Text(text = "Material:", color = White)
-                Row(
-                    Modifier
-                        .background(Background)
-                        .clickable {
-                            expanded = !expanded
-                        }
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = materialSelected.materialDesc,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(end = 32.dp),
-                        color = White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Icon(
-                        imageVector = Icons.Filled.ArrowDropDown,
-                        contentDescription = "",
-                        tint = White
-                    )
-                    DropdownMenu(expanded = expanded, onDismissRequest = {
-                        expanded = false
-                    }) {
-                        materiales.forEach { material ->
-                            DropdownMenuItem(onClick = {
-                                expanded = false
-                                materialSelected = material
-                            }) {
-                                Text(text = material.materialDesc)
-                            }
-                        }
-                    }
-                }
-
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    label = { Text("Cantidad") },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        textColor = Yellow3,
-                        cursorColor = White,
-                        focusedBorderColor = White,
-                        unfocusedBorderColor = Yellow3,
-                        focusedLabelColor = Yellow3,
-                        unfocusedLabelColor = White,
-                    )
-                )
-            }
-            IconButton(
-                modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 10.dp,
-                            topEnd = 10.dp,
-                            bottomStart = 10.dp,
-                            bottomEnd = 10.dp
-                        )
-                    )
-                    .background(Yellow3),
-                onClick = {
-                    if (text != "") {
-                        onClick(text.toDouble(), materialSelected)
-                    } else {
-                        onClick(-1.0, materialSelected)
-                    }
-                }
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = White)
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(materials) { material ->
+            MaterialsItem(material, materialsOld) { amount, materialDesc ->
+                onAction(amount, materialDesc)
             }
         }
     }
+}
+
+@Composable
+fun MaterialsItem(
+    material: Material,
+    materialsOld: List<Materials>,
+    onAction: (String, Material) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(
+                RoundedCornerShape(
+                    topStart = 10.dp,
+                    topEnd = 10.dp,
+                    bottomStart = 10.dp,
+                    bottomEnd = 10.dp
+                )
+            )
+            .background(Accent)
+            .padding(horizontal = 8.dp, vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(modifier = Modifier.weight(5f)) {
+            Text(text = material.materialDesc, modifier = Modifier.fillMaxWidth(), color = White)
+        }
+        Column(modifier = Modifier.weight(2f)) {
+            CustomTextField(
+                material = material,
+                materialsOld = materialsOld,
+                placeholderText = "cantidad",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) { amount, materialDesc ->
+                onAction(amount, materialDesc)
+            }
+        }
+    }
+}
+
+@Composable
+private fun CustomTextField(
+    modifier: Modifier = Modifier,
+    materialsOld: List<Materials>,
+    placeholderText: String = "Placeholder",
+    fontSize: TextUnit = 12.sp,
+    material: Material,
+    onAction: (String, Material) -> Unit,
+) {
+    val oldValue =
+        materialsOld.find { it.id_material == material.materialId }?.cantidad?.toInt().toString()
+    var text by rememberSaveable { mutableStateOf(if (oldValue == "null") "" else oldValue) }
+    BasicTextField(
+        modifier = modifier
+            .background(
+                MaterialTheme.colors.surface,
+                MaterialTheme.shapes.small,
+            )
+            .fillMaxWidth(),
+        value = text,
+        onValueChange = {
+            text = it
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions {
+            onAction(text, material)
+        },
+        singleLine = true,
+        cursorBrush = SolidColor(MaterialTheme.colors.primary),
+        textStyle = LocalTextStyle.current.copy(
+            color = MaterialTheme.colors.onSurface,
+            fontSize = fontSize
+        ),
+        decorationBox = { innerTextField ->
+            Row(
+                modifier,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(Modifier.weight(1f)) {
+                    if (text.isEmpty()) Text(
+                        placeholderText,
+                        style = LocalTextStyle.current.copy(
+                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                            fontSize = fontSize
+                        )
+                    )
+                    innerTextField()
+                }
+            }
+        }
+    )
 }
 
 @Composable
@@ -1003,60 +1014,6 @@ fun ScheduleItem(
             ) {
                 Text(text = "De: ${order.hourFrom?.toHourFormat()}", color = White)
                 Text(text = "De: ${order.hourUntil?.toHourFormat()}", color = White)
-            }
-        }
-    }
-}
-
-@Composable
-fun MaterialsFinalItem(
-    material: Materials,
-    onClick: (UUID) -> Unit
-) {
-    Card {
-        Row(
-            modifier = Modifier
-                .background(Accent)
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(modifier = Modifier.weight(9f)) {
-                Text(text = "${material.desc_material} ", color = Yellow4)
-                Text(text = "${material.cantidad}", color = White)
-            }
-            IconButton(
-                modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 10.dp,
-                            topEnd = 10.dp,
-                            bottomStart = 10.dp,
-                            bottomEnd = 10.dp
-                        )
-                    )
-                    .background(Gray)
-                    .weight(2f),
-                onClick = {
-                    onClick(material.id)
-                }
-            ) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = null, tint = White)
-            }
-        }
-    }
-}
-
-@Composable
-fun MaterialsFinalList(
-    materialList: List<Materials>,
-    onDelete: (UUID) -> Unit
-) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(materialList) { material ->
-            MaterialsFinalItem(material) {
-                onDelete(it)
             }
         }
     }

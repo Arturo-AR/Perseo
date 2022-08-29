@@ -109,7 +109,13 @@ interface PerseoApi {
     @POST("ws.php")
     suspend fun verifyVersion(
         @Query("opc") opc: Int,
-        @Field("VERSION") version:String
-    ):Response<VerifyVersionResponse>
+        @Field("VERSION") version: String
+    ): Response<VerifyVersionResponse>
 
+    @FormUrlEncoded
+    @POST("ws.php")
+    suspend fun getAllMaterials(
+        @Query("opc") opc: Int,
+        @Field("ID_EMPRESA") enterpriseId: Int,
+    ): Response<MaterialResponse>
 }
