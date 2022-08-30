@@ -709,35 +709,8 @@ fun MaterialsItem(
                     }
                 }
             )
-/*            CustomTextField(
-                material = material,
-                materialsOld = materialsOld,
-                placeholderText = "cantidad",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                onAction = { amount, materialDesc ->
-                    onAction(amount, materialDesc)
-                },
-                onLongClick = {
-                    onLongClick(it)
-                }
-            )*/
         }
     }
-}
-
-@Composable
-private fun CustomTextField(
-    modifier: Modifier = Modifier,
-    materialsOld: List<Materials>,
-    placeholderText: String = "Placeholder",
-    fontSize: TextUnit = 12.sp,
-    material: Material,
-    onAction: (String, Material) -> Unit,
-    onLongClick: (String) -> Unit
-) {
-
 }
 
 @Composable

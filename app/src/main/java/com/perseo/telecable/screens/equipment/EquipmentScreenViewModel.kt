@@ -148,15 +148,19 @@ class EquipmentScreenViewModel @Inject constructor(
     private fun saveEquipmentInDatabase() {
         viewModelScope.launch {
             dbRepository.deleteEquipment()
-            for (equipment in _equipmentTmp.value!!) {
-                dbRepository.insertEquipment(
-                    Equipment(
-                        nombre_imagen_adicional = "",
-                        id_tipo_equipo = equipment.equipment!!,
-                        id_equipo = equipment.idEquipment!!,
-                        url_image = equipment.image
+            try {
+                for (equipment in _equipmentTmp.value!!) {
+                    dbRepository.insertEquipment(
+                        Equipment(
+                            nombre_imagen_adicional = "",
+                            id_tipo_equipo = equipment.equipment!!,
+                            id_equipo = equipment.idEquipment!!,
+                            url_image = equipment.image
+                        )
                     )
-                )
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
@@ -210,21 +214,25 @@ class EquipmentScreenViewModel @Inject constructor(
                     "QUITAR_ANTENA_SECTORIAL" -> equipment.removeAntennaSectorial = 1
                 }
             }
-            equipmentTmp.value?.map {
-                when (it.equipment) {
-                    "CM" -> equipment.cmId = listOf(it.idEquipment!!)
-                    "DECO" -> equipment.decoId = listOf(it.idEquipment!!)
-                    "ETIQ" -> equipment.etiqId = listOf(it.idEquipment!!)
-                    "CAJADIG" -> equipment.cdId = listOf(it.idEquipment!!)
-                    "CAJATER" -> equipment.ctId = listOf(it.idEquipment!!)
-                    "ROUTERCEN" -> equipment.rcId = listOf(it.idEquipment!!)
-                    "LINEA" -> equipment.lineId = listOf(it.idEquipment!!)
-                    "ROUTER" -> equipment.routerId = listOf(it.idEquipment!!)
-                    "IP" -> equipment.ipId = listOf(it.idEquipment!!)
-                    "ANTE" -> equipment.antennaId = listOf(it.idEquipment!!)
-                    "ANTESEC" -> equipment.antennaSectorialId = listOf(it.idEquipment!!)
-                    "MINI" -> equipment.miniNodoId = listOf(it.idEquipment!!)
+            try {
+                equipmentTmp.value?.map {
+                    when (it.equipment) {
+                        "CM" -> equipment.cmId = listOf(it.idEquipment!!)
+                        "DECO" -> equipment.decoId = listOf(it.idEquipment!!)
+                        "ETIQ" -> equipment.etiqId = listOf(it.idEquipment!!)
+                        "CAJADIG" -> equipment.cdId = listOf(it.idEquipment!!)
+                        "CAJATER" -> equipment.ctId = listOf(it.idEquipment!!)
+                        "ROUTERCEN" -> equipment.rcId = listOf(it.idEquipment!!)
+                        "LINEA" -> equipment.lineId = listOf(it.idEquipment!!)
+                        "ROUTER" -> equipment.routerId = listOf(it.idEquipment!!)
+                        "IP" -> equipment.ipId = listOf(it.idEquipment!!)
+                        "ANTE" -> equipment.antennaId = listOf(it.idEquipment!!)
+                        "ANTESEC" -> equipment.antennaSectorialId = listOf(it.idEquipment!!)
+                        "MINI" -> equipment.miniNodoId = listOf(it.idEquipment!!)
+                    }
                 }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
             val response = repository.validateEquipment(
                 generalData.value[0].idMunicipality,

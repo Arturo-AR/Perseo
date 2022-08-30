@@ -92,14 +92,16 @@ class MaterialsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             dbRepository.getAllMaterials().distinctUntilChanged()
                 .collect { materials ->
-                    _materialSaved.value = materials
-                    _materialTmp.value = materials.map {
-                        MaterialTmp(
-                            it.id_material,
-                            it.desc_material,
-                            it.cantidad
-                        )
-                    } as MutableList<MaterialTmp>
+                    withContext(Dispatchers.Main) {
+                        _materialSaved.value = materials
+                        _materialTmp.value = materials.map {
+                            MaterialTmp(
+                                it.id_material,
+                                it.desc_material,
+                                it.cantidad
+                            )
+                        } as MutableList<MaterialTmp>
+                    }
                 }
         }
     }
