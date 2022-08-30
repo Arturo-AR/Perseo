@@ -1,11 +1,12 @@
 package com.perseo.telecable.screens.osdetails
 
+import android.app.Application
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.perseo.telecable.ApplicationViewModel
 import com.perseo.telecable.model.database.ComplianceInfo
 import com.perseo.telecable.model.database.Equipment
 import com.perseo.telecable.model.database.GeneralData
@@ -26,6 +27,7 @@ import com.perseo.telecable.utils.toJsonString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.util.*
@@ -33,12 +35,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OSDetailsScreenViewModel @Inject constructor(
+    application: Application,
     private val dbRepository: DatabaseRepository,
     private val repository: PerseoRepository,
     private val prefs: SharedRepository,
     private val imgurRepository: ImgurRepository
 ) :
-    ViewModel() {
+    ApplicationViewModel(application) {
 
     private val _cancelImages: MutableLiveData<List<Bitmap>> = MutableLiveData(mutableListOf())
     val cancelImages: MutableLiveData<List<Bitmap>> = _cancelImages
@@ -105,8 +108,8 @@ class OSDetailsScreenViewModel @Inject constructor(
 
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
-            Log.d("motivo", motivoId)
-            Log.d("motivo", enterpriseId.toString())
+            //Log.d("motivo", motivoId)
+            //Log.d("motivo", enterpriseId.toString())
             val response = repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
             if (response.isSuccessful) {
                 if (response.body()?.responseCode == 200) {
@@ -178,17 +181,21 @@ class OSDetailsScreenViewModel @Inject constructor(
 
     fun finishOrder(onClick: () -> Unit) {
         viewModelScope.launch {
+            endCompliance(
+                getLocationLiveData().value?.latitude!!,
+                getLocationLiveData().value?.longitude!!
+            )
             val ok = uploadImages()
             if (ok) {
-                Log.d("id_empresa", generalData.value[0].idMunicipality.toString())
-                Log.d("info_pre", complianceInfo.value?.toJsonString()!!)
-                Log.d("imagenes", finalImages.value?.toJsonString()!!)
-                Log.d("equipos", equipment.value?.toJsonString()!!)
-                Log.d("materiales", material.value?.toJsonString()!!)
-                Log.d("parametros_ro", "[]")
-                Log.d("id_os", currentOs.value?.osId.toString())
-                Log.d("fecha", Date().toDate())
-                Log.d("info_cum", "{}")
+                //Log.d("id_empresa", generalData.value[0].idMunicipality.toString())
+                //Log.d("info_pre", complianceInfo.value?.toJsonString()!!)
+                //Log.d("imagenes", finalImages.value?.toJsonString()!!)
+                //Log.d("equipos", equipment.value?.toJsonString()!!)
+                //Log.d("materiales", material.value?.toJsonString()!!)
+                //Log.d("parametros_ro", "[]")
+                //Log.d("id_os", currentOs.value?.osId.toString())
+                //Log.d("fecha", Date().toDate())
+                //Log.d("info_cum", "{}")
                 val response = repository.finalizarOrdenServicio(
                     empresa_id = generalData.value[0].idMunicipality,
                     ordenes_info_cumplimiento = complianceInfo.value?.toJsonString()!!,
@@ -241,7 +248,7 @@ class OSDetailsScreenViewModel @Inject constructor(
                             )
                         )
                     }
-                    Log.d("Link", response.body()?.upload?.link!!)
+                    //Log.d("Link", response.body()?.upload?.link!!)
                 }
             }
         }.join()
@@ -253,7 +260,7 @@ class OSDetailsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             images.mapIndexed { index, it ->
                 val title =
-                    "can${index+1}||${currentOs.value?.osId}||${Date().toDate()}||${currentOs.value?.requestNumber}"
+                    "can${index + 1}||${currentOs.value?.osId}||${Date().toDate()}||${currentOs.value?.requestNumber}"
                 val album = when (generalData.value[0].municipality) {
                     "PACHUCA" -> Constants.ID_PACHUCA_ALBUM
                     "MORELIA" -> Constants.ID_MORELIA_ALBUM
@@ -355,19 +362,19 @@ class OSDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    fun startCompliance() {
+    fun startCompliance(lat: String, lon: String) {
         viewModelScope.launch {
             val myDate = Date()
             dbRepository.insertCompliance(
                 ComplianceInfo(
                     id_empresa = generalData.value[0].idMunicipality,
                     id_os = currentOs.value?.osId!!,
-                    fecha_fin = myDate.toDate(),
+                    fecha_fin = "",
                     fecha_inicio = myDate.toDate(),
-                    hora_fin = myDate.toHour(),
+                    hora_fin = "",
                     hora_inicio = myDate.toHour(),
                     ubicacion_fin = "",
-                    ubicacion_inicio = "",
+                    ubicacion_inicio = "$lat, $lon",
                     respuesta1 = "",
                     respuesta2 = "",
                     respuesta3 = ""
@@ -375,6 +382,17 @@ class OSDetailsScreenViewModel @Inject constructor(
             )
             updateInfo()
         }
+    }
+
+    private suspend fun endCompliance(lat: String, lon: String) {
+        viewModelScope.launch {
+            val myDate = Date()
+            _complianceInfo.value?.fecha_fin = myDate.toDate()
+            _complianceInfo.value?.hora_fin = myDate.toHour()
+            _complianceInfo.value?.ubicacion_fin = "$lat, $lon"
+            dbRepository.updateComplianceInfo(complianceInfo.value!!)
+            updateInfo()
+        }.join()
     }
 
     fun addCancelImage(bitmap: Bitmap?) {

@@ -29,8 +29,10 @@ class ServiceCordsScreenViewModel @Inject constructor(
     private val _data: MutableLiveData<GeneralData> = MutableLiveData()
     val data: LiveData<GeneralData> = _data
 
-    private val _cordsOrders: MutableLiveData<List<CordsOrderBody>> = MutableLiveData()
-    val cordsOrder: LiveData<List<CordsOrderBody>> = _cordsOrders
+    private lateinit var _cordsOrders: List<CordsOrderBody>
+
+    private val _cordsOrdersFilter: MutableLiveData<List<CordsOrderBody>> = MutableLiveData()
+    val cordsOrder: LiveData<List<CordsOrderBody>> = _cordsOrdersFilter
 
     private val _osList: MutableLiveData<List<Int>> = MutableLiveData(mutableListOf())
     val osList: MutableLiveData<List<Int>> = _osList
@@ -46,7 +48,8 @@ class ServiceCordsScreenViewModel @Inject constructor(
                         val cords =
                             repository.getCordsOrders(data[0].idUser, data[0].idMunicipality)
                         withContext(Dispatchers.Main) {
-                            _cordsOrders.value = cords.body()?.responseBody
+                            _cordsOrders = cords.body()?.responseBody!!
+                            _cordsOrdersFilter.value = cords.body()?.responseBody
                         }
                     }
                 }
@@ -95,17 +98,26 @@ class ServiceCordsScreenViewModel @Inject constructor(
         }
     }
 
-    fun updateOptions(filter: String) {
-        if (!_cordsOrders.value.isNullOrEmpty()) {
+    fun updateFilter(filter: String) {
+        if (_cordsOrders.isNotEmpty()) {
             _filterOptions.value = if (filter == "Colonia") {
-                _cordsOrders.value!!.map {
+                _cordsOrders.map {
                     it.settlement
                 }.distinct()
             } else {
-                _cordsOrders.value!!.map {
+                _cordsOrders.map {
                     it.sector
                 }.distinct()
             }
         }
+    }
+
+    fun updateList(opc: String, filter: String) {
+        _cordsOrdersFilter.value =
+            if (filter == "Colonia")
+                _cordsOrders.filter { it.settlement == opc }
+            else
+                _cordsOrders.filter { it.sector == opc }
+
     }
 }

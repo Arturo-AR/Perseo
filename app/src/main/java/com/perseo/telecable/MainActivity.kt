@@ -12,11 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.perseo.telecable.navigation.PerseoNavigation
 import com.perseo.telecable.ui.theme.Background
 import com.perseo.telecable.ui.theme.PerseoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalPermissionsApi
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
 @AndroidEntryPoint
@@ -31,6 +33,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalPermissionsApi
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
 @Composable

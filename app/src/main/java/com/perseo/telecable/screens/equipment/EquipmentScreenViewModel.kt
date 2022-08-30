@@ -1,7 +1,6 @@
 package com.perseo.telecable.screens.equipment
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -82,11 +81,11 @@ class EquipmentScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val response = repository.getRoutersCT(generalData.value[0].idMunicipality)
             if (response.isSuccessful) {
-                val RC = response.body()
-                if (RC?.responseCode == 200) {
-                    _terminalBox.value = RC.responseBody.terminalBox
-                    _routers.value = RC.responseBody.routers
-                    _antennaSectorial.value = RC.responseBody.antennasSectorial
+                val rCA = response.body()
+                if (rCA?.responseCode == 200) {
+                    _terminalBox.value = rCA.responseBody.terminalBox
+                    _routers.value = rCA.responseBody.routers
+                    _antennaSectorial.value = rCA.responseBody.antennasSectorial
                 }
             }
         }
@@ -94,8 +93,8 @@ class EquipmentScreenViewModel @Inject constructor(
 
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
-            Log.d("motivoEQ", motivoId)
-            Log.d("motivoEQ", enterpriseId.toString())
+            //Log.d("motivoEQ", motivoId)
+            //Log.d("motivoEQ", enterpriseId.toString())
             try {
                 val response =
                     repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
@@ -124,9 +123,9 @@ class EquipmentScreenViewModel @Inject constructor(
     }
 
     fun saveTmp(equipment: String?, idEquipment: String?, image: Bitmap?) {
-        Log.d("equipment", equipment.toString())
-        Log.d("idEquipment", idEquipment.toString())
-        Log.d("image", image.toString())
+        //Log.d("equipment", equipment.toString())
+        //Log.d("idEquipment", idEquipment.toString())
+        //Log.d("image", image.toString())
         val current = _equipmentTmp.value?.find { it.equipment == equipment }
         if (current == null) {
             _equipmentTmp.value?.add(
@@ -149,15 +148,19 @@ class EquipmentScreenViewModel @Inject constructor(
     private fun saveEquipmentInDatabase() {
         viewModelScope.launch {
             dbRepository.deleteEquipment()
-            for (equipment in _equipmentTmp.value!!) {
-                dbRepository.insertEquipment(
-                    Equipment(
-                        nombre_imagen_adicional = "",
-                        id_tipo_equipo = equipment.equipment!!,
-                        id_equipo = equipment.idEquipment!!,
-                        url_image = equipment.image
+            try {
+                for (equipment in _equipmentTmp.value!!) {
+                    dbRepository.insertEquipment(
+                        Equipment(
+                            nombre_imagen_adicional = "",
+                            id_tipo_equipo = equipment.equipment!!,
+                            id_equipo = equipment.idEquipment!!,
+                            url_image = equipment.image
+                        )
                     )
-                )
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
@@ -211,21 +214,25 @@ class EquipmentScreenViewModel @Inject constructor(
                     "QUITAR_ANTENA_SECTORIAL" -> equipment.removeAntennaSectorial = 1
                 }
             }
-            equipmentTmp.value?.map {
-                when (it.equipment) {
-                    "CM" -> equipment.cmId = listOf(it.idEquipment!!)
-                    "DECO" -> equipment.decoId = listOf(it.idEquipment!!)
-                    "ETIQ" -> equipment.etiqId = listOf(it.idEquipment!!)
-                    "CAJADIG" -> equipment.cdId = listOf(it.idEquipment!!)
-                    "CAJATER" -> equipment.ctId = listOf(it.idEquipment!!)
-                    "ROUTERCEN" -> equipment.rcId = listOf(it.idEquipment!!)
-                    "LINEA" -> equipment.lineId = listOf(it.idEquipment!!)
-                    "ROUTER" -> equipment.routerId = listOf(it.idEquipment!!)
-                    "IP" -> equipment.ipId = listOf(it.idEquipment!!)
-                    "ANTE" -> equipment.antennaId = listOf(it.idEquipment!!)
-                    "ANTESEC" -> equipment.antennaSectorialId = listOf(it.idEquipment!!)
-                    "MINI" -> equipment.miniNodoId = listOf(it.idEquipment!!)
+            try {
+                equipmentTmp.value?.map {
+                    when (it.equipment) {
+                        "CM" -> equipment.cmId = listOf(it.idEquipment!!)
+                        "DECO" -> equipment.decoId = listOf(it.idEquipment!!)
+                        "ETIQ" -> equipment.etiqId = listOf(it.idEquipment!!)
+                        "CAJADIG" -> equipment.cdId = listOf(it.idEquipment!!)
+                        "CAJATER" -> equipment.ctId = listOf(it.idEquipment!!)
+                        "ROUTERCEN" -> equipment.rcId = listOf(it.idEquipment!!)
+                        "LINEA" -> equipment.lineId = listOf(it.idEquipment!!)
+                        "ROUTER" -> equipment.routerId = listOf(it.idEquipment!!)
+                        "IP" -> equipment.ipId = listOf(it.idEquipment!!)
+                        "ANTE" -> equipment.antennaId = listOf(it.idEquipment!!)
+                        "ANTESEC" -> equipment.antennaSectorialId = listOf(it.idEquipment!!)
+                        "MINI" -> equipment.miniNodoId = listOf(it.idEquipment!!)
+                    }
                 }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
             val response = repository.validateEquipment(
                 generalData.value[0].idMunicipality,
@@ -261,7 +268,6 @@ class EquipmentScreenViewModel @Inject constructor(
             }
             else -> id
         }
-
     }
 
     fun getEquipmentType(reason: String): String {

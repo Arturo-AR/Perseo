@@ -5,7 +5,6 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -15,6 +14,7 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
@@ -36,9 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
@@ -54,7 +55,6 @@ import com.perseo.telecable.ui.theme.*
 import com.perseo.telecable.utils.Constants
 import com.perseo.telecable.utils.toBitmap
 import com.perseo.telecable.utils.toHourFormat
-import java.util.*
 
 @Composable
 fun LogoPerseo(modifier: Modifier) {
@@ -64,7 +64,7 @@ fun LogoPerseo(modifier: Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = rememberAsyncImagePainter(Constants.LOGO_PERSEO),
+            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.LOGO_PERSEO),
             contentDescription = "Logo Perseo"
         )
     }
@@ -397,7 +397,7 @@ fun ZonesButtons(
                             .padding(4.dp)
                             .fillMaxSize()
                             .clickable { onPress(items[index]) },
-                        painter = rememberAsyncImagePainter(Constants.BUTTON_BACKGROUND),
+                        painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_BACKGROUND),
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds
                     )
@@ -439,7 +439,7 @@ fun ServiceOrderCard(
             modifier = Modifier
                 .padding(4.dp)
                 .fillMaxSize(),
-            painter = rememberAsyncImagePainter(if (os.preCumDate == "") Constants.OS_ACTIVE_BACKGROUND else Constants.OS_INACTIVE_BACKGROUND),
+            painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + if (os.preCumDate == "") Constants.OS_ACTIVE_BACKGROUND else Constants.OS_INACTIVE_BACKGROUND),
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
@@ -599,104 +599,116 @@ fun DetailItem(
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
-fun MaterialsAddItem(
-    materiales: List<Inventory>,
-    onClick: (Double, Inventory) -> Unit
+fun MaterialsList(
+    materials: List<Material>,
+    materialsOld: List<Materials>,
+    onAction: (String, Material) -> Unit,
+    onLongClick: (String) -> Unit
 ) {
-    // State variables
-    var materialSelected: Inventory by remember { mutableStateOf(materiales[0]) }
-    var expanded by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf("") }
-    Card {
-        Row(
-            modifier = Modifier
-                .background(Accent)
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(9f)
-                    .padding(end = 32.dp)
-            ) {
-                Text(text = "Material:", color = White)
-                Row(
-                    Modifier
-                        .background(Background)
-                        .clickable {
-                            expanded = !expanded
-                        }
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = materialSelected.materialDesc,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(end = 32.dp),
-                        color = White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Icon(
-                        imageVector = Icons.Filled.ArrowDropDown,
-                        contentDescription = "",
-                        tint = White
-                    )
-                    DropdownMenu(expanded = expanded, onDismissRequest = {
-                        expanded = false
-                    }) {
-                        materiales.forEach { material ->
-                            DropdownMenuItem(onClick = {
-                                expanded = false
-                                materialSelected = material
-                            }) {
-                                Text(text = material.materialDesc)
-                            }
-                        }
-                    }
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(materials) { material ->
+            MaterialsItem(
+                material = material,
+                materialsOld = materialsOld,
+                onAction = { amount, materialDesc ->
+                    onAction(amount, materialDesc)
+                },
+                onLongClick = {
+                    onLongClick(it)
                 }
+            )
+        }
+    }
+}
 
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    label = { Text("Cantidad") },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        textColor = Yellow3,
-                        cursorColor = White,
-                        focusedBorderColor = White,
-                        unfocusedBorderColor = Yellow3,
-                        focusedLabelColor = Yellow3,
-                        unfocusedLabelColor = White,
-                    )
+@ExperimentalFoundationApi
+@Composable
+fun MaterialsItem(
+    material: Material,
+    materialsOld: List<Materials>,
+    onAction: (String, Material) -> Unit,
+    onLongClick: (String) -> Unit
+) {
+    val oldValue =
+        materialsOld.find { it.id_material == material.materialId }?.cantidad?.toInt().toString()
+    var text by rememberSaveable { mutableStateOf(if (oldValue == "null") "" else oldValue) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(
+                RoundedCornerShape(
+                    topStart = 10.dp,
+                    topEnd = 10.dp,
+                    bottomStart = 10.dp,
+                    bottomEnd = 10.dp
                 )
-            }
-            IconButton(
+            )
+            .background(Accent)
+            .padding(horizontal = 8.dp, vertical = 2.dp)
+            .combinedClickable(
+                onClick = {},
+                onLongClick = {
+                    text = ""
+                    onLongClick(material.materialId)
+                }
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(modifier = Modifier.weight(5f)) {
+            Text(text = material.materialDesc, modifier = Modifier.fillMaxWidth(), color = White)
+        }
+        Column(modifier = Modifier.weight(2f)) {
+            BasicTextField(
                 modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 10.dp,
-                            topEnd = 10.dp,
-                            bottomStart = 10.dp,
-                            bottomEnd = 10.dp
-                        )
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .background(
+                        MaterialTheme.colors.surface,
+                        MaterialTheme.shapes.small,
                     )
-                    .background(Yellow3),
-                onClick = {
-                    if (text != "") {
-                        onClick(text.toDouble(), materialSelected)
-                    } else {
-                        onClick(-1.0, materialSelected)
+                    .fillMaxWidth(),
+                value = text,
+                onValueChange = {
+                    text = it
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions {
+                    onAction(text, material)
+                },
+                singleLine = true,
+                cursorBrush = SolidColor(MaterialTheme.colors.primary),
+                textStyle = LocalTextStyle.current.copy(
+                    color = MaterialTheme.colors.onSurface,
+                    fontSize = 12.sp
+                ),
+                decorationBox = { innerTextField ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(Modifier.weight(1f)) {
+                            if (text.isEmpty()) Text(
+                                "cantidad",
+                                style = LocalTextStyle.current.copy(
+                                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                                    fontSize = 12.sp
+                                )
+                            )
+                            innerTextField()
+                        }
                     }
                 }
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = White)
-            }
+            )
         }
     }
 }
@@ -710,7 +722,7 @@ fun EquipmentItem(
     routers: List<RouterCentral>,
     antennas: List<AntennaSectorial>,
     onAction: (String) -> Unit,
-    getImage: (Bitmap) -> Unit
+    getImage: (Bitmap?) -> Unit
 ) {
     var text by remember { mutableStateOf(idMotivo ?: "") }
     Card(
@@ -766,9 +778,9 @@ fun EquipmentItem(
                     )
                 )
             }
-            RequestContentPermission(oldBitmap = oldBitmap) {
+            RequestContentPermission(oldBitmap = oldBitmap, onReturn = {
                 getImage(it)
-            }
+            })
         }
     }
 }
@@ -799,7 +811,7 @@ fun CordsServicesItem(
                 color = White
             )
             Column(modifier = Modifier.weight(1.5f)) {
-                Text(text = "Etiquita", color = Yellow4)
+                Text(text = "Etiqueta", color = Yellow4)
                 Text(text = cord.label, color = White)
                 Text(text = "Caja terminal", color = Yellow4)
                 Text(text = cord.terminalBox, color = White)
@@ -818,15 +830,15 @@ fun CordsServicesItem(
 
 @Composable
 fun CordsServicesFilters(
-    filters:List<String>,
-    onChangeFilter:(String)->Unit,
-    onChangeOption:(String)->Unit
+    filters: List<String>,
+    onChangeFilter: (String) -> Unit,
+    onChangeOption: (String, String) -> Unit
 ) {
     val spinners = listOf("Colonia", "Sector")
-    val currentSelection = remember { mutableStateOf(spinners.first()) }
+    val currentSelection = remember { mutableStateOf("") }
 
     // State variables
-    var currentFilter: String by remember { mutableStateOf(filters.first()) }
+    var currentFilter: String by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
     Row(
@@ -859,7 +871,7 @@ fun CordsServicesFilters(
                     DropdownMenuItem(onClick = {
                         expanded = false
                         currentFilter = newFilter
-                        onChangeOption(currentFilter)
+                        onChangeOption(currentFilter, currentSelection.value)
                     }) {
                         Text(text = newFilter)
                     }
@@ -880,7 +892,7 @@ fun CordsServicesFilters(
             currentSelection.value = clickedItem
             onChangeFilter(clickedItem)
             currentFilter = ""
-            onChangeOption(currentFilter)
+            //onChangeOption(currentFilter)
         }
     }
 }
@@ -945,7 +957,10 @@ fun DefaultButtonWithImage(
     onClick: () -> Unit
 ) {
     Box {
-        ImageButton(urlImage = Constants.BUTTON_BACKGROUND, modifier = Modifier) {
+        ImageButton(
+            urlImage = Constants.PERSEO_BASE_URL + Constants.BUTTON_BACKGROUND,
+            modifier = Modifier
+        ) {
             onClick()
         }
         Column(
@@ -990,7 +1005,6 @@ fun ScheduleItem(
                         fontWeight = FontWeight.Light,
                         fontSize = 13.sp
                     )
-
             }
             Column(
                 modifier = Modifier
@@ -1007,67 +1021,10 @@ fun ScheduleItem(
 }
 
 @Composable
-fun MaterialsFinalItem(
-    material: Materials,
-    onClick: (UUID) -> Unit
-) {
-    Card {
-        Row(
-            modifier = Modifier
-                .background(Accent)
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(modifier = Modifier.weight(9f)) {
-                Text(text = "${material.desc_material} ", color = Yellow4)
-                Text(text = "${material.cantidad}", color = White)
-            }
-            IconButton(
-                modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 10.dp,
-                            topEnd = 10.dp,
-                            bottomStart = 10.dp,
-                            bottomEnd = 10.dp
-                        )
-                    )
-                    .background(Gray)
-                    .weight(2f),
-                onClick = {
-                    onClick(material.id)
-                }
-            ) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = null, tint = White)
-            }
-        }
-    }
-}
-
-@Composable
-fun MaterialsFinalList(
-    materialList: List<Materials>,
-    onDelete: (UUID) -> Unit
-) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(materialList) { material ->
-            MaterialsFinalItem(material) {
-                onDelete(it)
-            }
-        }
-    }
-}
-
-@Composable
 fun RequestContentPermission(
     oldBitmap: Bitmap?,
-    onReturn: (Bitmap) -> Unit
+    onReturn: (Bitmap?) -> Unit
 ) {
-    var imageUri by remember {
-        mutableStateOf<Uri?>(null)
-    }
     val context = LocalContext.current
     val bitmap = remember {
         mutableStateOf(oldBitmap)
@@ -1075,8 +1032,20 @@ fun RequestContentPermission(
     val launcher = rememberLauncherForActivityResult(
         contract =
         ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        imageUri = uri
+    ) {
+        var currentBitmap: Bitmap? = null
+        if (Build.VERSION.SDK_INT < 28) {
+            currentBitmap = MediaStore.Images
+                .Media.getBitmap(context.contentResolver, it)
+        } else {
+            val source = it?.let { it1 ->
+                ImageDecoder
+                    .createSource(context.contentResolver, it1)
+            }
+            source?.let { it1 -> ImageDecoder.decodeBitmap(it1) }
+                ?.let { it2 -> currentBitmap = it2 }
+        }
+        bitmap.value = currentBitmap
     }
     Column {
         Button(colors = ButtonDefaults.buttonColors(
@@ -1087,17 +1056,6 @@ fun RequestContentPermission(
             Text(text = "Imagen")
         }
         Spacer(modifier = Modifier.height(12.dp))
-
-        imageUri?.let {
-            if (Build.VERSION.SDK_INT < 28) {
-                bitmap.value = MediaStore.Images
-                    .Media.getBitmap(context.contentResolver, it)
-            } else {
-                val source = ImageDecoder
-                    .createSource(context.contentResolver, it)
-                bitmap.value = ImageDecoder.decodeBitmap(source)
-            }
-        }
         bitmap.value?.let { btm ->
             onReturn(btm)
             Image(
@@ -1142,8 +1100,6 @@ fun RequestContentPermissionCancelList(
                 if (bitmapList != null) {
                     if (bitmapList.size < 3) {
                         launcher.launch("image/*")
-                    } else {
-                        Log.d("Imagenes", "Limit of images")
                     }
                 }
             }) {
@@ -1209,8 +1165,6 @@ fun RequestContentPermissionList(
                 ), onClick = {
                     if (bitmapList.size < 3) {
                         launcher.launch("image/*")
-                    } else {
-                        Log.d("Imagenes", "Limit of images")
                     }
                 }) {
                     Text(text = "Imagenes Adicionales")
