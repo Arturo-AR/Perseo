@@ -4,7 +4,6 @@ import android.app.Application
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.perseo.telecable.ApplicationViewModel
 import com.perseo.telecable.model.database.ComplianceInfo
@@ -27,7 +26,6 @@ import com.perseo.telecable.utils.toJsonString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.util.*
@@ -160,7 +158,7 @@ class OSDetailsScreenViewModel @Inject constructor(
                 imageUrl1 = links[0],
                 imageUrl2 = links[1],
                 imageUrl3 = links[2],
-                location = ""
+                location = "${getLocationLiveData().value?.latitude!!},${getLocationLiveData().value?.longitude!!}"
             )
             val response =
                 repository.cancelOrder(generalData.value[0].idMunicipality, reasons.toJsonString())
@@ -235,7 +233,7 @@ class OSDetailsScreenViewModel @Inject constructor(
                         if (it.id_tipo_equipo == "") it.nombre_imagen_adicional else it.id_tipo_equipo
                     val response = imgurRepository.uploadImage(
                         image = it.url_image!!,
-                        album = "9K03yxW",
+                        album = getAlbum(),
                         title = "$title||${currentOs.value?.requestNumber}"
                     )
                     if (response.isSuccessful) {
@@ -263,13 +261,7 @@ class OSDetailsScreenViewModel @Inject constructor(
             images.mapIndexed { index, it ->
                 val title =
                     "can${index + 1}||${currentOs.value?.osId}||${Date().toDate()}||${currentOs.value?.requestNumber}"
-                val album = when (generalData.value[0].municipality) {
-                    "PACHUCA" -> Constants.ID_PACHUCA_ALBUM
-                    "MORELIA" -> Constants.ID_MORELIA_ALBUM
-                    "TULANCINGO" -> Constants.ID_TULANCINGO_ALBUM
-                    "TEST" -> Constants.ID_TEST_ALBUM
-                    else -> ""
-                }
+                val album = getAlbum()
                 val response = imgurRepository.uploadImage(
                     image = it,
                     album = album,
@@ -425,6 +417,16 @@ class OSDetailsScreenViewModel @Inject constructor(
             if (response.isSuccessful) {
                 _subscriberImages.value = response.body()?.responseBody
             }
+        }
+    }
+
+    private fun getAlbum(): String {
+        return when (generalData.value[0].municipality) {
+            "PACHUCA" -> Constants.ID_PACHUCA_ALBUM
+            "MORELIA" -> Constants.ID_MORELIA_ALBUM
+            "TULANCINGO" -> Constants.ID_TULANCINGO_ALBUM
+            "TEST" -> Constants.ID_TEST_ALBUM
+            else -> ""
         }
     }
 }
