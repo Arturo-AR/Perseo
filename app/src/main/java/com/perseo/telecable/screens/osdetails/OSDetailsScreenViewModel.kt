@@ -196,31 +196,33 @@ class OSDetailsScreenViewModel @Inject constructor(
                 //Log.d("id_os", currentOs.value?.osId.toString())
                 //Log.d("fecha", Date().toDate())
                 //Log.d("info_cum", "{}")
-                val response = repository.finalizarOrdenServicio(
-                    empresa_id = generalData.value[0].idMunicipality,
-                    ordenes_info_cumplimiento = complianceInfo.value?.toJsonString()!!,
-                    fotos = finalImages.value?.toJsonString()!!,
-                    equipos = equipment.value?.toJsonString()!!,
-                    orden = currentOs.value?.osId!!,
-                    fecha = Date().toDate(),
-                    materiales = material.value?.toJsonString()!!,
-                    parametros = "[]",
-                    info_cumplimiento = "{}"
-                )
-
-                if (response.isSuccessful) {
-                    if (response.body() == "Committed") {
-                        finishDoing()
-                        finishRoute()
-                        viewModelScope.launch {
-                            dbRepository.deleteMaterials()
-                            dbRepository.deleteEquipment()
-                            dbRepository.deleteComplianceInfo()
+                try {
+                    val response = repository.finalizarOrdenServicio(
+                        empresa_id = generalData.value[0].idMunicipality,
+                        ordenes_info_cumplimiento = complianceInfo.value?.toJsonString()!!,
+                        fotos = finalImages.value?.toJsonString()!!,
+                        equipos = equipment.value?.toJsonString()!!,
+                        orden = currentOs.value?.osId!!,
+                        fecha = Date().toDate(),
+                        materiales = material.value?.toJsonString()!!,
+                        parametros = "[]",
+                        info_cumplimiento = "{}"
+                    )
+                    if (response.isSuccessful) {
+                        if (response.body() == "Committed") {
+                            finishDoing()
+                            finishRoute()
+                            viewModelScope.launch {
+                                dbRepository.deleteMaterials()
+                                dbRepository.deleteEquipment()
+                                dbRepository.deleteComplianceInfo()
+                            }
+                            onClick()
                         }
-                        onClick()
                     }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
-
             }
         }
     }
