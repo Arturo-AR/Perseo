@@ -8,8 +8,10 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.perseo.telecable.R
 import com.perseo.telecable.components.EnterpriseList
 import com.perseo.telecable.components.PerseoTopBar
 import com.perseo.telecable.navigation.PerseoScreens
@@ -27,7 +29,7 @@ fun EnterpriseSelectorScreen(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Elige tu Ciudad",
+                title = stringResource(id = R.string.choose_your_city),
                 inDashboard = null
             ) {
                 navController.navigate(PerseoScreens.OrderOptions.route) {
@@ -42,7 +44,7 @@ fun EnterpriseSelectorScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (!options.isNullOrEmpty())
-                EnterpriseList(options!!){
+                EnterpriseList(options!!) {
                     viewModel.updateData(it)
                     navController.navigate(PerseoScreens.Dashboard.route)
                 }

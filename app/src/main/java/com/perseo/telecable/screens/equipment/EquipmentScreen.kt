@@ -15,9 +15,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.perseo.telecable.R
 import com.perseo.telecable.components.EquipmentItem
 import com.perseo.telecable.components.PerseoBottomBar
 import com.perseo.telecable.components.PerseoTopBar
@@ -57,7 +59,7 @@ fun EquipmentScreen(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Equipos",
+                title = stringResource(id = R.string.equipment),
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.OSDetails.route) {
@@ -142,7 +144,7 @@ fun EquipmentScreen(
                     ex.printStackTrace()
                 }
             }) {
-                Text(text = "Agregar")
+                Text(text = stringResource(id = R.string.add))
             }
         }
     }

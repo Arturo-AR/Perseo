@@ -1,6 +1,29 @@
 <resources>
     <string name="app_name">Perseo</string>
 
-    <!--Login Screen-->
+    <string name="enter_account">Ingresa a tu cuenta</string>
+    <string name="invalid_credentials">Credenciales Inválidas</string>
+    <string name="alert_title">Alerta!</string>
+    <string name="close">Cerrar</string>
+    <string name="close_account">Cerrar Sesion</string>
+    <string name="close_account_question">¿Desea Cerrar sesion?</string>
+    <string name="app_name_perseo">Perseo App</string>
+    <string name="change_city">Cambiar de ciudad</string>
+    <string name="close_app_question">Desea salir de la aplicacion ?\n(No se cerrará la sesion).</string>
+    <string name="compliance">Cumplimientos</string>
+    <string name="choose_your_city">Elige tu Ciudad</string>
+    <string name="equipment">Equipos</string>
+    <string name="add">Agregar</string>
+    <string name="inventory">Inventario</string>
+    <string name="materials">Materiales</string>
+    <string name="add_material">Agregar Material</string>
+    <string name="deleted">Eliminado</string>
+    <string name="update">Actualizar</string>
+    <string name="insufficient_material">Materiales insuficiente</string>
+    <string name="no_valid_amount">Cantidad no valida</string>
+    <string name="materials_updated_correctly">Materiales actualizados correctamente</string>
+    <string name="zone">Zonas</string>
+    <string name="schedule">Agenda</string>
+    <string name="order_by">Ordenar por …</string>
 
 </resources>

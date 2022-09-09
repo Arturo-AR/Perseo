@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.perseo.telecable.R
 import com.perseo.telecable.components.PerseoBottomBar
 import com.perseo.telecable.components.PerseoTopBar
 import com.perseo.telecable.components.ZonesButtons
@@ -29,7 +31,7 @@ fun MyServiceOrdersScreen(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Zonas",
+                title = stringResource(id = R.string.zone),
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.OrderOptions.route) {
@@ -38,7 +40,7 @@ fun MyServiceOrdersScreen(
             }
         },
         bottomBar = {
-            if (generalData != null){
+            if (generalData != null) {
                 PerseoBottomBar(
                     enterprise = generalData?.municipality!!,
                     enterpriseIcon = generalData?.logo!!

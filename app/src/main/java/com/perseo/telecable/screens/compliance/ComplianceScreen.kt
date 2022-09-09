@@ -13,8 +13,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.perseo.telecable.R
 import com.perseo.telecable.components.PerseoBottomBar
 import com.perseo.telecable.components.PerseoTopBar
 import com.perseo.telecable.navigation.PerseoScreens
@@ -31,7 +33,7 @@ fun ComplianceScreen(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Cumplimientos",
+                title = stringResource(id = R.string.compliance),
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.ServiceOrders.route) {
@@ -40,7 +42,7 @@ fun ComplianceScreen(
             }
         },
         bottomBar = {
-            if (generalData != null){
+            if (generalData != null) {
                 PerseoBottomBar(
                     enterprise = generalData?.municipality!!,
                     enterpriseIcon = generalData?.logo!!
@@ -54,7 +56,11 @@ fun ComplianceScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Cumplimiento", color = Color.White, style = MaterialTheme.typography.h3)
+            Text(
+                text = stringResource(id = R.string.compliance),
+                color = Color.White,
+                style = MaterialTheme.typography.h3
+            )
         }
     }
 }

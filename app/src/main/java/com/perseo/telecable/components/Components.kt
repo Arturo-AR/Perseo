@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -23,8 +24,11 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -37,20 +41,24 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.perseo.telecable.R
 import com.perseo.telecable.model.ItemOSDetail
 import com.perseo.telecable.model.database.Equipment
 import com.perseo.telecable.model.database.Materials
 import com.perseo.telecable.model.database.ServiceOrder
 import com.perseo.telecable.model.perseoresponse.*
 import com.perseo.telecable.navigation.PerseoScreens
+import com.perseo.telecable.screens.dashboard.DashboardScreenViewModel
 import com.perseo.telecable.ui.theme.*
 import com.perseo.telecable.utils.Constants
 import com.perseo.telecable.utils.toBitmap
@@ -67,6 +75,178 @@ fun LogoPerseo(modifier: Modifier) {
             painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.LOGO_PERSEO),
             contentDescription = "Logo Perseo"
         )
+    }
+}
+
+@Composable
+fun DrawerView(navController: NavController, viewModel: DashboardScreenViewModel) {
+    val openDialog = remember {
+        mutableStateOf(false)
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Background)
+            .padding(vertical = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        if (openDialog.value) {
+            ShowAlertDialog(
+                title = stringResource(id = R.string.alert_title),
+                message = {
+                    Text(
+                        text = stringResource(id = R.string.close_account_question),
+                        color = White,
+                        fontSize = 18.sp
+                    )
+                },
+                positiveButtonText = stringResource(id = R.string.close),
+                openDialog = openDialog
+            ) {
+                viewModel.signOut()
+                navController.navigate(PerseoScreens.Login.route)
+            }
+        }
+
+        Card(
+            modifier = Modifier
+                .width(90.dp)
+                .height(90.dp)
+                .clickable { },
+            elevation = 8.dp,
+            shape = RoundedCornerShape(8.dp),
+            border = BorderStroke(1.dp, Color.LightGray)
+        ) {
+            LogoPerseo(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(id = R.string.app_name_perseo),
+            color = ButtonText,
+            style = MaterialTheme.typography.h6
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        AddDrawerHeader(
+            title = stringResource(id = R.string.change_city),
+            icon = Icons.Default.Edit
+        ) {
+            navController.navigate(PerseoScreens.EnterpriseSelector.route)
+        }
+        Divider(color = Accent)
+        AddDrawerHeader(
+            title = stringResource(id = R.string.close_account),
+            icon = Icons.Default.Close
+        ) {
+            openDialog.value = true
+        }
+    }
+}
+
+@Composable
+fun AddDrawerHeader(
+    title: String,
+    icon: ImageVector,
+    titleColor: Color = TextColor,
+    onPress: () -> Unit
+) {
+    Card(
+        elevation = 0.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .clickable {
+                onPress.invoke()
+            },
+        backgroundColor = Background
+    ) {
+        Row(modifier = Modifier.padding(vertical = 16.dp)) {
+            Icon(imageVector = icon, contentDescription = null, tint = titleColor)
+            Spacer(modifier = Modifier.width(32.dp))
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    color = titleColor
+                )
+            )
+        }
+    }
+}
+
+@ExperimentalComposeUiApi
+@Composable
+fun UserForm(
+    loading: Boolean = false,
+    onDone: (String, String) -> Unit = { _, _ -> }
+) {
+    val userId = rememberSaveable { mutableStateOf("") }
+    val password = rememberSaveable { mutableStateOf("") }
+    val passwordVisibility = rememberSaveable { mutableStateOf(false) }
+    val passwordFocusRequest = FocusRequester.Default
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val valid = remember(userId.value, password.value) {
+        userId.value.trim().isNotEmpty() && password.value.trim().isNotEmpty()
+    }
+    val modifier = Modifier
+        .height(250.dp)
+        .background(Background)
+        .verticalScroll(rememberScrollState())
+
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        EmailInput(
+            emailState = userId,
+            enable = !loading,
+            onAction = KeyboardActions {
+                passwordFocusRequest.requestFocus()
+            })
+        PasswordInput(
+            modifier = Modifier.focusRequester(passwordFocusRequest),
+            passwordState = password,
+            labelId = "Contraseña:",
+            enable = !loading,
+            passwordVisibility = passwordVisibility,
+            onAction = KeyboardActions {
+                if (!valid) return@KeyboardActions
+                //onDone(email.value.trim(), password.value.trim())
+                keyboardController?.hide()
+            })
+        SubmitButton(
+            textId = "Ingresar",
+            loading = loading,
+            validInputs = valid
+        ) {
+            onDone(userId.value.trim(), password.value.trim())
+        }
+    }
+}
+
+@Composable
+fun SubmitButton(
+    textId: String,
+    loading: Boolean,
+    validInputs: Boolean,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth(),
+        enabled = !loading && validInputs,
+        shape = CircleShape,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Yellow4,
+            contentColor = Black,
+            disabledBackgroundColor = Accent
+        )
+    ) {
+        if (loading) CircularProgressIndicator(modifier = Modifier.size(25.dp))
+        else Text(text = textId, modifier = Modifier.padding(5.dp))
+
     }
 }
 
