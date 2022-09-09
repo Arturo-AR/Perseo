@@ -158,7 +158,7 @@ class OSDetailsScreenViewModel @Inject constructor(
                 imageUrl1 = links[0],
                 imageUrl2 = links[1],
                 imageUrl3 = links[2],
-                location = ""
+                location = "${getLocationLiveData().value?.latitude!!},${getLocationLiveData().value?.longitude!!}"
             )
             val response =
                 repository.cancelOrder(generalData.value[0].idMunicipality, reasons.toJsonString())
@@ -226,7 +226,11 @@ class OSDetailsScreenViewModel @Inject constructor(
                     val album = getAlbum()
                     val response = imgurRepository.uploadImage(
                         image = it.url_image!!,
+<<<<<<< HEAD
                         album = album,
+=======
+                        album = getAlbum(),
+>>>>>>> 55c7602fc0d091916d2e29cda5deb3dc75e0f2b4
                         title = "$title||${currentOs.value?.requestNumber}"
                     )
                     if (response.isSuccessful) {
@@ -413,7 +417,11 @@ class OSDetailsScreenViewModel @Inject constructor(
         }
     }
 
+<<<<<<< HEAD
     fun getAlbum(): String {
+=======
+    private fun getAlbum(): String {
+>>>>>>> 55c7602fc0d091916d2e29cda5deb3dc75e0f2b4
         return when (generalData.value[0].municipality) {
             "PACHUCA" -> Constants.ID_PACHUCA_ALBUM
             "MORELIA" -> Constants.ID_MORELIA_ALBUM
