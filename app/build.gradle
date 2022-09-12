@@ -46,6 +46,9 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+/*    repositories {
+        mavenCentral()
+    }*/
 }
 
 dependencies {
@@ -114,4 +117,7 @@ dependencies {
 
     //Permissions
     implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
+
+    //Draw
+    implementation  'io.ak1:drawbox:1.0.2'
 }

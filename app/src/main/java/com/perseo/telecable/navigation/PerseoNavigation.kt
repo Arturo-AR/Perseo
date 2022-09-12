@@ -1,5 +1,6 @@
 package com.perseo.telecable.navigation
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -25,6 +26,7 @@ import com.perseo.telecable.screens.rubro.RubroScreen
 import com.perseo.telecable.screens.scheduleorders.ScheduleOrdersScreen
 import com.perseo.telecable.screens.servicecords.ServiceCordsScreen
 import com.perseo.telecable.screens.serviceorders.ServiceOrdersScreen
+import com.perseo.telecable.screens.signature.SignatureScreen
 import com.perseo.telecable.screens.splash.SplashScreenViewModel
 import com.perseo.telecable.screens.subscribers.SubscribersScreen
 import com.perseo.telecable.screens.zone.ZoneScreen
@@ -39,6 +41,16 @@ fun PerseoNavigation() {
 
         composable(PerseoScreens.Compliance.route) {
             ComplianceScreen(navController = navController)
+        }
+
+        composable(PerseoScreens.Signature.route) {
+            SignatureScreen(navController = navController) {
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("FIRMA", it)
+                navController.popBackStack()
+                Log.d("Entro", "regresando")
+            }
         }
 
         composable(PerseoScreens.Dashboard.route) {

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
@@ -17,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -36,10 +39,7 @@ import com.perseo.telecable.components.*
 import com.perseo.telecable.model.ItemOSDetail
 import com.perseo.telecable.navigation.PerseoScreens
 import com.perseo.telecable.ui.theme.*
-import com.perseo.telecable.utils.Constants
-import com.perseo.telecable.utils.isPermanentlyDenied
-import com.perseo.telecable.utils.toBase64String
-import com.perseo.telecable.utils.toast
+import com.perseo.telecable.utils.*
 
 @ExperimentalPermissionsApi
 @ExperimentalComposeUiApi
@@ -73,6 +73,10 @@ fun OSDetailsScreen(
         )
     )
     val lifecycleOwner = LocalLifecycleOwner.current
+    var firma = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<Bitmap>("FIRMA")?.observeAsState()
+
     DisposableEffect(
         key1 = lifecycleOwner,
         effect = {
@@ -490,7 +494,19 @@ fun OSDetailsScreen(
                     }
                 }
             }
-
+            Button(onClick = { navController.navigate(PerseoScreens.Signature.route) }) {
+                Text("Firmas")
+            }
+            firma?.value?.let {
+                Image(
+                    modifier = Modifier.clickable {
+                        firma = null
+                        Log.d("Click", "Button Clicked...")
+                    },
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = null
+                )
+            }
             Row(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
