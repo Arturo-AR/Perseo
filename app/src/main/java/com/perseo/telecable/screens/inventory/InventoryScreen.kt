@@ -14,11 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.perseo.telecable.R
 import com.perseo.telecable.components.PerseoBottomBar
 import com.perseo.telecable.components.PerseoTopBar
 import com.perseo.telecable.navigation.PerseoScreens
@@ -40,7 +42,7 @@ fun InventoryScreen(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Inventario",
+                title = stringResource(id = R.string.inventory),
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.Dashboard.route) {
@@ -49,7 +51,7 @@ fun InventoryScreen(
             }
         },
         bottomBar = {
-            if (generalData != null){
+            if (generalData != null) {
                 PerseoBottomBar(
                     enterprise = generalData?.municipality!!,
                     enterpriseIcon = generalData?.logo!!

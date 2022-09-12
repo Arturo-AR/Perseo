@@ -10,11 +10,13 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.perseo.telecable.R
 import com.perseo.telecable.components.*
 import com.perseo.telecable.navigation.PerseoScreens
 import com.perseo.telecable.ui.theme.Background
@@ -32,9 +34,7 @@ fun MaterialsScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val materialsSaved by viewModel.materialSaved.collectAsState()
     val inventory by viewModel.inventory.observeAsState()
-    //val materialTmp by viewModel.materialTmp.observeAsState()
     val material by viewModel.material.observeAsState()
-    //val openDialogAddMaterials = remember { mutableStateOf(false) }
     val context = LocalContext.current
     viewModel.getMaterialsSaved()
     viewModel.getInventory()
@@ -44,7 +44,7 @@ fun MaterialsScreen(
         scaffoldState = scaffoldState,
         topBar = {
             PerseoTopBar(
-                title = "Materiales",
+                title = stringResource(id = R.string.materials),
                 inDashboard = false
             ) {
                 navController.navigate(PerseoScreens.OSDetails.route) {
@@ -62,40 +62,6 @@ fun MaterialsScreen(
         },
         backgroundColor = Background,
     ) {
-        /*       if (openDialogAddMaterials.value) {
-                   ShowAlertDialog(
-                       title = "Alerta",
-                       message = {
-                           Column {
-                               Text(
-                                   text = "Desea agregar los siguientes materiales ?\n",
-                                   color = Color.White,
-                                   fontSize = 18.sp
-                               )
-                               materialTmp?.map {
-                                   Text(
-                                       text = "${it.materialDesc}: ${it.amount}",
-                                       color = Color.White,
-                                       fontSize = 16.sp
-                                   )
-                               }
-                           }
-                       },
-                       openDialog = openDialogAddMaterials,
-                       positiveButtonText = "Agregar"
-                   ) {
-                       openDialogAddMaterials.value = false
-                       try {
-                           viewModel.saveMaterialsInDatabase()
-                           context.toast("Materiales registrados correctamente")
-                           Thread.sleep(1500)
-                           navController.navigate(PerseoScreens.OSDetails.route)
-                       } catch (ex: Exception) {
-                           context.toast(ex.message.toString())
-
-                       }
-                   }
-               }*/
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -106,7 +72,7 @@ fun MaterialsScreen(
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
                 Text(
                     modifier = Modifier.padding(bottom = 8.dp),
-                    text = "Agregar Material",
+                    text = stringResource(id = R.string.add_material),
                     color = Yellow4,
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp
@@ -130,18 +96,18 @@ fun MaterialsScreen(
                                         context.toast(it)
                                     }
                                 } else {
-                                    context.toast("materiales insuficientes")
+                                    context.toast(context.getString(R.string.insufficient_material))
                                 }
                             } catch (ex: Exception) {
                                 ex.printStackTrace()
-                                context.toast("cantidad no valida")
+                                context.toast(context.getString(R.string.no_valid_amount))
                             }
                             keyboardController?.hide()
                         },
                         onLongClick = {
                             try {
                                 viewModel.deleteTmp(it)
-                                context.toast("Eliminado")
+                                context.toast(context.getString(R.string.deleted))
                             } catch (ex: Exception) {
                                 ex.printStackTrace()
                             }
@@ -158,9 +124,8 @@ fun MaterialsScreen(
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
                 Button(
                     onClick = {
-                        //openDialogAddMaterials.value = true
                         viewModel.saveMaterialsInDatabase()
-                        context.toast("Materiales actualizados correctamente")
+                        context.toast(context.getString(R.string.materials_updated_correctly))
                         Thread.sleep(1500)
                         navController.navigate(PerseoScreens.OSDetails.route)
                     },
@@ -168,7 +133,7 @@ fun MaterialsScreen(
                         backgroundColor = Yellow4
                     )
                 ) {
-                    Text(text = "Actualizar")
+                    Text(text = stringResource(id = R.string.update))
                 }
             }
         }
