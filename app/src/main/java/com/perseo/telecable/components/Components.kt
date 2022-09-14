@@ -5,7 +5,6 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.widget.SeekBar
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
@@ -48,23 +47,20 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.PopupProperties
-import androidx.core.graphics.BlendModeColorFilterCompat
-import androidx.core.graphics.BlendModeCompat
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.perseo.telecable.R
 import com.perseo.telecable.model.ItemOSDetail
+import com.perseo.telecable.model.SummaryItems
 import com.perseo.telecable.model.database.Equipment
 import com.perseo.telecable.model.database.Materials
 import com.perseo.telecable.model.database.ServiceOrder
@@ -371,6 +367,7 @@ fun PasswordVisibility(passwordVisibility: MutableState<Boolean>) {
 fun PerseoTopBar(
     title: String,
     inDashboard: Boolean? = false,
+    textColor: Color = Yellow4,
     onBackArrowClicked: () -> Unit = {}
 ) {
     TopAppBar(
@@ -404,7 +401,7 @@ fun PerseoTopBar(
 
                 Text(
                     text = title,
-                    color = Yellow4,
+                    color = textColor,
                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 )
                 LogoPerseo(
@@ -1747,3 +1744,49 @@ fun DrawBox(
     },
     modifier = modifier
 )
+
+@Composable
+fun SummaryBox(
+    title: String,
+    list: List<SummaryItems>
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        backgroundColor = Background,
+        border = BorderStroke(2.dp, Yellow4)
+    ) {
+        Column(Modifier.padding(8.dp)) {
+            Text(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                text = title,
+                color = Yellow4,
+                fontWeight = FontWeight.Bold,
+                fontSize = 22.sp
+            )
+            list.map {
+                SummaryItem(it)
+            }
+        }
+    }
+}
+
+@Composable
+fun SummaryItem(item: SummaryItems) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 2.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = item.itemDesc,
+            color = White,
+        )
+        Text(
+            text = item.value,
+            color = White
+        )
+    }
+}

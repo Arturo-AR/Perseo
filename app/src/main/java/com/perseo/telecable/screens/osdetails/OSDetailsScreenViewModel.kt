@@ -102,8 +102,6 @@ class OSDetailsScreenViewModel @Inject constructor(
 
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
-            //Log.d("motivo", motivoId)
-            //Log.d("motivo", enterpriseId.toString())
             val response = repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
             if (response.isSuccessful) {
                 if (response.body()?.responseCode == 200) {

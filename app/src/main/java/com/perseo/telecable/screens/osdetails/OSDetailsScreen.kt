@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -70,9 +71,6 @@ fun OSDetailsScreen(
         )
     )
     val lifecycleOwner = LocalLifecycleOwner.current
-    val firma = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.getLiveData<Bitmap>("FIRMA")?.observeAsState()
 
     DisposableEffect(
         key1 = lifecycleOwner,
@@ -220,7 +218,8 @@ fun OSDetailsScreen(
             positiveButtonText = "Finalizar"
         ) {
             openDialogFinish.value = false
-            loading.value = true
+            navController.navigate(PerseoScreens.CompletedOrderSummary.route)
+/*            loading.value = true
             try {
                 viewModel.finishOrder {
                     loading.value = false
@@ -230,7 +229,7 @@ fun OSDetailsScreen(
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-            }
+            }*/
         }
     }
 
@@ -455,27 +454,41 @@ fun OSDetailsScreen(
                         }
 
                     } else {
-                        Image(
-                            modifier = Modifier
-                                .height(60.dp)
-                                .padding(vertical = 6.dp)
-                                .fillMaxHeight()
-                                .clickable {
-                                    if (onWay!! && !doing!!) {
-                                        openDialogStart.value = true
-                                    } else {
-                                        openDialogFinish.value = true
-                                        //viewModel.finishDoing()
-                                        //navController.navigate(PerseoScreens.Dashboard.route)
-                                    }
-                                },
-                            painter = rememberAsyncImagePainter(
-                                Constants.PERSEO_BASE_URL +
-                                        if (doing == true) Constants.BUTTON_FINISH else Constants.BUTTON_START
-                            ),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
-                        )
+                        if (doing == true) {
+                            Button(
+                                onClick = { navController.navigate(PerseoScreens.CompletedOrderSummary.route) },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Yellow4
+                                )
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(horizontal = 20.dp),
+                                    text = "Resumen",
+                                    fontSize = 26.sp,
+                                    fontFamily = FontFamily.SansSerif,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        } else {
+                            Image(
+                                modifier = Modifier
+                                    .height(60.dp)
+                                    .padding(vertical = 6.dp)
+                                    .fillMaxHeight()
+                                    .clickable {
+                                        if (onWay!! && !doing!!) {
+                                            openDialogStart.value = true
+                                        } else {
+                                            openDialogFinish.value = true
+                                        }
+                                    },
+                                painter = rememberAsyncImagePainter(
+                                    Constants.PERSEO_BASE_URL + Constants.BUTTON_START
+                                ),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                         Image(
                             modifier = Modifier
                                 .height(50.dp)
@@ -489,22 +502,6 @@ fun OSDetailsScreen(
                             contentScale = ContentScale.Crop
                         )
                     }
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(onClick = { navController.navigate(PerseoScreens.Signature.route) }) {
-                    Text("Firmas")
-                }
-                Button(onClick = {
-                    firma?.value?.let {
-                        viewModel.signDocument(it)
-                        //Log.d("Firma", it.toString())
-                    }
-                }) {
-                    Text("Cargar")
                 }
             }
             Row(

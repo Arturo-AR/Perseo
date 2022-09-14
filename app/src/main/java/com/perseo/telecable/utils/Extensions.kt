@@ -82,3 +82,21 @@ fun Context.findActivity(): Activity? = when (this) {
     is ContextWrapper -> baseContext.findActivity()
     else -> null
 }
+
+fun String.toEquipmentFormat(): String {
+    return when (this) {
+        "CM" -> "Cablemodem"
+        "DECO" -> "Decodificador"
+        "ETIQ" -> "Etiqueta"
+        "CAJADIG" -> "Caja Digital"
+        "CAJATER" -> "Caja Terminal"
+        "ROUTERCEN" -> "Router Central"
+        "LINEA" -> "Linea"
+        "ROUTER" -> "Router"
+        "IP" -> "Ip"
+        "ANTE" -> "Antena"
+        "ANTESEC" -> "Antena Sectorial"
+        "MINI" -> "Mini Nodo"
+        else -> this
+    }
+}
