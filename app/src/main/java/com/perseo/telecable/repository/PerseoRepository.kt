@@ -1,5 +1,6 @@
 package com.perseo.telecable.repository
 
+import android.util.Log
 import com.perseo.telecable.model.perseoresponse.*
 import com.perseo.telecable.network.PerseoApi
 import retrofit2.Response
@@ -57,5 +58,9 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
 
     suspend fun getAllMaterials(enterpriseId: Int): Response<MaterialResponse> {
         return api.getAllMaterials(12, enterpriseId)
+    }
+
+    suspend fun signDocument(signature: String) : Response<String> {
+        return api.signDocument(13,signature)
     }
 }

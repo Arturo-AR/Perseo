@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
@@ -18,8 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -73,7 +70,7 @@ fun OSDetailsScreen(
         )
     )
     val lifecycleOwner = LocalLifecycleOwner.current
-    var firma = navController.currentBackStackEntry
+    val firma = navController.currentBackStackEntry
         ?.savedStateHandle
         ?.getLiveData<Bitmap>("FIRMA")?.observeAsState()
 
@@ -494,18 +491,21 @@ fun OSDetailsScreen(
                     }
                 }
             }
-            Button(onClick = { navController.navigate(PerseoScreens.Signature.route) }) {
-                Text("Firmas")
-            }
-            firma?.value?.let {
-                Image(
-                    modifier = Modifier.clickable {
-                        firma = null
-                        Log.d("Click", "Button Clicked...")
-                    },
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = null
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(onClick = { navController.navigate(PerseoScreens.Signature.route) }) {
+                    Text("Firmas")
+                }
+                Button(onClick = {
+                    firma?.value?.let {
+                        viewModel.signDocument(it)
+                        //Log.d("Firma", it.toString())
+                    }
+                }) {
+                    Text("Cargar")
+                }
             }
             Row(
                 modifier = Modifier

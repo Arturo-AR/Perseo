@@ -46,6 +46,11 @@ sealed class PerseoScreens(
      * Screens that don't need permissions
      */
 
+    object CompletedOrderSummary : PerseoScreens(
+        route = "completedOrderSummaryScreen",
+        id = 0
+    )
+
     object Signature : PerseoScreens(
         route = "signatureScreen",
         id = 0

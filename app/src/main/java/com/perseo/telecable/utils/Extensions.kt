@@ -1,16 +1,12 @@
 package com.perseo.telecable.utils
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.widget.Toast
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.core.graphics.alpha
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.gson.Gson
@@ -48,6 +44,13 @@ fun Bitmap.toBase64String(): String {
     return Base64.encodeToString(b, Base64.DEFAULT)
 }
 
+fun Bitmap.toBase64StringJPEG(): String {
+    val bas = ByteArrayOutputStream()
+    this.compress(Bitmap.CompressFormat.JPEG, 80, bas)
+    val b = bas.toByteArray()
+    return "data:image/jpeg;base64," + Base64.encodeToString(b, Base64.DEFAULT)
+}
+
 fun String.toBitmap(): Bitmap {
     val newString = this.replace("data:image/png;base64,", "")
     val imageBytes = Base64.decode(newString, 0)
@@ -72,4 +75,10 @@ fun Date.toHour(): String {
 @ExperimentalPermissionsApi
 fun PermissionState.isPermanentlyDenied(): Boolean {
     return !shouldShowRationale && !hasPermission
+}
+
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }

@@ -2,6 +2,7 @@ package com.perseo.telecable.screens.osdetails
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -10,19 +11,14 @@ import com.perseo.telecable.model.database.ComplianceInfo
 import com.perseo.telecable.model.database.Equipment
 import com.perseo.telecable.model.database.GeneralData
 import com.perseo.telecable.model.database.Materials
-import com.perseo.telecable.model.perseorequest.CancelOrderRequest
-import com.perseo.telecable.model.perseorequest.EquipmentRequest
-import com.perseo.telecable.model.perseorequest.ImageRequest
+import com.perseo.telecable.model.perseorequest.*
 import com.perseo.telecable.model.perseoresponse.ServiceOrderItem
 import com.perseo.telecable.model.perseoresponse.SubscriberImage
 import com.perseo.telecable.repository.DatabaseRepository
 import com.perseo.telecable.repository.ImgurRepository
 import com.perseo.telecable.repository.PerseoRepository
 import com.perseo.telecable.repository.SharedRepository
-import com.perseo.telecable.utils.Constants
-import com.perseo.telecable.utils.toDate
-import com.perseo.telecable.utils.toHour
-import com.perseo.telecable.utils.toJsonString
+import com.perseo.telecable.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -419,6 +415,29 @@ class OSDetailsScreenViewModel @Inject constructor(
             "TULANCINGO" -> Constants.ID_TULANCINGO_ALBUM
             "TEST" -> Constants.ID_TEST_ALBUM
             else -> ""
+        }
+    }
+
+    fun signDocument(sign: Bitmap) {
+        viewModelScope.launch {
+            val elementsList = listOf(
+                SignElements(elementName = "FIRMA", element = sign.toBase64StringJPEG())
+            )
+            val request = SignDocumentRequest(
+                enterpriseId = generalData.value[0].idMunicipality,
+                contract = currentOs.value?.noContract ?: 0,
+                requestNumber = currentOs.value?.requestNumber ?: 0,
+                elements = elementsList,
+                documentId = 4,
+                document = "ORDEN SERVICIO",
+                file = "02_ORDENES_SERVICIO.pdf"
+            )
+            val response = repository.signDocument(request.toJsonString())
+            if (response.isSuccessful) {
+                if (response.body() == "Committed"){
+                    Log.d("Successful", "Firmado") //TODO, regresa de la firma exitosamente
+                }
+            }
         }
     }
 }
