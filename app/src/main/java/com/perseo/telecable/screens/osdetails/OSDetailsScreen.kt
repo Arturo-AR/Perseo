@@ -194,12 +194,12 @@ fun OSDetailsScreen(
         ) {
             viewModel.finishRoute()
             viewModel.startDoing()
-            currentLocation.let {
-                if (!it?.latitude.isNullOrEmpty()) {
-                    viewModel.startCompliance(it?.latitude!!, it.longitude)
-                }
+            if (!currentLocation?.latitude.isNullOrEmpty()) {
+                viewModel.startCompliance(
+                    currentLocation?.latitude ?: "",
+                    currentLocation?.longitude ?: ""
+                )
             }
-            //viewModel.startCompliance()
             openDialogStart.value = false
         }
     }
@@ -456,7 +456,9 @@ fun OSDetailsScreen(
                     } else {
                         if (doing == true) {
                             Button(
-                                onClick = { navController.navigate(PerseoScreens.CompletedOrderSummary.route) },
+                                onClick = {
+                                    navController.navigate(PerseoScreens.CompletedOrderSummary.route)
+                                },
                                 colors = ButtonDefaults.buttonColors(
                                     backgroundColor = Yellow4
                                 )

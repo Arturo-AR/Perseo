@@ -39,13 +39,17 @@ fun CompletedOrderSummaryScreen(
     navController: NavController,
     viewModel: CompletedOrderSummaryScreenViewModel = hiltViewModel()
 ) {
+    viewModel.updateInfo()
     viewModel.getMaterials()
     viewModel.getEquipment()
+    viewModel.updateEquipment()
+    viewModel.startLocationUpdates()
     val scaffoldState = rememberScaffoldState()
     val generalData by viewModel.data.observeAsState()
     val openDialogFinish = remember { mutableStateOf(false) }
     val material by viewModel.material.observeAsState()
     val equipment by viewModel.equipment.observeAsState()
+    val os by viewModel.currentOs.observeAsState()
     val loading = remember { mutableStateOf(false) }
     var titular by rememberSaveable {
         mutableStateOf(false)
@@ -53,6 +57,9 @@ fun CompletedOrderSummaryScreen(
     val firma = navController.currentBackStackEntry
         ?.savedStateHandle
         ?.getLiveData<Bitmap>("FIRMA")?.observeAsState()
+    if (os != null) {
+        viewModel.updateEquipment()
+    }
 
     val context = LocalContext.current
     if (openDialogFinish.value) {
@@ -69,7 +76,7 @@ fun CompletedOrderSummaryScreen(
             positiveButtonText = "Finalizar"
         ) {
             openDialogFinish.value = false
-/*            loading.value = true
+            loading.value = true
             try {
                 viewModel.finishOrder {
                     loading.value = false
@@ -79,7 +86,7 @@ fun CompletedOrderSummaryScreen(
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-            }*/
+            }
         }
     }
     Scaffold(
@@ -212,6 +219,15 @@ fun CompletedOrderSummaryScreen(
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
+        }
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            if (loading.value) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(80.dp),
+                    color = Yellow4,
+                    strokeWidth = 8.dp
+                )
+            }
         }
     }
 }
