@@ -117,26 +117,22 @@ fun CompletedOrderSummaryScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!material.isNullOrEmpty()) {
-                SummaryBox(
-                    title = "Materiales",
-                    list = material!!.map {
-                        SummaryItems(
-                            itemDesc = it.desc_material ?: "",
-                            value = it.cantidad.toString()
-                        )
-                    })
-            }
-            if (!equipment.isNullOrEmpty()) {
-                SummaryBox(
-                    title = "Equipos",
-                    list = equipment!!.map {
-                        SummaryItems(
-                            itemDesc = it.id_tipo_equipo.toEquipmentFormat(),
-                            value = it.id_equipo
-                        )
-                    })
-            }
+            SummaryBox(
+                title = "Materiales",
+                list = material?.map {
+                    SummaryItems(
+                        itemDesc = it.desc_material ?: "",
+                        value = it.cantidad.toString()
+                    )
+                })
+            SummaryBox(
+                title = "Equipos",
+                list = equipment?.map {
+                    SummaryItems(
+                        itemDesc = it.id_tipo_equipo.toEquipmentFormat(),
+                        value = it.id_equipo
+                    )
+                })
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -147,8 +143,8 @@ fun CompletedOrderSummaryScreen(
                 Button(
                     modifier = Modifier.weight(1f),
                     onClick = {
-                        navController.navigate(PerseoScreens.Signature.route)
-                        //context.toast("PROXIMAMENTE")
+                        //navController.navigate(PerseoScreens.Signature.route)
+                        context.toast("PROXIMAMENTE")
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Yellow4)
                 ) {
@@ -164,7 +160,7 @@ fun CompletedOrderSummaryScreen(
                         color = White
                     )
                     Checkbox(
-                        enabled = true,
+                        enabled = false,
                         checked = titular, onCheckedChange = { titular = !titular },
                         colors = CheckboxDefaults.colors(
                             checkedColor = Yellow4,

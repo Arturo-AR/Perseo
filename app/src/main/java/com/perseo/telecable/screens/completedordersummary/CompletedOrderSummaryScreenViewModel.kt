@@ -1,20 +1,20 @@
 package com.perseo.telecable.screens.completedordersummary
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.perseo.telecable.ApplicationViewModel
-import com.perseo.telecable.model.EquipmentTmp
 import com.perseo.telecable.model.database.ComplianceInfo
 import com.perseo.telecable.model.database.Equipment
 import com.perseo.telecable.model.database.GeneralData
 import com.perseo.telecable.model.database.Materials
 import com.perseo.telecable.model.perseorequest.EquipmentRequest
 import com.perseo.telecable.model.perseorequest.ImageRequest
+import com.perseo.telecable.model.perseoresponse.AntennaSectorial
+import com.perseo.telecable.model.perseoresponse.RouterCentral
 import com.perseo.telecable.model.perseoresponse.ServiceOrderItem
+import com.perseo.telecable.model.perseoresponse.TerminalBox
 import com.perseo.telecable.repository.DatabaseRepository
 import com.perseo.telecable.repository.ImgurRepository
 import com.perseo.telecable.repository.PerseoRepository
@@ -46,17 +46,13 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
     val equipment: LiveData<List<Equipment>> = _equipment
 
     private val _equipmentRequest: MutableLiveData<List<EquipmentRequest>> = MutableLiveData()
-    val equipmentRequest: LiveData<List<EquipmentRequest>> = _equipmentRequest
 
     private val _data: MutableLiveData<GeneralData> = MutableLiveData()
     val data: LiveData<GeneralData> = _data
 
     private val _complianceInfo: MutableLiveData<ComplianceInfo> = MutableLiveData()
-    val complianceInfo: LiveData<ComplianceInfo> = _complianceInfo
 
-    private val _finalImages: MutableLiveData<MutableList<ImageRequest>> =
-        MutableLiveData(mutableListOf())
-    val finalImages: LiveData<MutableList<ImageRequest>> = _finalImages
+    private val _finalImages: MutableLiveData<MutableList<ImageRequest>> = MutableLiveData(mutableListOf())
 
     private val _currentOs: MutableLiveData<ServiceOrderItem> = MutableLiveData()
     val currentOs: LiveData<ServiceOrderItem> = _currentOs
@@ -104,12 +100,12 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
         }
     }
 
-    fun finishRoute() {
+    private fun finishRoute() {
         prefs.saveOnWay(false)
         _onWay.value = prefs.getOnWay()
     }
 
-    fun finishDoing() {
+    private fun finishDoing() {
         prefs.saveDoing(false)
         _doing.value = prefs.getDoing()
     }
@@ -126,9 +122,9 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
                 try {
                     val response = repository.finalizarOrdenServicio(
                         empresa_id = _data.value?.idMunicipality ?: 0,
-                        ordenes_info_cumplimiento = complianceInfo.value?.toJsonString()!!,
-                        fotos = finalImages.value?.toJsonString()!!,
-                        equipos = equipmentRequest.value?.toJsonString()!!,
+                        ordenes_info_cumplimiento = _complianceInfo.value?.toJsonString()!!,
+                        fotos = _finalImages.value?.toJsonString()!!,
+                        equipos = _equipmentRequest.value?.toJsonString()!!,
                         orden = currentOs.value?.osId!!,
                         fecha = Date().toDate(),
                         materiales = material.value?.toJsonString()!!,
@@ -148,7 +144,6 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
                         }
                     }
                 } catch (ex: Exception) {
-                    Log.d("Error", "en finalizar orden")
                     ex.printStackTrace()
                 }
             }
@@ -156,14 +151,12 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
     }
 
     private suspend fun endCompliance(lat: String, lon: String) {
-        //Log.d("endComplince", "Entro a funcion")
         viewModelScope.launch {
             val myDate = Date()
             _complianceInfo.value?.fecha_fin = myDate.toDate()
             _complianceInfo.value?.hora_fin = myDate.toHour()
             _complianceInfo.value?.ubicacion_fin = "$lat, $lon"
-            //Log.d("endCompliance", _complianceInfo.value?.toString().toString())
-            dbRepository.updateComplianceInfo(complianceInfo.value!!)
+            dbRepository.updateComplianceInfo(_complianceInfo.value!!)
             updateInfo()
         }.join()
     }
@@ -190,9 +183,7 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
                                 link = response.body()?.upload?.link!!,
                             )
                         )
-                        Log.d("images", _finalImages.value?.toJsonString().toString())
                     }
-                    Log.d("Link", response.body()?.upload?.link!!)
                 }
             }
         }.join()
@@ -200,7 +191,6 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
     }
 
     fun updateInfo() {
-        Log.d("UpdateInfo", "Entro a funcion")
         viewModelScope.launch {
             dbRepository.getCompliance().distinctUntilChanged()
                 .collect { compliance ->

@@ -51,7 +51,6 @@ fun OSDetailsScreen(
     val scrollState = rememberScrollState()
     val openDialogRoute = remember { mutableStateOf(false) }
     val openDialogStart = remember { mutableStateOf(false) }
-    val openDialogFinish = remember { mutableStateOf(false) }
     val openDialogCancel = remember { mutableStateOf(false) }
     val loading = remember { mutableStateOf(false) }
     var cancelReason by remember { mutableStateOf("") }
@@ -201,35 +200,6 @@ fun OSDetailsScreen(
                 )
             }
             openDialogStart.value = false
-        }
-    }
-
-    if (openDialogFinish.value) {
-        ShowAlertDialog(
-            title = "Alerta",
-            message = {
-                Text(
-                    text = "Desea finalizar la orden de serivcio?",
-                    color = Color.White,
-                    fontSize = 18.sp
-                )
-            },
-            openDialog = openDialogFinish,
-            positiveButtonText = "Finalizar"
-        ) {
-            openDialogFinish.value = false
-            navController.navigate(PerseoScreens.CompletedOrderSummary.route)
-/*            loading.value = true
-            try {
-                viewModel.finishOrder {
-                    loading.value = false
-                    navController.navigate(PerseoScreens.OrderOptions.route) {
-                        popUpTo(PerseoScreens.OrderOptions.route)
-                    }
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }*/
         }
     }
 
@@ -480,8 +450,6 @@ fun OSDetailsScreen(
                                     .clickable {
                                         if (onWay!! && !doing!!) {
                                             openDialogStart.value = true
-                                        } else {
-                                            openDialogFinish.value = true
                                         }
                                     },
                                 painter = rememberAsyncImagePainter(

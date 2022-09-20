@@ -1625,7 +1625,7 @@ fun RowScope.MenuItems(
             tint = colorTint,
             modifier = if (border) modifier.border(
                 0.5.dp,
-                Color.White,
+                White,
                 shape = CircleShape
             ) else modifier
         )
@@ -1700,7 +1700,7 @@ internal fun RowScope.ColorDots(
 @Composable
 fun DrawBox(
     drawController: DrawController,
-    modifier: Modifier = Modifier.fillMaxSize(),
+    modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.background,
     bitmapCallback: (ImageBitmap?, Throwable?) -> Unit,
     trackHistory: (undoCount: Int, redoCount: Int) -> Unit = { _, _ -> }
@@ -1748,7 +1748,7 @@ fun DrawBox(
 @Composable
 fun SummaryBox(
     title: String,
-    list: List<SummaryItems>
+    list: List<SummaryItems>?
 ) {
     Card(
         modifier = Modifier
@@ -1765,7 +1765,7 @@ fun SummaryBox(
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp
             )
-            list.map {
+            list?.map {
                 SummaryItem(it)
             }
         }
