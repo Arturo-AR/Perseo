@@ -143,8 +143,8 @@ fun CompletedOrderSummaryScreen(
                 Button(
                     modifier = Modifier.weight(1f),
                     onClick = {
-                        //navController.navigate(PerseoScreens.Signature.route)
-                        context.toast("PROXIMAMENTE")
+                        navController.navigate(PerseoScreens.Signature.route)
+                        //context.toast("PROXIMAMENTE")
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Yellow4)
                 ) {
@@ -160,7 +160,7 @@ fun CompletedOrderSummaryScreen(
                         color = White
                     )
                     Checkbox(
-                        enabled = false,
+                        enabled = true,
                         checked = titular, onCheckedChange = { titular = !titular },
                         colors = CheckboxDefaults.colors(
                             checkedColor = Yellow4,
@@ -215,6 +215,20 @@ fun CompletedOrderSummaryScreen(
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
+            Button(
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Yellow4
+                ),
+                onClick = {
+                    if (firma?.value != null) {
+                        viewModel.signDocument(firma.value!!) { message ->
+                            context.toast(message)
+                        }
+                    }
+                }
+            ) {
+                Text(text = "Firmar perseo")
+            }
         }
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             if (loading.value) {

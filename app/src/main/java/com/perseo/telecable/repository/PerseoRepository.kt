@@ -60,7 +60,7 @@ class PerseoRepository @Inject constructor(private val api: PerseoApi) {
         return api.getAllMaterials(12, enterpriseId)
     }
 
-    suspend fun signDocument(signature: String) : Response<String> {
-        return api.signDocument(13,signature)
+    suspend fun signDocument(signature: String, idOs:String, enterpriseId:Int) : Response<SignDocumentResponse> {
+        return api.signDocument(13,signature, idOs, enterpriseId)
     }
 }

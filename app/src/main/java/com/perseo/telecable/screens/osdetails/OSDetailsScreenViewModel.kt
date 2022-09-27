@@ -2,7 +2,6 @@ package com.perseo.telecable.screens.osdetails
 
 import android.app.Application
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -416,7 +415,7 @@ class OSDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    fun signDocument(sign: Bitmap) {
+/*    fun signDocument(sign: Bitmap) {
         viewModelScope.launch {
             val elementsList = listOf(
                 SignElements(elementName = "FIRMA", element = sign.toBase64StringJPEG())
@@ -437,5 +436,5 @@ class OSDetailsScreenViewModel @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 }

@@ -123,7 +123,9 @@ interface PerseoApi {
     @POST("ws.php")
     suspend fun signDocument(
         @Query("opc") opc: Int,
-        @Field("FIRMAS") signature: String
-    ): Response<String>
+        @Field("FIRMAS") signature: String,
+        @Field("ID_OS") osId: String,
+        @Field("ID_EMPRESA") enterpriseId: Int,
+    ): Response<SignDocumentResponse>
 
 }

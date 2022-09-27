@@ -1,6 +1,7 @@
 package com.perseo.telecable.screens.completedordersummary
 
 import android.app.Application
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -11,18 +12,14 @@ import com.perseo.telecable.model.database.GeneralData
 import com.perseo.telecable.model.database.Materials
 import com.perseo.telecable.model.perseorequest.EquipmentRequest
 import com.perseo.telecable.model.perseorequest.ImageRequest
-import com.perseo.telecable.model.perseoresponse.AntennaSectorial
-import com.perseo.telecable.model.perseoresponse.RouterCentral
+import com.perseo.telecable.model.perseorequest.SignDocumentRequest
+import com.perseo.telecable.model.perseorequest.SignElements
 import com.perseo.telecable.model.perseoresponse.ServiceOrderItem
-import com.perseo.telecable.model.perseoresponse.TerminalBox
 import com.perseo.telecable.repository.DatabaseRepository
 import com.perseo.telecable.repository.ImgurRepository
 import com.perseo.telecable.repository.PerseoRepository
 import com.perseo.telecable.repository.SharedRepository
-import com.perseo.telecable.utils.Constants
-import com.perseo.telecable.utils.toDate
-import com.perseo.telecable.utils.toHour
-import com.perseo.telecable.utils.toJsonString
+import com.perseo.telecable.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -52,7 +49,8 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
 
     private val _complianceInfo: MutableLiveData<ComplianceInfo> = MutableLiveData()
 
-    private val _finalImages: MutableLiveData<MutableList<ImageRequest>> = MutableLiveData(mutableListOf())
+    private val _finalImages: MutableLiveData<MutableList<ImageRequest>> =
+        MutableLiveData(mutableListOf())
 
     private val _currentOs: MutableLiveData<ServiceOrderItem> = MutableLiveData()
     val currentOs: LiveData<ServiceOrderItem> = _currentOs
@@ -225,6 +223,37 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
                     }
                     _equipmentRequest.value = currentEquipment
                 }
+        }
+    }
+
+    fun signDocument(sign: Bitmap, onSuccess: (String) -> Unit) {
+        viewModelScope.launch {
+            val elementsList = listOf(
+                SignElements(elementName = "FIRMA", element = sign.toBase64StringJPEG())
+            )
+            try {
+                val request = SignDocumentRequest(
+                    enterpriseId = data.value?.idMunicipality ?: 0,
+                    contract = currentOs.value?.noContract ?: 0,
+                    requestNumber = currentOs.value?.requestNumber ?: 0,
+                    elements = elementsList,
+                    documentId = 4,
+                    document = "ORDEN SERVICIO",
+                    file = "02_ORDENES_SERVICIO.pdf"
+                )
+                val response = repository.signDocument(
+                    request.toJsonString(),
+                    idOs = currentOs.value?.osId.toString(),
+                    data.value?.idMunicipality ?: 0
+                )
+                if (response.isSuccessful) {
+                    if (response.body()?.responseCode == 200) {
+                        onSuccess(response.body()?.responseMessage.toString())
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 }
