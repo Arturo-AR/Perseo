@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    //id 'com.google.gms.google-services'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
 }
@@ -13,8 +12,8 @@ android {
         applicationId "com.perseo.telecable"
         minSdk 21
         targetSdk 32
-        versionCode 5
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.0.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -26,6 +25,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix = ".debug"
         }
     }
     compileOptions {
@@ -46,6 +48,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    namespace 'com.perseo.telecable'
 }
 
 dependencies {
@@ -63,12 +66,6 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
-
-    //Google Firebase
-    //implementation platform('com.google.firebase:firebase-bom:29.3.1')
-    //Google Auth
-    //implementation 'com.google.firebase:firebase-auth-ktx'
-    //implementation 'com.google.firebase:firebase-firestore-ktx'
 
     //Dagger-Hilt
     implementation 'com.google.dagger:hilt-android:2.39'
@@ -114,4 +111,5 @@ dependencies {
 
     //Permissions
     implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
+
 }

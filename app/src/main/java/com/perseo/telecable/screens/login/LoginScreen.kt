@@ -58,8 +58,8 @@ fun LoginScreen(
                     success = {
                         navController.navigate(PerseoScreens.Dashboard.route)
                     },
-                    fail = {
-                        context.toast(context.getString(R.string.invalid_credentials))
+                    fail = { failMessage ->
+                        context.toast(failMessage ?: "")
                     },
                     multipleEnterprise = {
                         navController.navigate(PerseoScreens.EnterpriseSelector.route)

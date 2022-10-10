@@ -44,7 +44,6 @@ object Constants {
 
     const val BUTTON_BACKGROUND = "images/fondos/zona_item_background.png"
 
-
     const val BUTTON_MATERIAL = "images/botones/materiales_agregar.png"
     const val BUTTON_EQUIPMENT = "images/botones/equipos_agregar.png"
 }
