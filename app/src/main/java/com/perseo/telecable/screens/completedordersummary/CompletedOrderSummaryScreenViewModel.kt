@@ -2,6 +2,7 @@ package com.perseo.telecable.screens.completedordersummary
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,7 @@ import com.perseo.telecable.model.perseorequest.EquipmentRequest
 import com.perseo.telecable.model.perseorequest.ImageRequest
 import com.perseo.telecable.model.perseorequest.SignDocumentRequest
 import com.perseo.telecable.model.perseorequest.SignElements
+import com.perseo.telecable.model.perseoresponse.RoutersCajas
 import com.perseo.telecable.model.perseoresponse.ServiceOrderItem
 import com.perseo.telecable.repository.DatabaseRepository
 import com.perseo.telecable.repository.ImgurRepository
@@ -21,8 +23,10 @@ import com.perseo.telecable.repository.PerseoRepository
 import com.perseo.telecable.repository.SharedRepository
 import com.perseo.telecable.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
@@ -59,6 +63,8 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
 
     private val _onWay: MutableLiveData<Boolean> = MutableLiveData()
 
+    private val _routersCTAntennas: MutableLiveData<RoutersCajas> = MutableLiveData()
+    val routersCTAntennas: LiveData<RoutersCajas> = _routersCTAntennas
 
     init {
         viewModelScope.launch {
@@ -89,6 +95,17 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
         }
     }
 
+    fun getRouters() {
+        viewModelScope.launch {
+            val response = repository.getRoutersCT(_data.value?.idMunicipality ?: 0)
+            if (response.isSuccessful) {
+                if (response.body()?.responseCode == 200) {
+                    _routersCTAntennas.value = response.body()!!.responseBody
+                }
+            }
+        }
+    }
+
     fun getEquipment() {
         viewModelScope.launch {
             dbRepository.getAllEquipment().distinctUntilChanged()
@@ -108,15 +125,17 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
         _doing.value = prefs.getDoing()
     }
 
-    fun finishOrder(onClick: () -> Unit) {
+    fun finishOrder(sign: Bitmap?, owner: Boolean, onSign: (String) -> Unit, onClick: () -> Unit) {
         viewModelScope.launch {
+            if (sign != null) {
+                signDocument(sign, owner, onSign)
+            }
             endCompliance(
                 getLocationLiveData().value?.latitude ?: "",
                 getLocationLiveData().value?.longitude ?: ""
             )
             val ok = uploadImages()
             if (ok) {
-
                 try {
                     val response = repository.finalizarOrdenServicio(
                         empresa_id = _data.value?.idMunicipality ?: 0,
@@ -226,8 +245,8 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
         }
     }
 
-    fun signDocument(sign: Bitmap, onSuccess: (String) -> Unit) {
-        viewModelScope.launch {
+    private suspend fun signDocument(sign: Bitmap, owner: Boolean, onSuccess: (String) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
             val elementsList = listOf(
                 SignElements(elementName = "FIRMA", element = sign.toBase64StringJPEG())
             )
@@ -239,7 +258,8 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
                     elements = elementsList,
                     documentId = 4,
                     document = "ORDEN SERVICIO",
-                    file = "02_ORDENES_SERVICIO.pdf"
+                    file = "02_ORDENES_SERVICIO.pdf",
+                    owner = owner
                 )
                 val response = repository.signDocument(
                     request.toJsonString(),
@@ -248,12 +268,15 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
                 )
                 if (response.isSuccessful) {
                     if (response.body()?.responseCode == 200) {
-                        onSuccess(response.body()?.responseMessage.toString())
+                        withContext(Dispatchers.Main){
+                            onSuccess(response.body()?.responseMessage.toString())
+                        }
+                        Thread.sleep(1000)
                     }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-        }
+        }.join()
     }
 }

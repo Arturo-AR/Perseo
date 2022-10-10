@@ -9,7 +9,8 @@ data class SignDocumentRequest(
     @SerializedName("elementos") val elements: List<SignElements>,
     @SerializedName("id_documento") val documentId: Int,
     @SerializedName("documento") val document: String,
-    @SerializedName("archivo") val file: String
+    @SerializedName("archivo") val file: String,
+    @SerializedName("titular") val owner: Boolean,
 )
 
 data class SignElements(

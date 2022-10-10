@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.gson.Gson
+import com.perseo.telecable.model.perseoresponse.RoutersCajas
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -97,6 +98,24 @@ fun String.toEquipmentFormat(): String {
         "ANTE" -> "Antena"
         "ANTESEC" -> "Antena Sectorial"
         "MINI" -> "Mini Nodo"
+        else -> this
+    }
+}
+
+fun String.getEquipmentDesc(id: String, routers: RoutersCajas?): String {
+    return when (id) {
+        "CAJATER" -> {
+            routers?.terminalBox?.filter { it.terminalBoxId == this.toInt() }
+                ?.get(0)?.terminalBoxDesc.toString()
+        }
+        "ROUTERCEN" -> {
+            routers?.routers?.filter { it.routerCentralId == this.toInt() }
+                ?.get(0)?.routerCentralDesc.toString()
+        }
+        "ANTESEC" -> {
+            routers?.antennasSectorial?.filter { it.antennaSectorialId == this.toInt() }
+                ?.get(0)?.antennaSectorialDesc.toString()
+        }
         else -> this
     }
 }

@@ -1781,12 +1781,15 @@ fun SummaryItem(item: SummaryItems) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
+            modifier = Modifier.weight(4f).align(Alignment.CenterVertically),
             text = item.itemDesc,
             color = White,
         )
         Text(
+            modifier = Modifier.weight(1f).align(Alignment.CenterVertically),
             text = item.value,
-            color = White
+            color = White,
+            textAlign = TextAlign.End
         )
     }
 }

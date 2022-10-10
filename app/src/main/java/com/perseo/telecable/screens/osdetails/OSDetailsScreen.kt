@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -90,6 +89,7 @@ fun OSDetailsScreen(
             Manifest.permission.ACCESS_COARSE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
+                        viewModel.startLocationUpdates()
                     }
                     perm.shouldShowRationale -> {
                     }
@@ -193,12 +193,10 @@ fun OSDetailsScreen(
         ) {
             viewModel.finishRoute()
             viewModel.startDoing()
-            if (!currentLocation?.latitude.isNullOrEmpty()) {
-                viewModel.startCompliance(
-                    currentLocation?.latitude ?: "",
-                    currentLocation?.longitude ?: ""
-                )
-            }
+            viewModel.startCompliance(
+                currentLocation?.latitude ?: "",
+                currentLocation?.longitude ?: ""
+            )
             openDialogStart.value = false
         }
     }
@@ -244,7 +242,6 @@ fun OSDetailsScreen(
                             if (Build.VERSION.SDK_INT < 28) {
                                 bitmap = MediaStore.Images
                                     .Media.getBitmap(context.contentResolver, it)
-
                             } else {
                                 val source = it?.let { it1 ->
                                     ImageDecoder
@@ -253,7 +250,6 @@ fun OSDetailsScreen(
                                 source?.let { it1 -> ImageDecoder.decodeBitmap(it1) }
                                     ?.let { it2 -> bitmap = it2 }
                             }
-
                             viewModel.addCancelImage(bitmap)
                             //imagesList.add(bitmap)
                         },
@@ -346,13 +342,7 @@ fun OSDetailsScreen(
                                 if (!motivos.isNullOrEmpty()) {
                                     navController.navigate(PerseoScreens.Equipment.route)
                                 } else {
-                                    Toast
-                                        .makeText(
-                                            context,
-                                            "No se requieren equipos",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                        .show()
+                                    context.toast("No se requieren equipos")
                                 }
                             },
                         painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_EQUIPMENT),
@@ -382,7 +372,6 @@ fun OSDetailsScreen(
                         if (Build.VERSION.SDK_INT < 28) {
                             bitmap = MediaStore.Images
                                 .Media.getBitmap(context.contentResolver, it)
-
                         } else {
                             val source = it?.let { it1 ->
                                 ImageDecoder
@@ -405,7 +394,6 @@ fun OSDetailsScreen(
                     }
                 }
 
-
                 if (generalData.isNotEmpty()) {
                     if (onWay == false && doing == false) {
                         Button(
@@ -422,7 +410,6 @@ fun OSDetailsScreen(
                                 fontWeight = FontWeight.Bold
                             )
                         }
-
                     } else {
                         if (doing == true) {
                             Button(

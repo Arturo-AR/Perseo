@@ -1,6 +1,7 @@
 package com.perseo.telecable.screens.completedordersummary
 
 import android.graphics.Bitmap
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -31,6 +32,7 @@ import com.perseo.telecable.ui.theme.Background
 import com.perseo.telecable.ui.theme.Yellow4
 import com.perseo.telecable.ui.theme.Yellow6Hint
 import com.perseo.telecable.utils.Constants
+import com.perseo.telecable.utils.getEquipmentDesc
 import com.perseo.telecable.utils.toEquipmentFormat
 import com.perseo.telecable.utils.toast
 
@@ -49,16 +51,26 @@ fun CompletedOrderSummaryScreen(
     val openDialogFinish = remember { mutableStateOf(false) }
     val material by viewModel.material.observeAsState()
     val equipment by viewModel.equipment.observeAsState()
+    val routersCTResponse by viewModel.routersCTAntennas.observeAsState()
     val os by viewModel.currentOs.observeAsState()
     val loading = remember { mutableStateOf(false) }
     var titular by rememberSaveable {
         mutableStateOf(false)
+    }
+    if (generalData != null) {
+        viewModel.getRouters()
     }
     val firma = navController.currentBackStackEntry
         ?.savedStateHandle
         ?.getLiveData<Bitmap>("FIRMA")?.observeAsState()
     if (os != null) {
         viewModel.updateEquipment()
+    }
+
+    BackHandler(enabled = true) {
+        if (firma?.value == null) {
+            navController.popBackStack()
+        }
     }
 
     val context = LocalContext.current
@@ -78,12 +90,18 @@ fun CompletedOrderSummaryScreen(
             openDialogFinish.value = false
             loading.value = true
             try {
-                viewModel.finishOrder {
-                    loading.value = false
-                    navController.navigate(PerseoScreens.OrderOptions.route) {
-                        popUpTo(PerseoScreens.OrderOptions.route)
-                    }
-                }
+                viewModel.finishOrder(
+                    sign = firma?.value,
+                    owner = titular,
+                    onSign = { message ->
+                        context.toast(message)
+                    },
+                    onClick = {
+                        loading.value = false
+                        navController.navigate(PerseoScreens.OrderOptions.route) {
+                            popUpTo(PerseoScreens.OrderOptions.route)
+                        }
+                    })
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -97,8 +115,10 @@ fun CompletedOrderSummaryScreen(
                 inDashboard = false,
                 textColor = White
             ) {
-                navController.navigate(PerseoScreens.OSDetails.route) {
-                    popUpTo(PerseoScreens.OSDetails.route)
+                if (firma?.value == null) {
+                    navController.navigate(PerseoScreens.OSDetails.route) {
+                        popUpTo(PerseoScreens.OSDetails.route)
+                    }
                 }
             }
         },
@@ -118,7 +138,7 @@ fun CompletedOrderSummaryScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SummaryBox(
-                title = "Materiales",
+                title = stringResource(id = R.string.materials),
                 list = material?.map {
                     SummaryItems(
                         itemDesc = it.desc_material ?: "",
@@ -126,11 +146,11 @@ fun CompletedOrderSummaryScreen(
                     )
                 })
             SummaryBox(
-                title = "Equipos",
+                title = stringResource(id = R.string.equipment),
                 list = equipment?.map {
                     SummaryItems(
                         itemDesc = it.id_tipo_equipo.toEquipmentFormat(),
-                        value = it.id_equipo
+                        value = it.id_equipo.getEquipmentDesc(it.id_tipo_equipo, routersCTResponse)
                     )
                 })
             Row(
@@ -161,7 +181,8 @@ fun CompletedOrderSummaryScreen(
                     )
                     Checkbox(
                         enabled = true,
-                        checked = titular, onCheckedChange = { titular = !titular },
+                        checked = titular,
+                        onCheckedChange = { titular = !titular },
                         colors = CheckboxDefaults.colors(
                             checkedColor = Yellow4,
                             checkmarkColor = Black,
@@ -190,7 +211,6 @@ fun CompletedOrderSummaryScreen(
                         )
                     }
                 }
-
             }
             Button(
                 modifier = Modifier
@@ -215,20 +235,6 @@ fun CompletedOrderSummaryScreen(
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
-            Button(
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Yellow4
-                ),
-                onClick = {
-                    if (firma?.value != null) {
-                        viewModel.signDocument(firma.value!!) { message ->
-                            context.toast(message)
-                        }
-                    }
-                }
-            ) {
-                Text(text = "Firmar perseo")
-            }
         }
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             if (loading.value) {
