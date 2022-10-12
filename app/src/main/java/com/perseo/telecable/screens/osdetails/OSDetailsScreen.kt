@@ -269,11 +269,12 @@ fun OSDetailsScreen(
                 viewModel.cancelOrder(
                     reason = cancelReason,
                     images = cancelImages?.map { it.toBase64String() }!!
-                ) {
+                ) { message->
                     navController.navigate(PerseoScreens.OrderOptions.route) {
                         popUpTo(PerseoScreens.OrderOptions.route)
                     }
                     loading.value = false
+                    context.toast(message)
                 }
             } else if (cancelReason == "") {
                 context.toast("Ingrese el motivo")

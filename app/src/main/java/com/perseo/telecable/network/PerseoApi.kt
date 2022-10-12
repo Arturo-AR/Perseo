@@ -86,7 +86,7 @@ interface PerseoApi {
         @Query("opc") opc: Int,
         @Field("ID_EMPRESA") enterpriseId: Int,
         @Field("MOTIVO_CANCELACION") cancelReason: String
-    ): Response<String>
+    ): Response<CancelOrder>
 
     @FormUrlEncoded
     @POST("ws.php")

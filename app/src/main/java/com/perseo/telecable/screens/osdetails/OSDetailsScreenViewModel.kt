@@ -142,17 +142,17 @@ class OSDetailsScreenViewModel @Inject constructor(
         _doing.value = prefs.getDoing()
     }
 
-    fun cancelOrder(reason: String, images: List<String>, onSuccess: () -> Unit) {
+    fun cancelOrder(reason: String, images: List<String>, onSuccess: (String) -> Unit) {
         viewModelScope.launch {
             try {
                 val links = uploadCancelImages(images)
                 val reasons = CancelOrderRequest(
-                    osId = currentOs.value?.osId!!,
+                    osId = currentOs.value?.osId ?: 0,
                     reason = reason,
                     imageUrl1 = links[0],
                     imageUrl2 = links[1],
                     imageUrl3 = links[2],
-                    location = "${getLocationLiveData().value?.latitude!!},${getLocationLiveData().value?.longitude!!}"
+                    location = "${getLocationLiveData().value?.latitude ?: ""},${getLocationLiveData().value?.longitude ?: "" }"
                 )
                 val response =
                     repository.cancelOrder(
@@ -160,15 +160,27 @@ class OSDetailsScreenViewModel @Inject constructor(
                         reasons.toJsonString()
                     )
                 if (response.isSuccessful) {
-                    if (response.body() == "Committed") {
-                        finishDoing()
-                        finishRoute()
-                        viewModelScope.launch {
-                            dbRepository.deleteMaterials()
-                            dbRepository.deleteEquipment()
-                            dbRepository.deleteComplianceInfo()
+                    when (response.body()?.responseCode) {
+                        200, 404 -> {
+                            finishDoing()
+                            finishRoute()
+                            viewModelScope.launch {
+                                dbRepository.deleteMaterials()
+                                dbRepository.deleteEquipment()
+                                dbRepository.deleteComplianceInfo()
+                            }
+                            onSuccess("Orden Cancelada Correctamente")
                         }
-                        onSuccess()
+                        204 -> {
+                            finishDoing()
+                            finishRoute()
+                            viewModelScope.launch {
+                                dbRepository.deleteMaterials()
+                                dbRepository.deleteEquipment()
+                                dbRepository.deleteComplianceInfo()
+                            }
+                            onSuccess("Algo salió mal")
+                        }
                     }
                 }
             } catch (ex: Exception) {
