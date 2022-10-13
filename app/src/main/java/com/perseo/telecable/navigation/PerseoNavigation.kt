@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.perseo.telecable.screens.splash.SplashScreen
+import com.perseo.telecable.screens.completedordersummary.CompletedOrderSummaryScreen
 import com.perseo.telecable.screens.compliance.ComplianceScreen
 import com.perseo.telecable.screens.dashboard.DashboardScreen
 import com.perseo.telecable.screens.dashboard.DashboardScreenViewModel
@@ -25,6 +25,8 @@ import com.perseo.telecable.screens.rubro.RubroScreen
 import com.perseo.telecable.screens.scheduleorders.ScheduleOrdersScreen
 import com.perseo.telecable.screens.servicecords.ServiceCordsScreen
 import com.perseo.telecable.screens.serviceorders.ServiceOrdersScreen
+import com.perseo.telecable.screens.signature.SignatureScreen
+import com.perseo.telecable.screens.splash.SplashScreen
 import com.perseo.telecable.screens.splash.SplashScreenViewModel
 import com.perseo.telecable.screens.subscribers.SubscribersScreen
 import com.perseo.telecable.screens.zone.ZoneScreen
@@ -39,6 +41,19 @@ fun PerseoNavigation() {
 
         composable(PerseoScreens.Compliance.route) {
             ComplianceScreen(navController = navController)
+        }
+
+        composable(PerseoScreens.CompletedOrderSummary.route) {
+            CompletedOrderSummaryScreen(navController = navController)
+        }
+
+        composable(PerseoScreens.Signature.route) {
+            SignatureScreen(navController = navController) {
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("FIRMA", it)
+                navController.popBackStack()
+            }
         }
 
         composable(PerseoScreens.Dashboard.route) {

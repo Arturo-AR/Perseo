@@ -24,7 +24,7 @@ class LoginScreenViewModel @Inject constructor(
         userId: String,
         password: String,
         success: () -> Unit,
-        fail: () -> Unit,
+        fail: (String?) -> Unit,
         multipleEnterprise: () -> Unit
     ) {
         viewModelScope.launch {
@@ -49,7 +49,7 @@ class LoginScreenViewModel @Inject constructor(
                         multipleEnterprise()
                     }
                 } else {
-                    fail()
+                    fail(data.body()?.responseMessage)
                 }
             } catch (ex: Exception) {
                 Log.d("Login", "Error at login: ${ex.message}")

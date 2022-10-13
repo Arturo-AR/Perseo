@@ -10,19 +10,14 @@ import com.perseo.telecable.model.database.ComplianceInfo
 import com.perseo.telecable.model.database.Equipment
 import com.perseo.telecable.model.database.GeneralData
 import com.perseo.telecable.model.database.Materials
-import com.perseo.telecable.model.perseorequest.CancelOrderRequest
-import com.perseo.telecable.model.perseorequest.EquipmentRequest
-import com.perseo.telecable.model.perseorequest.ImageRequest
+import com.perseo.telecable.model.perseorequest.*
 import com.perseo.telecable.model.perseoresponse.ServiceOrderItem
 import com.perseo.telecable.model.perseoresponse.SubscriberImage
 import com.perseo.telecable.repository.DatabaseRepository
 import com.perseo.telecable.repository.ImgurRepository
 import com.perseo.telecable.repository.PerseoRepository
 import com.perseo.telecable.repository.SharedRepository
-import com.perseo.telecable.utils.Constants
-import com.perseo.telecable.utils.toDate
-import com.perseo.telecable.utils.toHour
-import com.perseo.telecable.utils.toJsonString
+import com.perseo.telecable.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,11 +50,11 @@ class OSDetailsScreenViewModel @Inject constructor(
     val material: LiveData<List<Materials>> = _materials
 
     private val _complianceInfo: MutableLiveData<ComplianceInfo> = MutableLiveData()
-    val complianceInfo: LiveData<ComplianceInfo> = _complianceInfo
+    //val complianceInfo: LiveData<ComplianceInfo> = _complianceInfo
 
-    private val _finalImages: MutableLiveData<MutableList<ImageRequest>> =
+/*    private val _finalImages: MutableLiveData<MutableList<ImageRequest>> =
         MutableLiveData(mutableListOf())
-    val finalImages: LiveData<MutableList<ImageRequest>> = _finalImages
+    val finalImages: LiveData<MutableList<ImageRequest>> = _finalImages*/
 
     private val allEquipment: MutableLiveData<List<Equipment>> = MutableLiveData()
 
@@ -106,8 +101,6 @@ class OSDetailsScreenViewModel @Inject constructor(
 
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
-            //Log.d("motivo", motivoId)
-            //Log.d("motivo", enterpriseId.toString())
             val response = repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
             if (response.isSuccessful) {
                 if (response.body()?.responseCode == 200) {
@@ -149,57 +142,26 @@ class OSDetailsScreenViewModel @Inject constructor(
         _doing.value = prefs.getDoing()
     }
 
-    fun cancelOrder(reason: String, images: List<String>, onSuccess: () -> Unit) {
+    fun cancelOrder(reason: String, images: List<String>, onSuccess: (String) -> Unit) {
         viewModelScope.launch {
-            val links = uploadCancelImages(images)
-            val reasons = CancelOrderRequest(
-                osId = currentOs.value?.osId!!,
-                reason = reason,
-                imageUrl1 = links[0],
-                imageUrl2 = links[1],
-                imageUrl3 = links[2],
-                location = "${getLocationLiveData().value?.latitude!!},${getLocationLiveData().value?.longitude!!}"
-            )
-            val response =
-                repository.cancelOrder(generalData.value[0].idMunicipality, reasons.toJsonString())
-            if (response.isSuccessful) {
-                if (response.body() == "Committed") {
-                    finishDoing()
-                    finishRoute()
-                    viewModelScope.launch {
-                        dbRepository.deleteMaterials()
-                        dbRepository.deleteEquipment()
-                        dbRepository.deleteComplianceInfo()
-                    }
-                    onSuccess()
-                }
-            }
-        }
-    }
-
-    fun finishOrder(onClick: () -> Unit) {
-        viewModelScope.launch {
-            endCompliance(
-                getLocationLiveData().value?.latitude ?: "",
-                getLocationLiveData().value?.longitude ?: ""
-            )
-            val ok = uploadImages()
-            if (ok) {
-
-                try {
-                    val response = repository.finalizarOrdenServicio(
-                        empresa_id = generalData.value[0].idMunicipality,
-                        ordenes_info_cumplimiento = complianceInfo.value?.toJsonString()!!,
-                        fotos = finalImages.value?.toJsonString()!!,
-                        equipos = equipment.value?.toJsonString()!!,
-                        orden = currentOs.value?.osId!!,
-                        fecha = Date().toDate(),
-                        materiales = material.value?.toJsonString()!!,
-                        parametros = "[]",
-                        info_cumplimiento = "{}"
+            try {
+                val links = uploadCancelImages(images)
+                val reasons = CancelOrderRequest(
+                    osId = currentOs.value?.osId ?: 0,
+                    reason = reason,
+                    imageUrl1 = links[0],
+                    imageUrl2 = links[1],
+                    imageUrl3 = links[2],
+                    location = "${getLocationLiveData().value?.latitude ?: ""},${getLocationLiveData().value?.longitude ?: "" }"
+                )
+                val response =
+                    repository.cancelOrder(
+                        generalData.value[0].idMunicipality,
+                        reasons.toJsonString()
                     )
-                    if (response.isSuccessful) {
-                        if (response.body() == "Committed") {
+                if (response.isSuccessful) {
+                    when (response.body()?.responseCode) {
+                        200, 404 -> {
                             finishDoing()
                             finishRoute()
                             viewModelScope.launch {
@@ -207,44 +169,24 @@ class OSDetailsScreenViewModel @Inject constructor(
                                 dbRepository.deleteEquipment()
                                 dbRepository.deleteComplianceInfo()
                             }
-                            onClick()
+                            onSuccess("Orden Cancelada Correctamente")
+                        }
+                        204 -> {
+                            finishDoing()
+                            finishRoute()
+                            viewModelScope.launch {
+                                dbRepository.deleteMaterials()
+                                dbRepository.deleteEquipment()
+                                dbRepository.deleteComplianceInfo()
+                            }
+                            onSuccess("Algo salió mal")
                         }
                     }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
                 }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
-    }
-
-    private suspend fun uploadImages(): Boolean {
-        viewModelScope.launch {
-            allEquipment.value?.map {
-                if (!it.url_image.isNullOrEmpty()) {
-                    val title =
-                        if (it.id_tipo_equipo == "") it.nombre_imagen_adicional else it.id_tipo_equipo
-                    val response = imgurRepository.uploadImage(
-                        image = it.url_image!!,
-                        album = getAlbum(),
-                        title = "$title||${currentOs.value?.requestNumber}"
-                    )
-                    if (response.isSuccessful) {
-                        _finalImages.value?.add(
-                            ImageRequest(
-                                description = response.body()?.upload?.title!!,
-                                equipmentId = it.id_equipo,
-                                osId = currentOs.value?.osId!!,
-                                equipmentTypeId = it.id_tipo_equipo,
-                                requestNumber = currentOs.value?.requestNumber!!,
-                                link = response.body()?.upload?.link!!,
-                            )
-                        )
-                    }
-                    //Log.d("Link", response.body()?.upload?.link!!)
-                }
-            }
-        }.join()
-        return true
     }
 
     private suspend fun uploadCancelImages(images: List<String>): List<String> {
@@ -370,21 +312,9 @@ class OSDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun endCompliance(lat: String, lon: String) {
-        viewModelScope.launch {
-            val myDate = Date()
-            _complianceInfo.value?.fecha_fin = myDate.toDate()
-            _complianceInfo.value?.hora_fin = myDate.toHour()
-            _complianceInfo.value?.ubicacion_fin = "$lat, $lon"
-            dbRepository.updateComplianceInfo(complianceInfo.value!!)
-            updateInfo()
-        }.join()
-    }
-
     fun addCancelImage(bitmap: Bitmap?) {
         if (bitmap != null) {
             _cancelImages.value = _cancelImages.value?.plus(bitmap) ?: emptyList()
-            //Log.d("bitmapList", _cancelImages.value.toString())
         }
     }
 

@@ -7,8 +7,11 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.selection.selectable
@@ -29,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
@@ -39,20 +41,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.perseo.telecable.R
 import com.perseo.telecable.model.ItemOSDetail
+import com.perseo.telecable.model.SummaryItems
 import com.perseo.telecable.model.database.Equipment
 import com.perseo.telecable.model.database.Materials
 import com.perseo.telecable.model.database.ServiceOrder
@@ -60,9 +68,7 @@ import com.perseo.telecable.model.perseoresponse.*
 import com.perseo.telecable.navigation.PerseoScreens
 import com.perseo.telecable.screens.dashboard.DashboardScreenViewModel
 import com.perseo.telecable.ui.theme.*
-import com.perseo.telecable.utils.Constants
-import com.perseo.telecable.utils.toBitmap
-import com.perseo.telecable.utils.toHourFormat
+import com.perseo.telecable.utils.*
 
 @Composable
 fun LogoPerseo(modifier: Modifier) {
@@ -361,6 +367,7 @@ fun PasswordVisibility(passwordVisibility: MutableState<Boolean>) {
 fun PerseoTopBar(
     title: String,
     inDashboard: Boolean? = false,
+    textColor: Color = Yellow4,
     onBackArrowClicked: () -> Unit = {}
 ) {
     TopAppBar(
@@ -394,7 +401,7 @@ fun PerseoTopBar(
 
                 Text(
                     text = title,
-                    color = Yellow4,
+                    color = textColor,
                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 )
                 LogoPerseo(
@@ -1597,5 +1604,192 @@ fun CordsServicesFooter(
                 Text(text = "Cumplir")
             }
         }
+    }
+}
+
+@Composable
+fun RowScope.MenuItems(
+    @DrawableRes resId: Int,
+    desc: String,
+    colorTint: Color,
+    border: Boolean = false,
+    onClick: () -> Unit
+) {
+    val modifier = Modifier.size(24.dp)
+    IconButton(
+        onClick = onClick, modifier = Modifier.weight(1f, true)
+    ) {
+        Icon(
+            painterResource(id = resId),
+            contentDescription = desc,
+            tint = colorTint,
+            modifier = if (border) modifier.border(
+                0.5.dp,
+                White,
+                shape = CircleShape
+            ) else modifier
+        )
+    }
+}
+
+@Composable
+fun ControlsBar(
+    drawController: DrawController,
+    onDownloadClick: () -> Unit,
+    undoVisibility: MutableState<Boolean>,
+    redoVisibility: MutableState<Boolean>
+) {
+    Row(modifier = Modifier.padding(12.dp), horizontalArrangement = Arrangement.SpaceAround) {
+        MenuItems(
+            R.drawable.ic_download,
+            "download",
+            if (undoVisibility.value) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant
+        ) {
+            if (undoVisibility.value) onDownloadClick()
+        }
+        MenuItems(
+            R.drawable.ic_undo,
+            "undo",
+            if (undoVisibility.value) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant
+        ) {
+            if (undoVisibility.value) drawController.unDo()
+        }
+        MenuItems(
+            R.drawable.ic_redo,
+            "redo",
+            if (redoVisibility.value) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant
+        ) {
+            if (redoVisibility.value) drawController.reDo()
+        }
+        MenuItems(
+            R.drawable.ic_refresh,
+            "reset",
+            if (redoVisibility.value || undoVisibility.value) MaterialTheme.colors.primary else MaterialTheme.colors.primaryVariant
+        ) {
+            drawController.reset()
+        }
+    }
+}
+
+@Composable
+internal fun RowScope.ColorDots(
+    color: Color,
+    selected: Boolean,
+    unSelectedSize: Dp = 26.dp,
+    selectedSize: Dp = 36.dp,
+    clickedColor: (Color) -> Unit
+) {
+    val dbAnimateAsState: Dp by animateDpAsState(
+        targetValue = if (selected) selectedSize else unSelectedSize
+    )
+    IconButton(
+        onClick = {
+            clickedColor(color)
+        }, modifier = Modifier
+            .weight(1f, true)
+    ) {
+        Icon(
+            painterResource(id = R.drawable.ic_color),
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.size(dbAnimateAsState)
+        )
+    }
+}
+
+@Composable
+fun DrawBox(
+    drawController: DrawController,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colors.background,
+    bitmapCallback: (ImageBitmap?, Throwable?) -> Unit,
+    trackHistory: (undoCount: Int, redoCount: Int) -> Unit = { _, _ -> }
+) = AndroidView(
+    factory = {
+        ComposeView(it).apply {
+            setContent {
+                LaunchedEffect(drawController) {
+                    drawController.changeBgColor(backgroundColor)
+                    drawController.trackBitmaps(this@apply, this, bitmapCallback)
+                    drawController.trackHistory(this, trackHistory)
+                }
+                Canvas(modifier = modifier
+                    .background(drawController.bgColor)
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = { offset ->
+                                drawController.insertNewPath(offset)
+                            }
+                        ) { change, _ ->
+                            val newPoint = change.position
+                            drawController.updateLatestPath(newPoint)
+                        }
+                    }) {
+
+                    drawController.pathList.forEach { pw ->
+                        drawPath(
+                            createPath(pw.points),
+                            color = pw.strokeColor,
+                            alpha = pw.alpha,
+                            style = Stroke(
+                                width = pw.strokeWidth,
+                                cap = StrokeCap.Round,
+                                join = StrokeJoin.Round
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    },
+    modifier = modifier
+)
+
+@Composable
+fun SummaryBox(
+    title: String,
+    list: List<SummaryItems>?
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        backgroundColor = Background,
+        border = BorderStroke(2.dp, Yellow4)
+    ) {
+        Column(Modifier.padding(8.dp)) {
+            Text(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                text = title,
+                color = Yellow4,
+                fontWeight = FontWeight.Bold,
+                fontSize = 22.sp
+            )
+            list?.map {
+                SummaryItem(it)
+            }
+        }
+    }
+}
+
+@Composable
+fun SummaryItem(item: SummaryItems) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 2.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            modifier = Modifier.weight(4f).align(Alignment.CenterVertically),
+            text = item.itemDesc,
+            color = White,
+        )
+        Text(
+            modifier = Modifier.weight(1f).align(Alignment.CenterVertically),
+            text = item.value,
+            color = White,
+            textAlign = TextAlign.End
+        )
     }
 }

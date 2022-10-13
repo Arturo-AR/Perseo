@@ -46,6 +46,16 @@ sealed class PerseoScreens(
      * Screens that don't need permissions
      */
 
+    object CompletedOrderSummary : PerseoScreens(
+        route = "completedOrderSummaryScreen",
+        id = 0
+    )
+
+    object Signature : PerseoScreens(
+        route = "signatureScreen",
+        id = 0
+    )
+
     object Splash : PerseoScreens(
         route = "splashScreen",
         id = 0
@@ -86,12 +96,12 @@ sealed class PerseoScreens(
         id = 0
     )
 
-    object ScheduleOrders: PerseoScreens(
+    object ScheduleOrders : PerseoScreens(
         route = "scheduleOrders",
         id = 0
     )
 
-    object OrderOptions: PerseoScreens(
+    object OrderOptions : PerseoScreens(
         route = "orderOptions",
         id = 0
     )

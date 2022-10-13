@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -20,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,10 +36,7 @@ import com.perseo.telecable.components.*
 import com.perseo.telecable.model.ItemOSDetail
 import com.perseo.telecable.navigation.PerseoScreens
 import com.perseo.telecable.ui.theme.*
-import com.perseo.telecable.utils.Constants
-import com.perseo.telecable.utils.isPermanentlyDenied
-import com.perseo.telecable.utils.toBase64String
-import com.perseo.telecable.utils.toast
+import com.perseo.telecable.utils.*
 
 @ExperimentalPermissionsApi
 @ExperimentalComposeUiApi
@@ -53,7 +50,6 @@ fun OSDetailsScreen(
     val scrollState = rememberScrollState()
     val openDialogRoute = remember { mutableStateOf(false) }
     val openDialogStart = remember { mutableStateOf(false) }
-    val openDialogFinish = remember { mutableStateOf(false) }
     val openDialogCancel = remember { mutableStateOf(false) }
     val loading = remember { mutableStateOf(false) }
     var cancelReason by remember { mutableStateOf("") }
@@ -73,6 +69,7 @@ fun OSDetailsScreen(
         )
     )
     val lifecycleOwner = LocalLifecycleOwner.current
+
     DisposableEffect(
         key1 = lifecycleOwner,
         effect = {
@@ -92,6 +89,7 @@ fun OSDetailsScreen(
             Manifest.permission.ACCESS_COARSE_LOCATION -> {
                 when {
                     perm.hasPermission -> {
+                        viewModel.startLocationUpdates()
                     }
                     perm.shouldShowRationale -> {
                     }
@@ -195,41 +193,11 @@ fun OSDetailsScreen(
         ) {
             viewModel.finishRoute()
             viewModel.startDoing()
-            currentLocation.let {
-                if (!it?.latitude.isNullOrEmpty()) {
-                    viewModel.startCompliance(it?.latitude!!, it.longitude)
-                }
-            }
-            //viewModel.startCompliance()
+            viewModel.startCompliance(
+                currentLocation?.latitude ?: "",
+                currentLocation?.longitude ?: ""
+            )
             openDialogStart.value = false
-        }
-    }
-
-    if (openDialogFinish.value) {
-        ShowAlertDialog(
-            title = "Alerta",
-            message = {
-                Text(
-                    text = "Desea finalizar la orden de serivcio?",
-                    color = Color.White,
-                    fontSize = 18.sp
-                )
-            },
-            openDialog = openDialogFinish,
-            positiveButtonText = "Finalizar"
-        ) {
-            openDialogFinish.value = false
-            loading.value = true
-            try {
-                viewModel.finishOrder {
-                    loading.value = false
-                    navController.navigate(PerseoScreens.OrderOptions.route) {
-                        popUpTo(PerseoScreens.OrderOptions.route)
-                    }
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
         }
     }
 
@@ -274,7 +242,6 @@ fun OSDetailsScreen(
                             if (Build.VERSION.SDK_INT < 28) {
                                 bitmap = MediaStore.Images
                                     .Media.getBitmap(context.contentResolver, it)
-
                             } else {
                                 val source = it?.let { it1 ->
                                     ImageDecoder
@@ -283,7 +250,6 @@ fun OSDetailsScreen(
                                 source?.let { it1 -> ImageDecoder.decodeBitmap(it1) }
                                     ?.let { it2 -> bitmap = it2 }
                             }
-
                             viewModel.addCancelImage(bitmap)
                             //imagesList.add(bitmap)
                         },
@@ -303,11 +269,12 @@ fun OSDetailsScreen(
                 viewModel.cancelOrder(
                     reason = cancelReason,
                     images = cancelImages?.map { it.toBase64String() }!!
-                ) {
+                ) { message->
                     navController.navigate(PerseoScreens.OrderOptions.route) {
                         popUpTo(PerseoScreens.OrderOptions.route)
                     }
                     loading.value = false
+                    context.toast(message)
                 }
             } else if (cancelReason == "") {
                 context.toast("Ingrese el motivo")
@@ -376,13 +343,7 @@ fun OSDetailsScreen(
                                 if (!motivos.isNullOrEmpty()) {
                                     navController.navigate(PerseoScreens.Equipment.route)
                                 } else {
-                                    Toast
-                                        .makeText(
-                                            context,
-                                            "No se requieren equipos",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                        .show()
+                                    context.toast("No se requieren equipos")
                                 }
                             },
                         painter = rememberAsyncImagePainter(Constants.PERSEO_BASE_URL + Constants.BUTTON_EQUIPMENT),
@@ -412,7 +373,6 @@ fun OSDetailsScreen(
                         if (Build.VERSION.SDK_INT < 28) {
                             bitmap = MediaStore.Images
                                 .Media.getBitmap(context.contentResolver, it)
-
                         } else {
                             val source = it?.let { it1 ->
                                 ImageDecoder
@@ -435,7 +395,6 @@ fun OSDetailsScreen(
                     }
                 }
 
-
                 if (generalData.isNotEmpty()) {
                     if (onWay == false && doing == false) {
                         Button(
@@ -452,29 +411,42 @@ fun OSDetailsScreen(
                                 fontWeight = FontWeight.Bold
                             )
                         }
-
                     } else {
-                        Image(
-                            modifier = Modifier
-                                .height(60.dp)
-                                .padding(vertical = 6.dp)
-                                .fillMaxHeight()
-                                .clickable {
-                                    if (onWay!! && !doing!!) {
-                                        openDialogStart.value = true
-                                    } else {
-                                        openDialogFinish.value = true
-                                        //viewModel.finishDoing()
-                                        //navController.navigate(PerseoScreens.Dashboard.route)
-                                    }
+                        if (doing == true) {
+                            Button(
+                                onClick = {
+                                    navController.navigate(PerseoScreens.CompletedOrderSummary.route)
                                 },
-                            painter = rememberAsyncImagePainter(
-                                Constants.PERSEO_BASE_URL +
-                                        if (doing == true) Constants.BUTTON_FINISH else Constants.BUTTON_START
-                            ),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
-                        )
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Yellow4
+                                )
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(horizontal = 20.dp),
+                                    text = "Resumen",
+                                    fontSize = 26.sp,
+                                    fontFamily = FontFamily.SansSerif,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        } else {
+                            Image(
+                                modifier = Modifier
+                                    .height(60.dp)
+                                    .padding(vertical = 6.dp)
+                                    .fillMaxHeight()
+                                    .clickable {
+                                        if (onWay!! && !doing!!) {
+                                            openDialogStart.value = true
+                                        }
+                                    },
+                                painter = rememberAsyncImagePainter(
+                                    Constants.PERSEO_BASE_URL + Constants.BUTTON_START
+                                ),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                         Image(
                             modifier = Modifier
                                 .height(50.dp)
@@ -490,7 +462,6 @@ fun OSDetailsScreen(
                     }
                 }
             }
-
             Row(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
