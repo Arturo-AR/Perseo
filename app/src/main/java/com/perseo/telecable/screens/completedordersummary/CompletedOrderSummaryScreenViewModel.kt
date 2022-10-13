@@ -2,7 +2,6 @@ package com.perseo.telecable.screens.completedordersummary
 
 import android.app.Application
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -268,7 +267,7 @@ class CompletedOrderSummaryScreenViewModel @Inject constructor(
                 )
                 if (response.isSuccessful) {
                     if (response.body()?.responseCode == 200) {
-                        withContext(Dispatchers.Main){
+                        withContext(Dispatchers.Main) {
                             onSuccess(response.body()?.responseMessage.toString())
                         }
                         Thread.sleep(1000)
