@@ -93,8 +93,6 @@ class EquipmentScreenViewModel @Inject constructor(
 
     fun getMotivos(motivoId: String, enterpriseId: Int) {
         viewModelScope.launch {
-            //Log.d("motivoEQ", motivoId)
-            //Log.d("motivoEQ", enterpriseId.toString())
             try {
                 val response =
                     repository.motivoOrders(motivoId = motivoId, enterpriseId = enterpriseId)
@@ -123,9 +121,6 @@ class EquipmentScreenViewModel @Inject constructor(
     }
 
     fun saveTmp(equipment: String?, idEquipment: String?, image: Bitmap?) {
-        //Log.d("equipment", equipment.toString())
-        //Log.d("idEquipment", idEquipment.toString())
-        //Log.d("image", image.toString())
         val current = _equipmentTmp.value?.find { it.equipment == equipment }
         if (current == null) {
             _equipmentTmp.value?.add(
@@ -185,7 +180,7 @@ class EquipmentScreenViewModel @Inject constructor(
         validateAction: (String) -> Unit
     ) {
         viewModelScope.launch {
-            val equipment = ValidateEquipmentRequest(noContract = currentOs.value?.noContract!!)
+            val equipment = ValidateEquipmentRequest(noContract = currentOs.value?.noContract ?: 0)
             motivosOriginal.value?.map {
                 when (it) {
                     "AGREGAR_CABLEMODEM" -> equipment.addCM = 1

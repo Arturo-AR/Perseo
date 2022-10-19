@@ -50,11 +50,6 @@ class OSDetailsScreenViewModel @Inject constructor(
     val material: LiveData<List<Materials>> = _materials
 
     private val _complianceInfo: MutableLiveData<ComplianceInfo> = MutableLiveData()
-    //val complianceInfo: LiveData<ComplianceInfo> = _complianceInfo
-
-/*    private val _finalImages: MutableLiveData<MutableList<ImageRequest>> =
-        MutableLiveData(mutableListOf())
-    val finalImages: LiveData<MutableList<ImageRequest>> = _finalImages*/
 
     private val allEquipment: MutableLiveData<List<Equipment>> = MutableLiveData()
 
@@ -137,7 +132,7 @@ class OSDetailsScreenViewModel @Inject constructor(
         _onWay.value = prefs.getOnWay()
     }
 
-    fun finishDoing() {
+    private fun finishDoing() {
         prefs.saveDoing(false)
         _doing.value = prefs.getDoing()
     }
@@ -152,7 +147,7 @@ class OSDetailsScreenViewModel @Inject constructor(
                     imageUrl1 = links[0],
                     imageUrl2 = links[1],
                     imageUrl3 = links[2],
-                    location = "${getLocationLiveData().value?.latitude ?: ""},${getLocationLiveData().value?.longitude ?: "" }"
+                    location = "${getLocationLiveData().value?.latitude ?: ""},${getLocationLiveData().value?.longitude ?: ""}"
                 )
                 val response =
                     repository.cancelOrder(
@@ -274,7 +269,6 @@ class OSDetailsScreenViewModel @Inject constructor(
                         )
                     }
                     _equipment.value = currentEquipment
-
                 }
         }
     }
@@ -283,9 +277,7 @@ class OSDetailsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             dbRepository.getAllEquipment().distinctUntilChanged()
                 .collect { equipment ->
-
                     allEquipment.value = equipment
-
                 }
         }
     }
@@ -296,7 +288,7 @@ class OSDetailsScreenViewModel @Inject constructor(
             dbRepository.insertCompliance(
                 ComplianceInfo(
                     id_empresa = generalData.value[0].idMunicipality,
-                    id_os = currentOs.value?.osId!!,
+                    id_os = currentOs.value?.osId ?: 0,
                     fecha_fin = "",
                     fecha_inicio = myDate.toDate(),
                     hora_fin = "",
