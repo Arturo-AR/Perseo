@@ -339,6 +339,7 @@ class OSDetailsScreenViewModel @Inject constructor(
             "PACHUCA" -> Constants.ID_PACHUCA_ALBUM
             "MORELIA" -> Constants.ID_MORELIA_ALBUM
             "TULANCINGO" -> Constants.ID_TULANCINGO_ALBUM
+            "PATZCUARO" -> Constants.ID_PATZCUARO_ALBUM
             "TEST" -> Constants.ID_TEST_ALBUM
             else -> ""
         }

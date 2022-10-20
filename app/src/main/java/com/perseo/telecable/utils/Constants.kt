@@ -29,6 +29,7 @@ object Constants {
     const val ID_PACHUCA_ALBUM = "dqNqCuK"
     const val ID_MORELIA_ALBUM = "BcCsOBJ"
     const val ID_TULANCINGO_ALBUM = "MCYvwJI"
+    const val ID_PATZCUARO_ALBUM = "xqbG0JJ"
     const val ID_TEST_ALBUM = "9K03yxW"
     /**
      *   No Final
